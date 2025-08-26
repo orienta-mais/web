@@ -1,0 +1,76 @@
+<div class="flex items-center justify-center min-h-screen bg-gray-100 py-2 px-1">
+    <div class="w-full max-w-2xl p-8 bg-white rounded-2xl shadow-lg">
+        <form [formGroup]="mentorForm" (ngSubmit)="handleSubmit()" class="space-y-4 flex flex-col gap-1.5">
+            <h2 class="text-3xl font-bold mb-8 text-center text-gray-800">Informações Pessoais</h2>
+            <div>
+                <p-floatlabel>
+                    <input pInputText formControlName="name" class="w-full" />
+                    <label>Nome</label>
+                </p-floatlabel>
+                <div *ngIf="f['name'].touched && f['name'].invalid" class="text-red-500 text-sm">
+                    Campo obrigatório
+                </div>
+            </div>
+
+            <div>
+                <p-floatlabel>
+                    <input pInputText formControlName="lastName" class="w-full" />
+                    <label>Sobrenome</label>
+                </p-floatlabel>
+                <div *ngIf="f['lastName'].touched && f['lastName'].invalid" class="text-red-500 text-sm">
+                    Campo obrigatório
+                </div>
+            </div>
+
+            <div>
+                <p-floatlabel>
+                    <p-datepicker formControlName="birthDate" dateFormat="dd/mm/yy" [maxDate]="maxDate"
+                        [defaultDate]="maxDate" [showIcon]="true" [readonlyInput]="true"></p-datepicker>
+                    <label>Data de Nascimento</label>
+                </p-floatlabel>
+                <div *ngIf="f['birthDate'].touched && f['birthDate'].invalid" class="text-red-500 text-sm mt-1">
+                    Campo obrigatório
+                </div>
+            </div>
+
+            <div>
+                <p-floatlabel>
+                    <input pInputText formControlName="socialMedias" class="w-full" />
+                    <label>Linkedin</label>
+                </p-floatlabel>
+            </div>
+
+            <div>
+                <p-floatlabel>
+                    <textarea pInputTextarea formControlName="description" rows="4" class="w-full"
+                        placeholder="Fale sobre você"></textarea>
+                    <label>Descrição</label>
+                </p-floatlabel>
+                <div *ngIf="f['description'].touched && f['description'].errors?.['minlength']"
+                    class="text-red-500 text-sm mt-1">
+                    Campo deve ter no mínimo 100 caracteres
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <p-floatlabel>
+                        <p-select formControlName="state" [options]="states" optionLabel="name"
+                            class="w-full"></p-select>
+                        <label>Estado</label>
+                    </p-floatlabel>
+                </div>
+                <div>
+                    <p-floatlabel>
+                        <p-select formControlName="nationality" [options]="nationalities" optionLabel="name"
+                            class="w-full"></p-select>
+                        <label>Nacionalidade</label>
+                    </p-floatlabel>
+                </div>
+            </div>
+
+            <p-button type="submit" label="Salvar" severity="primary" styleClass="w-full mt-4"></p-button>
+        </form>
+
+    </div>
+</div>

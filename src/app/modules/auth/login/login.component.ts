@@ -9,6 +9,8 @@ import { ToastService } from '../../../shared/components/toast/toast.service';
 import { AuthService } from '../../../@core/services/auth/auth.service';
 import { LoginRequest } from '../../../@core/interfaces/auth.interface';
 import { Router } from '@angular/router';
+import { take } from 'rxjs/operators';
+import { VerificationService } from '../../../@core/services/auth/verification.service';
 
 @Component({
   selector: 'app-login',
@@ -20,11 +22,12 @@ import { Router } from '@angular/router';
 export class LoginComponent {
   loginForm: FormGroup;
 
-  constructor(private toast: ToastService, private service: AuthService, private router: Router, private fb: FormBuilder) {
+  constructor(private toast: ToastService, private service: AuthService, private router: Router, private fb: FormBuilder, private verificationService: VerificationService) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, emailValidator]],
       password: ['', Validators.required]
     });
+    verificationService.clear();
   }
 
   handleLogin() {
@@ -40,7 +43,9 @@ export class LoginComponent {
       email: values.email,
       password: values.password
     }
-    this.service.login(body).subscribe({
+    this.service.login(body)
+    .pipe(take(1))
+    .subscribe({
       next: (res) => {
         console.log(res.token)
         this.router.navigate(['/home']);
@@ -54,12 +59,11 @@ export class LoginComponent {
   }
 
   forgotPassword(){
-    this.router.navigate(['/forgot-password']);
+    this.router.navigate(['/password/forgot']);
   }
 
   register(){
-    console.log("teste")
-    this.router.navigate(['/register-send-email-validate'])
+    this.router.navigate(['/register/email/send-validation'])
   }
 
   get email() { return this.loginForm.get('email'); }
