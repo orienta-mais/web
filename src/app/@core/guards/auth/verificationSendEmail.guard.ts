@@ -4,7 +4,10 @@ import { VerificationService } from '../../services/auth/verification.service';
 
 @Injectable({ providedIn: 'root' })
 export class VerificationGuard implements CanActivate {
-  constructor(private verificationService: VerificationService, private router: Router) {}
+  constructor(
+    private verificationService: VerificationService,
+    private router: Router,
+  ) {}
 
   canActivate(): boolean {
     if (this.verificationService.hasVerificationPending()) {

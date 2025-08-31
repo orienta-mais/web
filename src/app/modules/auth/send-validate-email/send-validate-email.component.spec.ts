@@ -8,9 +8,8 @@ describe('SendValidateEmailComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SendValidateEmailComponent]
-    })
-    .compileComponents();
+      imports: [SendValidateEmailComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(SendValidateEmailComponent);
     component = fixture.componentInstance;

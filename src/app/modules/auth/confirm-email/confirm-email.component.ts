@@ -1,44 +1,33 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  ReactiveFormsModule,
-  FormBuilder,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { ButtonModule } from 'primeng/button';
 import { ToastService } from '../../../shared/components/toast/toast.service';
 import { AuthService } from '../../../@core/services/auth/auth.service';
 import { Router } from '@angular/router';
-import { ConfirmEmailRequest, SendValidateEmailRequest } from '../../../@core/interfaces/auth.interface';
+import { ConfirmEmailRequest } from '../../../@core/interfaces/auth.interface';
 import { take } from 'rxjs/operators';
 import { VerificationService } from '../../../@core/services/auth/verification.service';
 
 @Component({
   selector: 'app-confirm-email',
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    InputTextModule,
-    FloatLabelModule,
-    ButtonModule,
-  ],
+  imports: [CommonModule, ReactiveFormsModule, InputTextModule, FloatLabelModule, ButtonModule],
   templateUrl: './confirm-email.component.html',
   styleUrl: './confirm-email.component.css',
 })
 export class ConfirmEmailComponent implements OnInit {
   form: FormGroup;
   emailUser?: string | null;
-  codeSendEmailRetry: number = 0;
+  codeSendEmailRetry = 0;
 
   constructor(
     private toast: ToastService,
     private verification: VerificationService,
     private service: AuthService,
     private router: Router,
-    private fb: FormBuilder
+    private fb: FormBuilder,
   ) {
     this.form = this.fb.group({
       code: ['', [Validators.required, Validators.pattern(/^[a-zA-Z0-9]{4}$/)]],
@@ -68,9 +57,7 @@ export class ConfirmEmailComponent implements OnInit {
         },
         error: () => {
           this.router.navigate(['/register']);
-          this.toast.error(
-            'Erro ao confirmar o e-mail. Verifique se o código está correto.'
-          );
+          this.toast.error('Erro ao confirmar o e-mail. Verifique se o código está correto.');
         },
       });
   }
@@ -80,7 +67,7 @@ export class ConfirmEmailComponent implements OnInit {
   }
 
   retrySendEmail() {
-    if(this.codeSendEmailRetry > 0){
+    if (this.codeSendEmailRetry > 0) {
       return;
     }
 
@@ -94,7 +81,9 @@ export class ConfirmEmailComponent implements OnInit {
             this.toast.success('E-mail de validação reenviado com sucesso');
           },
           error: () => {
-            this.toast.error("Erro ao enviar email de validação. Verifique se o e-mail está correto.");
+            this.toast.error(
+              'Erro ao enviar email de validação. Verifique se o e-mail está correto.',
+            );
             // setTimeout(() => {
             //   this.returnSendEmail();
             // }
@@ -111,16 +100,16 @@ export class ConfirmEmailComponent implements OnInit {
     }
   }
 
-    startCountdown(seconds: number) {
-      this.codeSendEmailRetry = seconds;
-    
-      const interval = setInterval(() => {
-        this.codeSendEmailRetry--;
-    
-        if (this.codeSendEmailRetry <= 0) {
-          clearInterval(interval);
-        }
-      }, 1000);
+  startCountdown(seconds: number) {
+    this.codeSendEmailRetry = seconds;
+
+    const interval = setInterval(() => {
+      this.codeSendEmailRetry--;
+
+      if (this.codeSendEmailRetry <= 0) {
+        clearInterval(interval);
+      }
+    }, 1000);
   }
 
   get code() {

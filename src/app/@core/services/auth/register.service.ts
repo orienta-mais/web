@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class RegisterService {
   private email: string | null = null;
@@ -18,5 +18,10 @@ export class RegisterService {
 
   getPassword(): string | null {
     return this.password;
+  }
+
+  clear(): void {
+    this.email = null;
+    this.password = null;
   }
 }

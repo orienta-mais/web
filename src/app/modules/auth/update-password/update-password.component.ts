@@ -1,11 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  ReactiveFormsModule,
-  FormBuilder,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { ButtonModule } from 'primeng/button';
@@ -18,13 +13,7 @@ import { uuidValidator } from '../../../@core/validators';
 
 @Component({
   selector: 'app-update-password',
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    InputTextModule,
-    FloatLabelModule,
-    ButtonModule,
-  ],
+  imports: [CommonModule, ReactiveFormsModule, InputTextModule, FloatLabelModule, ButtonModule],
   templateUrl: './update-password.component.html',
   styleUrl: './update-password.component.css',
 })
@@ -37,7 +26,7 @@ export class UpdatePasswordComponent implements OnInit {
     private toast: ToastService,
     private service: AuthService,
     private fb: FormBuilder,
-    private routeUrl: ActivatedRoute
+    private routeUrl: ActivatedRoute,
   ) {
     this.form = this.fb.group({
       newPassword: ['', [Validators.required, Validators.minLength(4)]],
@@ -78,9 +67,7 @@ export class UpdatePasswordComponent implements OnInit {
           this.toast.success('Senha atualizada com sucesso');
         },
         error: () => {
-          this.toast.error(
-            'Erro ao atualizar a senha. Verifique se atende aos requisitos.'
-          );
+          this.toast.error('Erro ao atualizar a senha. Verifique se atende aos requisitos.');
         },
       });
   }

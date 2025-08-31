@@ -26,7 +26,7 @@ export class SendValidateEmailComponent {
     private toast: ToastService,
     private service: AuthService,
     private router: Router,
-    private fb: FormBuilder
+    private fb: FormBuilder,
   ) {
     this.form = this.fb.group({
       email: ['', [Validators.required, emailValidator]],
@@ -36,34 +36,36 @@ export class SendValidateEmailComponent {
 
   handleSendValidateEmail() {
     if (this.form.valid) {
-      this.submitSendValidateEmail(
-        this.form.value
-      );
+      this.submitSendValidateEmail(this.form.value);
     } else {
       this.form.markAllAsTouched();
     }
   }
 
   submitSendValidateEmail(value: SendValidateEmailRequest) {
-    this.service.sendValidateEmail(value)
-    .pipe(take(1))
-    .subscribe({
-      next: () => {
-        this.toast.success('E-mail de validação enviado com sucesso');
-        this.router.navigate(['/register/email/confirm']);},
-      error: () => {
-        this.verificationService.setPendingVerification(true, value.email);
-        this.router.navigate(['/register/email/confirm']);
-        this.toast.error(
-          'Erro ao enviar e-mail de validação. Verifique se o e-mail está correto.'
-        );
-      },
-    });
+    this.service
+      .sendValidateEmail(value)
+      .pipe(take(1))
+      .subscribe({
+        next: () => {
+          this.toast.success('E-mail de validação enviado com sucesso');
+          this.router.navigate(['/register/email/confirm']);
+        },
+        error: () => {
+          this.verificationService.setPendingVerification(true, value.email);
+          this.router.navigate(['/register/email/confirm']);
+          this.toast.error(
+            'Erro ao enviar e-mail de validação. Verifique se o e-mail está correto.',
+          );
+        },
+      });
   }
 
   returnLogin() {
     this.router.navigate(['/login']);
   }
 
-  get email() { return this.form.get('email'); }
+  get email() {
+    return this.form.get('email');
+  }
 }

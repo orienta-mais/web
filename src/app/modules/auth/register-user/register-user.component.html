@@ -1,16 +1,20 @@
 <div class="flex items-center justify-center min-h-screen bg-gray-100 py-2 px-1">
   <div class="w-full max-w-2xl p-8 bg-white rounded-2xl shadow-lg">
-
-    <form *ngIf="step === 1" [formGroup]="credentialsForm" (ngSubmit)="nextStep()" class="space-y-6 flex flex-col">
+    <form
+      *ngIf="step === 1"
+      [formGroup]="credentialsForm"
+      (ngSubmit)="nextStep()"
+      class="space-y-6 flex flex-col"
+    >
       <h2 class="text-3xl font-bold mb-8 text-center text-gray-800">Crie sua conta</h2>
-    
+
       <div>
         <p-floatlabel>
-          <input pInputText formControlName="email" type="email" class="w-full" [readonly]="true"/>
+          <input pInputText formControlName="email" type="email" class="w-full" [readonly]="true" />
           <label>Email</label>
         </p-floatlabel>
       </div>
-    
+
       <div class="relative w-full">
         <p-floatlabel class="w-full">
           <input
@@ -21,18 +25,27 @@
             class="w-full pr-10"
           />
           <label>Senha</label>
-        </p-floatlabel>  
-        <div *ngIf="c['password'].touched && c['password'].errors?.['required']" class="text-red-500 text-sm">
+        </p-floatlabel>
+        <div
+          *ngIf="passwordCtrl?.touched && passwordCtrl?.errors?.['required']"
+          class="text-red-500 text-sm"
+        >
           Campo obrigatório
         </div>
-        <div *ngIf="c['password'].touched && c['password'].errors?.['minLength']" class="text-red-500 text-sm">
+        <div
+          *ngIf="passwordCtrl?.touched && passwordCtrl?.errors?.['minLength']"
+          class="text-red-500 text-sm"
+        >
           senha deve ter no minimo 8 caracteres.
         </div>
-        <div *ngIf="c['password'].touched && c['password'].errors?.['pattern']" class="text-red-500 text-sm">
+        <div
+          *ngIf="passwordCtrl?.touched && passwordCtrl?.errors?.['pattern']"
+          class="text-red-500 text-sm"
+        >
           A senha deve conter letra, número e caractere especial
         </div>
       </div>
-    
+
       <div class="relative w-full">
         <p-floatlabel class="w-full">
           <input
@@ -44,13 +57,21 @@
           />
           <label>Confirmar Senha</label>
         </p-floatlabel>
-    
-        <div *ngIf="credentialsForm.hasError('passwordMismatch') && c['confirmPassword'].touched" class="text-red-500 text-sm">
+
+        <div
+          *ngIf="credentialsForm.hasError('passwordMismatch') && emailCtrl?.touched"
+          class="text-red-500 text-sm"
+        >
           As senhas não coincidem
         </div>
       </div>
-    
-      <p-button type="submit" label="Próximo" severity="primary" styleClass="w-full mt-4"></p-button>
+
+      <p-button
+        type="submit"
+        label="Próximo"
+        severity="primary"
+        styleClass="w-full mt-4"
+      ></p-button>
     </form>
 
     <div *ngIf="step === 2" class="space-y-6 flex flex-col">

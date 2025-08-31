@@ -1,30 +1,30 @@
 export interface LoginRequest {
-    email: string;
-    password: string;
+  email: string;
+  password: string;
 }
 
 export interface LoginResponse {
-    token: string;
-    refreshToken?: string;
+  token: string;
+  refreshToken?: string;
 }
 
 export interface SendValidateEmailRequest {
-    email: string;
+  email: string;
 }
 
 export interface SendEmailForgotPasswordRequest {
-    email: string;
+  email: string;
 }
 
 export interface ConfirmEmailRequest {
-    code: string;
+  code: string;
 }
 
 export interface UpdatePasswordRequest {
-    uuid: string;
-    password: string;
+  uuid: string;
+  password: string;
 }
 
 export interface UuidOfUpdatePasswordRequest {
-    uuid: string;
+  uuid: string;
 }

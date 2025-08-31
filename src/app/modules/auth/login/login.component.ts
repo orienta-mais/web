@@ -22,10 +22,16 @@ import { VerificationService } from '../../../@core/services/auth/verification.s
 export class LoginComponent {
   loginForm: FormGroup;
 
-  constructor(private toast: ToastService, private service: AuthService, private router: Router, private fb: FormBuilder, private verificationService: VerificationService) {
+  constructor(
+    private toast: ToastService,
+    private service: AuthService,
+    private router: Router,
+    private fb: FormBuilder,
+    private verificationService: VerificationService,
+  ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, emailValidator]],
-      password: ['', Validators.required]
+      password: ['', Validators.required],
     });
     verificationService.clear();
   }
@@ -34,38 +40,43 @@ export class LoginComponent {
     if (this.loginForm.valid) {
       this.submitLogin(this.loginForm.value as LoginRequest);
     } else {
-      this.loginForm.markAllAsTouched(); 
+      this.loginForm.markAllAsTouched();
     }
   }
 
-  submitLogin(values: LoginRequest){
+  submitLogin(values: LoginRequest) {
     const body: LoginRequest = {
       email: values.email,
-      password: values.password
-    }
-    this.service.login(body)
-    .pipe(take(1))
-    .subscribe({
-      next: (res) => {
-        console.log(res.token)
-        this.router.navigate(['/home']);
-        this.toast.success('Login realizado com sucesso');
-      },
-      error: (error) => {
-        console.error('Erro no login:', error);
-        this.toast.error('Erro ao realizar login. Verifique suas credenciais.');
-      }
-    });
+      password: values.password,
+    };
+    this.service
+      .login(body)
+      .pipe(take(1))
+      .subscribe({
+        next: (res) => {
+          console.log(res.token);
+          this.router.navigate(['/home']);
+          this.toast.success('Login realizado com sucesso');
+        },
+        error: (error) => {
+          console.error('Erro no login:', error);
+          this.toast.error('Erro ao realizar login. Verifique suas credenciais.');
+        },
+      });
   }
 
-  forgotPassword(){
+  forgotPassword() {
     this.router.navigate(['/password/forgot']);
   }
 
-  register(){
-    this.router.navigate(['/register/email/send-validation'])
+  register() {
+    this.router.navigate(['/register/email/send-validation']);
   }
 
-  get email() { return this.loginForm.get('email'); }
-  get password() { return this.loginForm.get('password'); }
+  get email() {
+    return this.loginForm.get('email');
+  }
+  get password() {
+    return this.loginForm.get('password');
+  }
 }

@@ -1,7 +1,14 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { ReactiveFormsModule, FormBuilder, Validators, FormGroup, ValidationErrors, AbstractControl } from '@angular/forms';
+import {
+  ReactiveFormsModule,
+  FormBuilder,
+  Validators,
+  FormGroup,
+  ValidationErrors,
+  AbstractControl,
+} from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { ButtonModule } from 'primeng/button';
@@ -12,13 +19,7 @@ import { RegisterService } from '../../../@core/services/auth/register.service';
 @Component({
   selector: 'app-register-user',
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    InputTextModule,
-    FloatLabelModule,
-    ButtonModule,
-  ],
+  imports: [CommonModule, ReactiveFormsModule, InputTextModule, FloatLabelModule, ButtonModule],
   templateUrl: './register-user.component.html',
   styleUrls: ['./register-user.component.css'],
 })
@@ -28,16 +29,40 @@ export class RegisterUserComponent {
 
   credentialsForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private router: Router, private verificationService: VerificationService, private registerService: RegisterService) {
-    this.credentialsForm = this.fb.group({
-      email: [{value: verificationService.getEmail(), disabled: true}],
-      password: ['', [Validators.required, Validators.minLength(8), Validators.pattern(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&^()\-_=+{}[\]|;:'",.<>]).+$/)]],
-      confirmPassword: ['', [Validators.required, Validators.minLength(8)]],
-    }, { validators: this.passwordMatchValidator });
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private verificationService: VerificationService,
+    private registerService: RegisterService,
+  ) {
+    this.credentialsForm = this.fb.group(
+      {
+        email: [{ value: verificationService.getEmail(), disabled: true }],
+        password: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(8),
+            Validators.pattern(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&^()\-_=+{}[\]|;:'",.<>]).+$/),
+          ],
+        ],
+        confirmPassword: ['', [Validators.required, Validators.minLength(8)]],
+      },
+      { validators: this.passwordMatchValidator },
+    );
+    this.registerService.clear();
   }
 
-  get c() {
-    return this.credentialsForm.controls;
+  get emailCtrl() {
+    return this.credentialsForm.get('email');
+  }
+
+  get passwordCtrl() {
+    return this.credentialsForm.get('password');
+  }
+
+  get confirmPasswordCtrl() {
+    return this.credentialsForm.get('confirmPassword');
   }
 
   passwordMatchValidator = (group: AbstractControl): ValidationErrors | null => {
@@ -49,13 +74,14 @@ export class RegisterUserComponent {
   nextStep() {
     if (this.credentialsForm.valid) {
       this.step = 2;
-      //this.registerService.setRegisterUser(this.c.['email'].value, this.c.['password'].value )
+
+      this.registerService.setRegisterUser(this.emailCtrl?.value, this.passwordCtrl?.value);
     } else {
       this.credentialsForm.markAllAsTouched();
     }
   }
 
-  returnStep(){
+  returnStep() {
     this.step = 1;
   }
 
