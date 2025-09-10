@@ -25,7 +25,9 @@ export const routes: Routes = [
     canActivate: [VerificationGuard],
   },
 
-  { path: 'home', component: HomeComponent },
+  { path: 'home', component: HomeComponent, children: [
+    
+  ] },
 
   { path: 'register', component: RegisterUserComponent, canActivate: [VerificationGuard] },
   { path: 'register/mentor', component: RegisterMentorComponent, canActivate: [RegisterGuard] },

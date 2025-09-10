@@ -54,7 +54,7 @@ export class LoginComponent {
       .pipe(take(1))
       .subscribe({
         next: (res) => {
-          console.log(res.token);
+          
           this.router.navigate(['/home']);
           this.toast.success('Login realizado com sucesso');
         },
