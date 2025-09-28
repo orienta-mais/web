@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
+import { ROLE } from '../../enums/role.enum';
 
 @Injectable({
   providedIn: 'root',
 })
 export class VerificationService {
-  private pendingKey = 'pending_verification';
+  private roleKey = 'role';
   private emailKey = 'verification_email';
 
-  setPendingVerification(value: boolean, email: string) {
-    sessionStorage.setItem(this.pendingKey, JSON.stringify(value));
+  setPendingVerification(role: ROLE, email: string): void {
+    sessionStorage.setItem(this.roleKey, role);
     sessionStorage.setItem(this.emailKey, email);
   }
 
@@ -16,12 +17,17 @@ export class VerificationService {
     return sessionStorage.getItem(this.emailKey);
   }
 
+  getRole(): ROLE | null {
+    const role = sessionStorage.getItem(this.roleKey);
+    return role ? (role as ROLE) : null;
+  }
+
   hasVerificationPending(): boolean {
-    return JSON.parse(sessionStorage.getItem(this.pendingKey) || 'false');
+    return !!this.getEmail() && !!this.getRole();
   }
 
   clear(): void {
-    sessionStorage.removeItem(this.pendingKey);
+    sessionStorage.removeItem(this.roleKey);
     sessionStorage.removeItem(this.emailKey);
   }
 }

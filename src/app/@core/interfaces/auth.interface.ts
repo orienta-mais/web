@@ -1,4 +1,4 @@
-import { ROLE } from "../enums/role.enum";
+import { ROLE } from '../enums/role.enum';
 
 export interface LoginRequest {
   email: string;
@@ -6,9 +6,8 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
-  token: string;
-  refreshToken?: string;
-  role: ROLE
+  accessToken: string;
+  refreshToken: string;
 }
 
 export interface SendValidateEmailRequest {
@@ -30,4 +29,8 @@ export interface UpdatePasswordRequest {
 
 export interface UuidOfUpdatePasswordRequest {
   uuid: string;
+}
+
+export interface UuidOfTokenRegisterRequest {
+  token: string;
 }

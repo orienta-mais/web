@@ -21,13 +21,19 @@
       <p-floatlabel class="mt-6">
         <input
           pInputText
-          id="password"
+          [type]="showPassword ? 'text' : 'password'"
           formControlName="password"
-          type="password"
           autocomplete="off"
-          class="w-full"
+          class="w-full pr-20"
         />
         <label for="password">Senha</label>
+        <button
+          type="button"
+          class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-blue-600 hover:underline"
+          (click)="togglePasswordVisibility()"
+        >
+          {{ showPassword ? 'Ocultar' : 'Mostrar' }}
+        </button>
       </p-floatlabel>
 
       <div

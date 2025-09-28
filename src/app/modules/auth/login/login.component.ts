@@ -7,10 +7,12 @@ import { ButtonModule } from 'primeng/button';
 import { emailValidator } from '../../../@core/validators';
 import { ToastService } from '../../../shared/components/toast/toast.service';
 import { AuthService } from '../../../@core/services/auth/auth.service';
-import { LoginRequest } from '../../../@core/interfaces/auth.interface';
+import { LoginRequest, LoginResponse } from '../../../@core/interfaces/auth.interface';
 import { Router } from '@angular/router';
 import { take } from 'rxjs/operators';
 import { VerificationService } from '../../../@core/services/auth/verification.service';
+import { tokenInterceptor } from '../../../@core/interceptors/token.interceptor';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
@@ -21,6 +23,7 @@ import { VerificationService } from '../../../@core/services/auth/verification.s
 })
 export class LoginComponent {
   loginForm: FormGroup;
+  showPassword = false;
 
   constructor(
     private toast: ToastService,
@@ -38,29 +41,33 @@ export class LoginComponent {
 
   handleLogin() {
     if (this.loginForm.valid) {
-      this.submitLogin(this.loginForm.value as LoginRequest);
+      this.submitLogin(this.loginForm.value);
     } else {
       this.loginForm.markAllAsTouched();
     }
   }
 
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
+  }
+
   submitLogin(values: LoginRequest) {
     const body: LoginRequest = {
-      email: values.email,
+      email: values.email.toLowerCase(),
       password: values.password,
     };
+
     this.service
       .login(body)
       .pipe(take(1))
       .subscribe({
-        next: (res) => {
-          
+        next: (res: LoginResponse) => {
+          this.service.saveTokens(res);
           this.router.navigate(['/home']);
           this.toast.success('Login realizado com sucesso');
         },
-        error: (error) => {
-          console.error('Erro no login:', error);
-          this.toast.error('Erro ao realizar login. Verifique suas credenciais.');
+        error: (e: HttpErrorResponse) => {
+          this.toast.error(e.error?.error);
         },
       });
   }

@@ -7,7 +7,7 @@ type Role = 'mentor' | 'mentored';
   selector: 'app-header',
   imports: [RouterLink, RouterLinkActive],
   templateUrl: './header.component.html',
-  styleUrl: './header.component.css'
+  styleUrl: './header.component.css',
 })
 export class HeaderComponent {
   role: Role = 'mentored';

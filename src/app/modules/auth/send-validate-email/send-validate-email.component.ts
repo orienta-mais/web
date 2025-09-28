@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
@@ -9,17 +9,20 @@ import { ToastService } from '../../../shared/components/toast/toast.service';
 import { AuthService } from '../../../@core/services/auth/auth.service';
 import { Router } from '@angular/router';
 import { SendValidateEmailRequest } from '../../../@core/interfaces/auth.interface';
-import { take } from 'rxjs/operators';
 import { VerificationService } from '../../../@core/services/auth/verification.service';
+import { ROLE } from '../../../@core/enums/role.enum';
 
 @Component({
   selector: 'app-send-validate-email',
   imports: [CommonModule, ReactiveFormsModule, InputTextModule, FloatLabelModule, ButtonModule],
   templateUrl: './send-validate-email.component.html',
-  styleUrl: './send-validate-email.component.css',
+  styleUrls: ['./send-validate-email.component.css'],
 })
-export class SendValidateEmailComponent {
-  form: FormGroup;
+export class SendValidateEmailComponent implements OnInit {
+  form!: FormGroup; // Usando o operador "!"
+  selectedRole: ROLE | null = null; // Armazena o role selecionado
+  step: 'role' | 'email' = 'role'; // Controla o passo atual
+  ROLE = ROLE; // Enum para usar no template
 
   constructor(
     private verificationService: VerificationService,
@@ -27,38 +30,45 @@ export class SendValidateEmailComponent {
     private service: AuthService,
     private router: Router,
     private fb: FormBuilder,
-  ) {
+  ) {}
+
+  ngOnInit(): void {
     this.form = this.fb.group({
       email: ['', [Validators.required, emailValidator]],
     });
-    verificationService.clear();
+    this.verificationService.clear();
   }
 
-  handleSendValidateEmail() {
-    if (this.form.valid) {
-      this.submitSendValidateEmail(this.form.value);
+  selectRole(role: ROLE): void {
+    this.selectedRole = role;
+    this.step = 'email';
+  }
+
+  handleSendValidateEmail(): void {
+    if (this.form.valid && this.selectedRole) {
+      const email = this.form.value.email;
+      this.verificationService.setPendingVerification(this.selectedRole, email);
+      const value: SendValidateEmailRequest = { email };
+      this.submitSendValidateEmail(value);
     } else {
       this.form.markAllAsTouched();
     }
   }
 
-  submitSendValidateEmail(value: SendValidateEmailRequest) {
-    this.service
-      .sendValidateEmail(value)
-      .pipe(take(1))
-      .subscribe({
-        next: () => {
-          this.toast.success('E-mail de validação enviado com sucesso');
-          this.router.navigate(['/register/email/confirm']);
-        },
-        error: () => {
-          this.verificationService.setPendingVerification(true, value.email);
-          this.router.navigate(['/register/email/confirm']);
-          this.toast.error(
-            'Erro ao enviar e-mail de validação. Verifique se o e-mail está correto.',
-          );
-        },
-      });
+  // Método para submeter o email à API
+  submitSendValidateEmail(value: SendValidateEmailRequest): void {
+    this.service.sendValidateEmail(value).subscribe({
+      next: () => {
+        this.toast.success('E-mail enviado com sucesso! Verifique sua caixa de entrada.', 5000);
+      },
+      error: () => {
+        this.toast.error('Erro ao enviar o e-mail. Tente novamente mais tarde.');
+      },
+    });
+  }
+
+  handleBack() {
+    this.step = 'role';
   }
 
   returnLogin() {
