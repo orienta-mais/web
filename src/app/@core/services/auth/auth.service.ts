@@ -44,6 +44,10 @@ export class AuthService {
     return localStorage.getItem(this.ACCESS_TOKEN_KEY);
   }
 
+  isAuthenticated(): boolean {
+    return !!this.getAccessToken();
+  }
+
   saveTokens(tokens: LoginResponse) {
     localStorage.setItem(this.ACCESS_TOKEN_KEY, tokens.accessToken);
     localStorage.setItem(this.REFRESH_TOKEN_KEY, tokens.refreshToken);

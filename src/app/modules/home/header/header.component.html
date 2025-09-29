@@ -3,43 +3,37 @@
     <div class="flex justify-between items-center h-16">
       <div class="text-xl font-bold">🚀 MinhaApp</div>
 
-      @if (role === 'mentor') {
-        <nav class="flex space-x-6">
-          <a
-            routerLink="/pagina1"
-            routerLinkActive="text-yellow-400"
-            class="hover:text-yellow-300 transition"
-          >
-            Página 1
-          </a>
-          <a
-            routerLink="/pagina2"
-            routerLinkActive="text-yellow-400"
-            class="hover:text-yellow-300 transition"
-          >
-            Página 2
-          </a>
-        </nav>
-      }
+      <div class="flex space-x-6 items-center">
+        @if (role === 'mentor') {
+          <nav class="flex space-x-6">
+            <a routerLink="pagina1" routerLinkActive="text-yellow-400" class="hover:text-yellow-300 transition">
+              Página 1
+            </a>
+            <a routerLink="pagina2" routerLinkActive="text-yellow-400" class="hover:text-yellow-300 transition">
+              Página 2
+            </a>
+          </nav>
+        }
 
-      @if (role === 'mentored') {
-        <nav class="flex space-x-6">
-          <a
-            routerLink="/pagina3"
-            routerLinkActive="text-yellow-400"
-            class="hover:text-yellow-300 transition"
-          >
-            Página 3
-          </a>
-          <a
-            routerLink="/pagina4"
-            routerLinkActive="text-yellow-400"
-            class="hover:text-yellow-300 transition"
-          >
-            Página 4
-          </a>
-        </nav>
-      }
+        @if (role === 'mentored') {
+          <nav class="flex space-x-6">
+            <a routerLink="pagina3" routerLinkActive="text-yellow-400" class="hover:text-yellow-300 transition">
+              Página 3
+            </a>
+            <a routerLink="pagina4" routerLinkActive="text-yellow-400" class="hover:text-yellow-300 transition">
+              Página 4
+            </a>
+          </nav>
+        }
+
+        <!-- Botão de sair -->
+        <button
+          class="ml-6 px-3 py-1 bg-red-600 hover:bg-red-700 rounded-md text-white text-sm"
+          (click)="logout()"
+        >
+          Sair
+        </button>
+      </div>
     </div>
   </div>
 </header>

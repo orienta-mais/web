@@ -11,7 +11,6 @@ import { LoginRequest, LoginResponse } from '../../../@core/interfaces/auth.inte
 import { Router } from '@angular/router';
 import { take } from 'rxjs/operators';
 import { VerificationService } from '../../../@core/services/auth/verification.service';
-import { tokenInterceptor } from '../../../@core/interceptors/token.interceptor';
 import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
@@ -24,6 +23,10 @@ import { HttpErrorResponse } from '@angular/common/http';
 export class LoginComponent {
   loginForm: FormGroup;
   showPassword = false;
+
+  ngOnInit() {
+    this.service.logout();
+  }
 
   constructor(
     private toast: ToastService,

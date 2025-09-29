@@ -6,9 +6,7 @@ import { HomeComponent } from './modules/home/home.component';
 import { UpdatePasswordComponent } from './modules/auth/update-password/update-password.component';
 import { RegisterMentorComponent } from './modules/auth/register-user/register-mentor/register-mentor.component';
 import { RegisterMentoredComponent } from './modules/auth/register-user/register-mentored/register-mentored.component';
-
-import { VerificationGuard } from '../app/@core/guards/auth/verificationSendEmail.guard';
-import { RegisterGuard } from './@core/guards/auth/registerUser.guard';
+import { AuthGuard } from './@core/guards/auth/auth.guard';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -18,9 +16,9 @@ export const routes: Routes = [
 
   { path: 'register/email/send-validation', component: SendValidateEmailComponent },
 
-  { path: 'home', component: HomeComponent, children: [] },
+  { path: 'home', component: HomeComponent, children: [], canActivate: [AuthGuard] },
 
-  { path: 'register/mentor', component: RegisterMentorComponent }, // Removido :token do path
+  { path: 'register/mentor', component: RegisterMentorComponent },
   { path: 'register/mentored', component: RegisterMentoredComponent },
 
   { path: '**', redirectTo: 'login' },
