@@ -4,29 +4,44 @@
       <div class="text-xl font-bold">🚀 MinhaApp</div>
 
       <div class="flex space-x-6 items-center">
-        @if (role === 'mentor') {
+        @if (role === 'MENTOR') {
           <nav class="flex space-x-6">
-            <a routerLink="pagina1" routerLinkActive="text-yellow-400" class="hover:text-yellow-300 transition">
+            <a
+              routerLink="/home/meeting"
+              routerLinkActive="text-yellow-400"
+              class="hover:text-yellow-300 transition cursor-pointer"
+            >
               Página 1
             </a>
-            <a routerLink="pagina2" routerLinkActive="text-yellow-400" class="hover:text-yellow-300 transition">
+            <a
+              routerLink="/home/pagina2"
+              routerLinkActive="text-yellow-400"
+              class="hover:text-yellow-300 transition cursor-pointer"
+            >
               Página 2
             </a>
           </nav>
         }
 
-        @if (role === 'mentored') {
+        @if (role === 'MENTORED') {
           <nav class="flex space-x-6">
-            <a routerLink="pagina3" routerLinkActive="text-yellow-400" class="hover:text-yellow-300 transition">
+            <a
+              routerLink="/home/pagina3"
+              routerLinkActive="text-yellow-400"
+              class="hover:text-yellow-300 transition cursor-pointer"
+            >
               Página 3
             </a>
-            <a routerLink="pagina4" routerLinkActive="text-yellow-400" class="hover:text-yellow-300 transition">
+            <a
+              routerLink="/home/pagina4"
+              routerLinkActive="text-yellow-400"
+              class="hover:text-yellow-300 transition cursor-pointer"
+            >
               Página 4
             </a>
           </nav>
         }
 
-        <!-- Botão de sair -->
         <button
           class="ml-6 px-3 py-1 bg-red-600 hover:bg-red-700 rounded-md text-white text-sm"
           (click)="logout()"

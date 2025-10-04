@@ -11,6 +11,7 @@ import { Router } from '@angular/router';
 import { SendValidateEmailRequest } from '../../../@core/interfaces/auth.interface';
 import { VerificationService } from '../../../@core/services/auth/verification.service';
 import { ROLE } from '../../../@core/enums/role.enum';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-send-validate-email',
@@ -19,10 +20,10 @@ import { ROLE } from '../../../@core/enums/role.enum';
   styleUrls: ['./send-validate-email.component.css'],
 })
 export class SendValidateEmailComponent implements OnInit {
-  form!: FormGroup; // Usando o operador "!"
-  selectedRole: ROLE | null = null; // Armazena o role selecionado
-  step: 'role' | 'email' = 'role'; // Controla o passo atual
-  ROLE = ROLE; // Enum para usar no template
+  form!: FormGroup;
+  selectedRole: ROLE | null = null;
+  step: 'role' | 'email' | 'success' = 'role';
+  ROLE = ROLE;
 
   constructor(
     private verificationService: VerificationService,
@@ -55,14 +56,14 @@ export class SendValidateEmailComponent implements OnInit {
     }
   }
 
-  // Método para submeter o email à API
   submitSendValidateEmail(value: SendValidateEmailRequest): void {
     this.service.sendValidateEmail(value).subscribe({
       next: () => {
-        this.toast.success('E-mail enviado com sucesso! Verifique sua caixa de entrada.', 5000);
+        this.step = 'success';
+        this.returnLogin();
       },
-      error: () => {
-        this.toast.error('Erro ao enviar o e-mail. Tente novamente mais tarde.');
+      error: (e: HttpErrorResponse) => {
+        this.toast.error(e.error?.error);
       },
     });
   }

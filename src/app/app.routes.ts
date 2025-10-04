@@ -7,6 +7,7 @@ import { UpdatePasswordComponent } from './modules/auth/update-password/update-p
 import { RegisterMentorComponent } from './modules/auth/register-user/register-mentor/register-mentor.component';
 import { RegisterMentoredComponent } from './modules/auth/register-user/register-mentored/register-mentored.component';
 import { AuthGuard } from './@core/guards/auth/auth.guard';
+import { MeetingComponent } from './modules/pages/meeting/meeting.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -16,7 +17,12 @@ export const routes: Routes = [
 
   { path: 'register/email/send-validation', component: SendValidateEmailComponent },
 
-  { path: 'home', component: HomeComponent, children: [], canActivate: [AuthGuard] },
+  {
+    path: 'home',
+    component: HomeComponent,
+    canActivate: [AuthGuard],
+    children: [{ path: 'meeting', component: MeetingComponent }],
+  },
 
   { path: 'register/mentor', component: RegisterMentorComponent },
   { path: 'register/mentored', component: RegisterMentoredComponent },

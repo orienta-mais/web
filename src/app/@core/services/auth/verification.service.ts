@@ -9,16 +9,16 @@ export class VerificationService {
   private emailKey = 'verification_email';
 
   setPendingVerification(role: ROLE, email: string): void {
-    sessionStorage.setItem(this.roleKey, role);
-    sessionStorage.setItem(this.emailKey, email);
+    localStorage.setItem(this.roleKey, role);
+    localStorage.setItem(this.emailKey, email);
   }
 
   getEmail(): string | null {
-    return sessionStorage.getItem(this.emailKey);
+    return localStorage.getItem(this.emailKey);
   }
 
   getRole(): ROLE | null {
-    const role = sessionStorage.getItem(this.roleKey);
+    const role = localStorage.getItem(this.roleKey);
     return role ? (role as ROLE) : null;
   }
 
@@ -27,7 +27,7 @@ export class VerificationService {
   }
 
   clear(): void {
-    sessionStorage.removeItem(this.roleKey);
-    sessionStorage.removeItem(this.emailKey);
+    localStorage.removeItem(this.roleKey);
+    localStorage.removeItem(this.emailKey);
   }
 }

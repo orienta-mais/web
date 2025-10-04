@@ -1,6 +1,5 @@
 <div class="flex items-center justify-center min-h-screen bg-gray-100">
   <div class="w-full max-w-md p-8 bg-white rounded-2xl shadow-lg">
-    <!-- Passo 1: Selecionar Mentor ou Mentorado -->
     <div *ngIf="step === 'role'" class="text-center">
       <h2 class="text-2xl font-bold mb-6 text-gray-800">Selecione seu perfil</h2>
       <button
@@ -17,9 +16,15 @@
       >
         Sou Mentorado
       </button>
+      <p-button
+        type="button"
+        label="Voltar"
+        severity="secondary"
+        styleClass="w-full mt-6"
+        (click)="returnLogin()"
+      ></p-button>
     </div>
 
-    <!-- Passo 2: Enviar Email -->
     <div *ngIf="step === 'email'">
       <h2 class="text-2xl font-bold mb-6 text-gray-800">Digite seu email</h2>
       <form [formGroup]="form" (ngSubmit)="handleSendValidateEmail()">
@@ -28,7 +33,6 @@
           <label for="email">Email</label>
         </p-floatlabel>
 
-        <!-- Validações de Erro -->
         <div
           *ngIf="email?.touched && email?.errors?.['required']"
           class="text-red-500 text-sm mt-1"
@@ -39,7 +43,6 @@
           Email não é válido
         </div>
 
-        <!-- Botão de Enviar -->
         <p-button
           type="submit"
           label="Enviar"
@@ -54,6 +57,23 @@
         severity="danger"
         styleClass="w-full mt-6"
         (click)="handleBack()"
+      ></p-button>
+    </div>
+
+    <div *ngIf="step === 'success'" class="text-center space-y-4">
+      <h2 class="text-2xl font-bold text-green-600">Email enviado com sucesso!</h2>
+      <p class="text-gray-700">
+        Um email foi enviado à sua caixa de mensagens.<br />
+        Verifique sua caixa de entrada e também a pasta <span class="font-semibold">Spam</span> ou
+        <span class="font-semibold">Lixo eletrônico</span>.
+      </p>
+
+      <p-button
+        type="button"
+        label="Voltar ao login"
+        severity="primary"
+        styleClass="w-full mt-6"
+        (click)="returnLogin()"
       ></p-button>
     </div>
   </div>
