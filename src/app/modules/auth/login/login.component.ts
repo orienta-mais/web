@@ -39,7 +39,6 @@ export class LoginComponent {
       email: ['', [Validators.required, emailValidator]],
       password: ['', Validators.required],
     });
-    verificationService.clear();
   }
 
   handleLogin() {
@@ -65,8 +64,9 @@ export class LoginComponent {
       .pipe(take(1))
       .subscribe({
         next: (res: LoginResponse) => {
+          this.verificationService.clear();
           this.service.saveTokens(res);
-          this.router.navigate(['/home']);
+          this.router.navigate(['']);
           this.toast.success('Login realizado com sucesso');
         },
         error: (e: HttpErrorResponse) => {

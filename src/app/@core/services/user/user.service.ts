@@ -4,6 +4,7 @@ import { jwtDecode } from 'jwt-decode';
 import { ROLE } from '../../enums/role.enum';
 
 export interface JwtPayload {
+  id: string;
   sub: string;
   name?: string;
   role?: string;
@@ -13,6 +14,7 @@ export interface JwtPayload {
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
+  private id: string = '';
   private name: string | null = null;
   private role: ROLE | null = null;
   private email: string | null = null;
@@ -27,6 +29,7 @@ export class UserService {
 
     try {
       const decoded = jwtDecode<JwtPayload>(token);
+      this.id = decoded.id;
       this.name = decoded.name ?? null;
       this.role = (decoded.role as ROLE) ?? null;
       this.email = decoded.sub ?? null;
@@ -37,6 +40,10 @@ export class UserService {
 
   getName(): string | null {
     return this.name;
+  }
+
+  getId(): string {
+    return this.id;
   }
 
   getRole(): ROLE | null {

@@ -2,11 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { Observable } from 'rxjs';
-import { RegisterMentor } from '../../interfaces/mentor.interface';
-import {
-  UuidOfTokenRegisterRequest,
-  UuidOfUpdatePasswordRequest,
-} from '../../interfaces/auth.interface';
+import { CreateLeason, RegisterMentor } from '../../interfaces/mentor.interface';
+import { UuidOfTokenRegisterRequest } from '../../interfaces/auth.interface';
 
 @Injectable({ providedIn: 'root' })
 export class MentorService {
@@ -20,5 +17,9 @@ export class MentorService {
 
   validateUuidTokenRegister(body: UuidOfTokenRegisterRequest): Observable<void> {
     return this.http.post<void>(`${this._baseApi}/validate-uuid-password-reset`, body);
+  }
+
+  createLeason(body: CreateLeason): Observable<void> {
+    return this.http.post<void>(`${this._baseApi}/leason/create-leason`, { body });
   }
 }

@@ -11,3 +11,25 @@ export interface RegisterMentor {
   role: string;
   token: string;
 }
+
+export interface CreateLeason {
+  title: string;
+  description: string;
+  date: string;
+  initialTime: string;
+  finalTime: string;
+  mentorId: string;
+}
+
+export interface MentorId {
+  mentorId: string;
+}
+
+export interface LeasonListResponse {
+  id: string;
+  title: string;
+  description: string;
+  date: string;
+  initialTime: string;
+  finalTime: string;
+}

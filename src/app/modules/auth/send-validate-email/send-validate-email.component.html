@@ -45,10 +45,11 @@
 
         <p-button
           type="submit"
-          label="Enviar"
+          [label]="isLoading ? 'Enviando...' : 'Enviar'"
+          [icon]="isLoading ? 'pi pi-spin pi-spinner' : ''"
+          [disabled]="!form.valid || isLoading"
           severity="primary"
           styleClass="w-full mt-6"
-          [disabled]="!form.valid"
         ></p-button>
       </form>
       <p-button

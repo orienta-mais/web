@@ -24,6 +24,7 @@ export class SendValidateEmailComponent implements OnInit {
   selectedRole: ROLE | null = null;
   step: 'role' | 'email' | 'success' = 'role';
   ROLE = ROLE;
+  isLoading: boolean = false;
 
   constructor(
     private verificationService: VerificationService,
@@ -57,12 +58,19 @@ export class SendValidateEmailComponent implements OnInit {
   }
 
   submitSendValidateEmail(value: SendValidateEmailRequest): void {
+    this.isLoading = true;
+
     this.service.sendValidateEmail(value).subscribe({
       next: () => {
+        this.isLoading = false;
         this.step = 'success';
-        this.returnLogin();
+
+        setTimeout(() => {
+          this.returnLogin();
+        }, 10000);
       },
       error: (e: HttpErrorResponse) => {
+        this.isLoading = false;
         this.toast.error(e.error?.error);
       },
     });

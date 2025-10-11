@@ -1,0 +1,97 @@
+<div class="flex items-center justify-center min-h-screen py-4">
+  <div class="w-full max-w-2xl p-8 bg-white rounded-2xl shadow-lg">
+    <h2 class="text-3xl font-bold mb-8 text-center text-gray-800">Cadastrar Aula</h2>
+
+    <form [formGroup]="form" (ngSubmit)="handleSubmit()" class="space-y-5">
+      <!-- Título -->
+      <p-floatlabel>
+        <input pInputText id="title" formControlName="title" class="w-full" />
+        <label for="title">Título</label>
+      </p-floatlabel>
+      <div
+        *ngIf="f['title'].touched && f['title'].errors?.['required']"
+        class="text-red-500 text-sm"
+      >
+        O título é obrigatório.
+      </div>
+
+      <p-floatlabel>
+        <textarea
+          pInputTextarea
+          id="description"
+          formControlName="description"
+          rows="4"
+          class="w-full"
+        ></textarea>
+        <label for="description">Descrição</label>
+      </p-floatlabel>
+      <div
+        *ngIf="f['description'].touched && f['description'].errors?.['required']"
+        class="text-red-500 text-sm"
+      >
+        A descrição é obrigatória.
+      </div>
+
+      <div>
+        <label for="date" class="block text-gray-700 font-medium mb-2">Data da aula</label>
+        <p-datepicker
+          formControlName="date"
+          [showIcon]="true"
+          dateFormat="dd/mm/yy"
+          inputId="date"
+          [minDate]="today"
+          [showButtonBar]="true"
+          styleClass="w-full"
+        ></p-datepicker>
+      </div>
+      <div *ngIf="f['date'].touched && f['date'].errors?.['required']" class="text-red-500 text-sm">
+        A data da aula é obrigatória.
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label for="initialTime" class="block text-gray-700 font-medium mb-2"
+            >Hora de início</label
+          >
+          <input
+            type="time"
+            id="initialTime"
+            formControlName="initialTime"
+            class="w-full border rounded-md px-3 py-2"
+          />
+          <div
+            *ngIf="f['initialTime'].touched && f['initialTime'].errors?.['required']"
+            class="text-red-500 text-sm"
+          >
+            A hora de início é obrigatória.
+          </div>
+        </div>
+
+        <div>
+          <label for="finalTime" class="block text-gray-700 font-medium mb-2">Hora de fim</label>
+          <input
+            type="time"
+            id="finalTime"
+            formControlName="finalTime"
+            class="w-full border rounded-md px-3 py-2"
+          />
+          <div
+            *ngIf="f['finalTime'].touched && f['finalTime'].errors?.['required']"
+            class="text-red-500 text-sm"
+          >
+            A hora de fim é obrigatória.
+          </div>
+        </div>
+      </div>
+
+      <p-button
+        type="submit"
+        label="Salvar Aula"
+        severity="primary"
+        styleClass="w-full mt-6"
+        [loading]="loading"
+        [disabled]="form.invalid"
+      ></p-button>
+    </form>
+  </div>
+</div>

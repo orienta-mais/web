@@ -8,6 +8,9 @@ import { RegisterMentorComponent } from './modules/auth/register-user/register-m
 import { RegisterMentoredComponent } from './modules/auth/register-user/register-mentored/register-mentored.component';
 import { AuthGuard } from './@core/guards/auth/auth.guard';
 import { MeetingComponent } from './modules/pages/meeting/meeting.component';
+import { ROLE } from './@core/enums/role.enum';
+import { CreateLeasonComponent } from './modules/pages/mentor/leason/create-leason/create-leason.component';
+import { LeasonListComponent } from './modules/pages/mentor/leason/leason.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -18,10 +21,24 @@ export const routes: Routes = [
   { path: 'register/email/send-validation', component: SendValidateEmailComponent },
 
   {
-    path: 'home',
+    path: '',
     component: HomeComponent,
     canActivate: [AuthGuard],
-    children: [{ path: 'meeting', component: MeetingComponent }],
+    children: [
+      { path: 'meeting', component: MeetingComponent },
+      {
+        path: 'leason',
+        component: LeasonListComponent,
+        canActivate: [AuthGuard],
+        data: { roles: [ROLE.MENTOR] },
+      },
+      {
+        path: 'leason/create-leason',
+        component: CreateLeasonComponent,
+        canActivate: [AuthGuard],
+        data: { roles: [ROLE.MENTOR] },
+      },
+    ],
   },
 
   { path: 'register/mentor', component: RegisterMentorComponent },
