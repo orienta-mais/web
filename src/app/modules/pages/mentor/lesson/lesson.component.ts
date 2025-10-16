@@ -4,23 +4,23 @@ import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { Router } from '@angular/router';
 import { take } from 'rxjs';
-import { LeasonService } from '../../../../@core/services/mentor/leason.service';
+import { LessonService } from '../../../../@core/services/lesson/lesson.service';
 import { UserService } from '../../../../@core/services/user/user.service';
-import { LeasonListResponse } from '../../../../@core/interfaces/mentor.interface';
+import { LeasonListResponse as LessonListResponse } from '../../../../@core/interfaces/mentor.interface';
 
 @Component({
-  selector: 'app-leason',
+  selector: 'app-lesson',
   standalone: true,
   imports: [CommonModule, TableModule, ButtonModule],
-  templateUrl: './leason.component.html',
-  styleUrls: ['./leason.component.css'],
+  templateUrl: './lesson.component.html',
+  styleUrls: ['./lesson.component.css'],
 })
-export class LeasonListComponent implements OnInit {
-  leasons: LeasonListResponse[] = [];
+export class LessonListComponent implements OnInit {
+  leasons: LessonListResponse[] = [];
   loading = false;
 
   constructor(
-    private leasonService: LeasonService,
+    private leasonService: LessonService,
     private router: Router,
     private userService: UserService,
   ) {}
@@ -30,23 +30,13 @@ export class LeasonListComponent implements OnInit {
   }
 
   loadLeasons() {
-    this.leasons = [
-      {
-        id: '1',
-        title: 'Aula de Angular',
-        description: 'Aprendendo componentes e serviços',
-        date: '2025-10-15',
-        initialTime: '09:00',
-        finalTime: '11:00',
-      },
-    ];
     this.loading = true;
     this.leasonService
-      .findAllLeasons({ mentorId: this.userService.getId() })
+      .findAllLessons(this.userService.getId())
       .pipe(take(1))
       .subscribe({
         next: (data) => {
-          //this.leasons = data;
+          this.leasons = data;
           this.loading = false;
         },
         error: () => {
@@ -56,10 +46,10 @@ export class LeasonListComponent implements OnInit {
   }
 
   goToCreate() {
-    this.router.navigate(['/leason/create-leason']);
+    this.router.navigate(['/lesson/create-leason']);
   }
 
-  showDetails() {
-    console.log('Detalhes da aula:');
+  showDetails(leasonId: string) {
+    this.router.navigate([`/lesson/details/${leasonId}`]);
   }
 }

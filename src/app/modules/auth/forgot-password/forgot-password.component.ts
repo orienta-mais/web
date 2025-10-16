@@ -42,7 +42,7 @@ export class ForgotPasswordComponent {
 
   submitSendValidateEmail(value: SendEmailForgotPasswordRequest) {
     this.service
-      .sendValidateEmail(value)
+      .validateUpdatePassword(value)
       .pipe(take(1))
       .subscribe({
         next: () => {

@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { LeasonComponent } from './leason.component';
+import { LeasonComponent } from './lesson.component';
 
 describe('LeasonComponent', () => {
   let component: LeasonComponent;

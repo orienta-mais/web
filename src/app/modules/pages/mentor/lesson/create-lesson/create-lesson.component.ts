@@ -2,19 +2,20 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
+import { Router } from '@angular/router';
 import { TextareaModule } from 'primeng/textarea';
 import { ButtonModule } from 'primeng/button';
 import { DatePickerModule } from 'primeng/datepicker';
 import { ToastService } from '../../../../../shared/components/toast/toast.service';
-import { MentorService } from '../../../../../@core/services/mentor/mentor.service';
 import { take } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { UserService } from '../../../../../@core/services/user/user.service';
 import { CreateLeason } from '../../../../../@core/interfaces/mentor.interface';
 import { FloatLabelModule } from 'primeng/floatlabel';
+import { LessonService } from '../../../../../@core/services/lesson/lesson.service';
 
 @Component({
-  selector: 'app-create-leason',
+  selector: 'app-create-lesson',
   standalone: true,
   imports: [
     CommonModule,
@@ -25,8 +26,8 @@ import { FloatLabelModule } from 'primeng/floatlabel';
     DatePickerModule,
     FloatLabelModule,
   ],
-  templateUrl: './create-leason.component.html',
-  styleUrls: ['./create-leason.component.css'],
+  templateUrl: './create-lesson.component.html',
+  styleUrls: ['./create-lesson.component.css'],
 })
 export class CreateLeasonComponent {
   form: FormGroup;
@@ -35,9 +36,10 @@ export class CreateLeasonComponent {
 
   constructor(
     private fb: FormBuilder,
-    private mentorService: MentorService,
     private toast: ToastService,
     private userService: UserService,
+    private lessonService: LessonService,
+    private router: Router,
   ) {
     this.form = this.fb.group({
       title: ['', [Validators.required, Validators.maxLength(100)]],
@@ -82,7 +84,7 @@ export class CreateLeasonComponent {
 
     this.loading = true;
 
-    this.mentorService
+    this.lessonService
       .createLeason(payload)
       .pipe(take(1))
       .subscribe({
@@ -100,5 +102,9 @@ export class CreateLeasonComponent {
 
   get f() {
     return this.form.controls;
+  }
+
+  returnBack() {
+    this.router.navigate(['/lesson']);
   }
 }

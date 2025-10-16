@@ -12,11 +12,12 @@ import { RegisterService } from '../../../../@core/services/auth/register.servic
 import { Router, ActivatedRoute } from '@angular/router';
 import { MentorService } from '../../../../@core/services/mentor/mentor.service';
 import { ToastService } from '../../../../shared/components/toast/toast.service';
-import { uuidValidator } from '../../../../@core/validators';
+import { emailValidator, uuidValidator } from '../../../../@core/validators';
 import { VerificationService } from '../../../../@core/services/auth/verification.service';
 import { take } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { RegisterMentor } from '../../../../@core/interfaces/mentor.interface';
+import { isValidEmail } from '../../../../@core/validators/email/email.validator';
 
 @Component({
   selector: 'app-register-mentor',
@@ -44,6 +45,8 @@ export class RegisterMentorComponent implements OnInit {
   tokenUrl!: string;
   screenValidated = false;
 
+  email: string | null = null;
+
   constructor(
     private fb: FormBuilder,
     private router: Router,
@@ -54,7 +57,7 @@ export class RegisterMentorComponent implements OnInit {
     private routeUrl: ActivatedRoute,
   ) {
     this.mentorForm = this.fb.group({
-      email: [verificationService.getEmail(), [Validators.required, Validators.email]],
+      email: [this.email, [Validators.required, Validators.email]],
       password: [
         '',
         [
@@ -83,12 +86,21 @@ export class RegisterMentorComponent implements OnInit {
 
     this.routeUrl.queryParamMap.subscribe((pm) => {
       const token = pm.get('token');
+      const email = pm.get('email');
       if (!token || !uuidValidator(token)) {
         this.screenValidated = false;
         return;
       }
-      this.tokenUrl = token;
+
+      if (!email || !isValidEmail(email)) {
+        this.screenValidated = false;
+        return;
+      }
+
       this.screenValidated = true;
+      this.tokenUrl = token;
+      this.email = email;
+      this.mentorForm.get('email')?.setValue(email);
     });
   }
 

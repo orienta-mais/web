@@ -9,13 +9,19 @@ import { DatePickerModule } from 'primeng/datepicker';
 import { SelectModule } from 'primeng/select';
 import { STATES, COUNTRIES } from '../../../../shared/constants';
 import { RegisterService } from '../../../../@core/services/auth/register.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { ToastService } from '../../../../shared/components/toast/toast.service';
+import { emailValidator, uuidValidator } from '../../../../@core/validators';
+import { VerificationService } from '../../../../@core/services/auth/verification.service';
 import { take } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
 import { RegisterMentored } from '../../../../@core/interfaces/mentored.interface';
 import { MentoredService } from '../../../../@core/services/mentored/mentored.service';
+import { isValidEmail } from '../../../../@core/validators/email/email.validator';
+
 @Component({
   selector: 'app-register-mentored',
+  standalone: true,
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -27,7 +33,7 @@ import { MentoredService } from '../../../../@core/services/mentored/mentored.se
     SelectModule,
   ],
   templateUrl: './register-mentored.component.html',
-  styleUrl: './register-mentored.component.css',
+  styleUrls: ['./register-mentored.component.css'],
 })
 export class RegisterMentoredComponent implements OnInit {
   mentoredForm: FormGroup;
@@ -36,53 +42,93 @@ export class RegisterMentoredComponent implements OnInit {
   maxDate!: Date;
   step = 1;
   showPassword = false;
-  showConfirmPassword = false;
+  tokenUrl!: string;
+  screenValidated = false;
+
+  email: string | null = null;
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private registerService: RegisterService,
+    private verificationService: VerificationService,
     private mentoredService: MentoredService,
     private toast: ToastService,
+    private routeUrl: ActivatedRoute,
   ) {
     this.mentoredForm = this.fb.group({
-      name: ['', Validators.required],
-      lastName: ['', Validators.required],
+      email: [this.email, [Validators.required, Validators.email]],
+      password: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(8),
+          Validators.pattern(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&^()\-_=+{}[\]|;:'",.<>]).+$/),
+        ],
+      ],
+      name: ['', [Validators.required, Validators.maxLength(50)]],
+      lastName: ['', [Validators.required, Validators.maxLength(50)]],
       birthDate: ['', Validators.required],
-      codeBolsaFamilia: ['', Validators.required],
-      description: ['', [Validators.required, Validators.minLength(100)]],
+      description: [
+        '',
+        [Validators.required, Validators.minLength(100), Validators.maxLength(500)],
+      ],
       state: ['', Validators.required],
       nationality: ['', Validators.required],
+      phone: ['', [Validators.required, Validators.pattern(/^\d+$/), Validators.maxLength(15)]],
     });
   }
 
   ngOnInit() {
     const today = new Date();
     this.maxDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
-  }
 
-  returnStep() {
-    this.router.navigate(['/register']);
+    this.routeUrl.queryParamMap.subscribe((pm) => {
+      const token = pm.get('token');
+      const email = pm.get('email');
+      if (!token || !uuidValidator(token)) {
+        this.screenValidated = false;
+        return;
+      }
+
+      if (!email || !isValidEmail(email)) {
+        this.screenValidated = false;
+        return;
+      }
+
+      this.screenValidated = true;
+      this.tokenUrl = token;
+      this.email = email;
+      this.mentoredForm.get('email')?.setValue(email);
+    });
   }
 
   handleSubmit() {
     if (this.mentoredForm.valid) {
       const mentoredData: RegisterMentored = {
-        email: this.registerService.getEmail()!,
-        password: this.registerService.getPassword()!,
         ...this.mentoredForm.getRawValue(),
+        role: this.verificationService.getRole(),
+        token: this.tokenUrl,
+        state: this.mentoredForm.get('state')?.value?.name,
+        nationality: this.mentoredForm.get('nationality')?.value?.name,
       };
+
       this.mentoredService
         .register(mentoredData)
         .pipe(take(1))
         .subscribe({
           next: () => {
-            this.toast.success('E-mail de validação reenviado com sucesso');
+            this.toast.success('Cadastro realizado com sucesso!', 5000);
+            setTimeout(() => {
+              this.router.navigate(['/login']);
+            }, 2000);
           },
-          error: () => {
-            this.toast.error(
-              'Erro ao enviar email de validação. Verifique se o e-mail está correto.',
-            );
+          error: (e: HttpErrorResponse) => {
+            if (e.status === 400) {
+              this.toast.error(e.error?.error);
+            } else {
+              this.toast.error('Ocorreu um erro inesperado.');
+            }
           },
         });
     } else {
@@ -94,11 +140,11 @@ export class RegisterMentoredComponent implements OnInit {
     this.showPassword = !this.showPassword;
   }
 
-  toggleConfirmPasswordVisibility() {
-    this.showConfirmPassword = !this.showConfirmPassword;
-  }
-
   get f() {
     return this.mentoredForm.controls;
+  }
+
+  get passwordCtrl() {
+    return this.mentoredForm.get('password');
   }
 }

@@ -18,8 +18,4 @@ export class MentorService {
   validateUuidTokenRegister(body: UuidOfTokenRegisterRequest): Observable<void> {
     return this.http.post<void>(`${this._baseApi}/validate-uuid-password-reset`, body);
   }
-
-  createLeason(body: CreateLeason): Observable<void> {
-    return this.http.post<void>(`${this._baseApi}/leason/create-leason`, { body });
-  }
 }

@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CreateLeasonComponent } from './create-leason.component';
+import { LeasonDetailsComponent } from './lesson-details.component';
 
-describe('CreateLeasonComponent', () => {
-  let component: CreateLeasonComponent;
-  let fixture: ComponentFixture<CreateLeasonComponent>;
+describe('LeasonDetailsComponent', () => {
+  let component: LeasonDetailsComponent;
+  let fixture: ComponentFixture<LeasonDetailsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CreateLeasonComponent],
+      imports: [LeasonDetailsComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(CreateLeasonComponent);
+    fixture = TestBed.createComponent(LeasonDetailsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

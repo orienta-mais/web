@@ -117,8 +117,10 @@
               [maxDate]="maxDate"
               [showIcon]="true"
               [readonlyInput]="true"
+              inputId="birthDate"
+              styleClass="w-full border border-gray-200 rounded-md"
             ></p-datepicker>
-            <label>Data de Nascimento</label>
+            <label for="birthDate">Data de Nascimento</label>
           </p-floatlabel>
           <div
             *ngIf="f['birthDate'].touched && f['birthDate'].errors?.['required']"

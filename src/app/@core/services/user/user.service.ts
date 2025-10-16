@@ -23,7 +23,7 @@ export class UserService {
     this.loadUserFromToken();
   }
 
-  private loadUserFromToken() {
+  loadUserFromToken() {
     const token = this.authService.getAccessToken();
     if (!token) return;
 

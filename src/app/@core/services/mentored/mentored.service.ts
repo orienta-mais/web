@@ -11,6 +11,6 @@ export class MentoredService {
   constructor(private http: HttpClient) {}
 
   register(body: RegisterMentored): Observable<void> {
-    return this.http.post<void>(this._baseApi, body);
+    return this.http.post<void>(`${this._baseApi}/register`, body);
   }
 }

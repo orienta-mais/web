@@ -33,3 +33,12 @@ export interface LeasonListResponse {
   initialTime: string;
   finalTime: string;
 }
+
+export interface LeasonDetailsResponse {
+  id: string;
+  title: string;
+  description: string;
+  date: string;
+  initialTime: string;
+  finalTime: string;
+}

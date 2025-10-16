@@ -1,12 +1,14 @@
-import { AbstractControl } from '@angular/forms';
+import { AbstractControl, ValidationErrors } from '@angular/forms';
 
-export function emailValidator(control: AbstractControl): Record<string, boolean> | null {
+export function emailValidator(control: AbstractControl): ValidationErrors | null {
+  const value = control.value?.trim();
+  if (!value) return null;
+
+  return isValidEmail(value) ? null : { invalidEmail: true };
+}
+
+// 👉 Versão para usar com string pura
+export function isValidEmail(value: string): boolean {
   const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  const email = control.value;
-
-  if (email && !emailPattern.test(email)) {
-    return { invalidEmail: true };
-  }
-
-  return null;
+  return emailPattern.test(value.trim());
 }

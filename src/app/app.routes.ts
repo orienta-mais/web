@@ -9,8 +9,9 @@ import { RegisterMentoredComponent } from './modules/auth/register-user/register
 import { AuthGuard } from './@core/guards/auth/auth.guard';
 import { MeetingComponent } from './modules/pages/meeting/meeting.component';
 import { ROLE } from './@core/enums/role.enum';
-import { CreateLeasonComponent } from './modules/pages/mentor/leason/create-leason/create-leason.component';
-import { LeasonListComponent } from './modules/pages/mentor/leason/leason.component';
+import { CreateLeasonComponent } from './modules/pages/mentor/lesson/create-lesson/create-lesson.component';
+import { LessonListComponent } from './modules/pages/mentor/lesson/lesson.component';
+import { LeasonDetailsComponent } from './modules/pages/mentor/lesson/lesson-details/lesson-details.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -27,14 +28,20 @@ export const routes: Routes = [
     children: [
       { path: 'meeting', component: MeetingComponent },
       {
-        path: 'leason',
-        component: LeasonListComponent,
+        path: 'lesson',
+        component: LessonListComponent,
         canActivate: [AuthGuard],
         data: { roles: [ROLE.MENTOR] },
       },
       {
-        path: 'leason/create-leason',
+        path: 'lesson/create-leason',
         component: CreateLeasonComponent,
+        canActivate: [AuthGuard],
+        data: { roles: [ROLE.MENTOR] },
+      },
+      {
+        path: 'lesson/details/:id',
+        component: LeasonDetailsComponent,
         canActivate: [AuthGuard],
         data: { roles: [ROLE.MENTOR] },
       },

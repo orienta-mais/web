@@ -1,6 +1,15 @@
-<div class="flex items-center justify-center min-h-screen py-4">
-  <div class="w-full max-w-2xl p-8 bg-white rounded-2xl shadow-lg">
-    <h2 class="text-3xl font-bold mb-8 text-center text-gray-800">Cadastrar Aula</h2>
+<div class="flex justify-center items-center min-h-[calc(100vh-4rem)]">
+  <div class="w-full max-w-2xl p-8 bg-red rounded-2xl shadow-lg">
+    <div class="flex items-center justify-between mb-8">
+      <p-button
+        label="Voltar"
+        icon="pi pi-arrow-left"
+        styleClass="hover:bg-yellow-500 text-gray-800 font-medium border-none shadow-sm px-4 py-2 rounded-md transition-all duration-200"
+        (click)="returnBack()"
+      ></p-button>
+
+      <h2 class="text-3xl font-bold text-gray-800 text-center flex-1">Cadastrar Aula</h2>
+    </div>
 
     <form [formGroup]="form" (ngSubmit)="handleSubmit()" class="space-y-5">
       <!-- Título -->
@@ -15,6 +24,7 @@
         O título é obrigatório.
       </div>
 
+      <!-- Descrição -->
       <p-floatlabel>
         <textarea
           pInputTextarea
@@ -32,6 +42,7 @@
         A descrição é obrigatória.
       </div>
 
+      <!-- Data -->
       <div>
         <label for="date" class="block text-gray-700 font-medium mb-2">Data da aula</label>
         <p-datepicker
@@ -48,6 +59,7 @@
         A data da aula é obrigatória.
       </div>
 
+      <!-- Horários -->
       <div class="grid grid-cols-2 gap-4">
         <div>
           <label for="initialTime" class="block text-gray-700 font-medium mb-2"
@@ -84,6 +96,7 @@
         </div>
       </div>
 
+      <!-- Botão principal -->
       <p-button
         type="submit"
         label="Salvar Aula"

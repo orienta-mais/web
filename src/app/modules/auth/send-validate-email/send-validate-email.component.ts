@@ -58,9 +58,11 @@ export class SendValidateEmailComponent implements OnInit {
   }
 
   submitSendValidateEmail(value: SendValidateEmailRequest): void {
+    if (!this.selectedRole) return;
+
     this.isLoading = true;
 
-    this.service.sendValidateEmail(value).subscribe({
+    this.service.sendValidateEmail(value, this.selectedRole).subscribe({
       next: () => {
         this.isLoading = false;
         this.step = 'success';

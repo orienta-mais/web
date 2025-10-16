@@ -16,6 +16,10 @@ export class ToastService {
       gravity: 'top',
       position: 'right',
       backgroundColor: backgroundColor,
+      offset: {
+        y: 60,
+        x: 20,
+      },
     }).showToast();
   }
 
