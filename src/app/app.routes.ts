@@ -52,4 +52,14 @@ export const routes: Routes = [
   { path: 'register/mentored', component: RegisterMentoredComponent },
 
   { path: '**', redirectTo: 'login' },
+  {
+    path: 'termos',
+    redirectTo: '/termos.html',
+    pathMatch: 'full',
+  },
+  {
+    path: 'politica-de-privacidade',
+    redirectTo: '/politica-de-privacidade.html',
+    pathMatch: 'full',
+  },
 ];

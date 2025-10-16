@@ -1,0 +1,29 @@
+<div class="mt-6 p-4 bg-gray-50 rounded-xl border border-gray-200">
+  <p class="text-sm text-gray-700 mb-3 leading-relaxed">
+    Ao continuar, você confirma que leu e concorda com os
+    <a href="/termos" target="_blank" class="text-blue-600 hover:underline font-medium">
+      Termos de Uso
+    </a>
+    e a
+    <a
+      href="/politica-de-privacidade"
+      target="_blank"
+      class="text-blue-600 hover:underline font-medium"
+    >
+      Política de Privacidade </a
+    >.
+  </p>
+
+  <div class="flex items-center space-x-2">
+    <input
+      type="checkbox"
+      id="acceptTerms"
+      [checked]="accepted"
+      (change)="handleChange($event)"
+      class="w-4 h-4 accent-blue-600 cursor-pointer"
+    />
+    <label for="acceptTerms" class="text-sm text-gray-800 cursor-pointer">
+      Concordo com os Termos e a Política de Privacidade
+    </label>
+  </div>
+</div>

@@ -8,16 +8,16 @@ import { ButtonModule } from 'primeng/button';
 import { DatePickerModule } from 'primeng/datepicker';
 import { SelectModule } from 'primeng/select';
 import { STATES, COUNTRIES } from '../../../../shared/constants';
-import { RegisterService } from '../../../../@core/services/auth/register.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MentorService } from '../../../../@core/services/mentor/mentor.service';
 import { ToastService } from '../../../../shared/components/toast/toast.service';
-import { emailValidator, uuidValidator } from '../../../../@core/validators';
+import { uuidValidator } from '../../../../@core/validators';
 import { VerificationService } from '../../../../@core/services/auth/verification.service';
 import { take } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { RegisterMentor } from '../../../../@core/interfaces/mentor.interface';
 import { isValidEmail } from '../../../../@core/validators/email/email.validator';
+import { TermsCheckboxComponent } from '../../../../shared/terms-checkbox/terms-checkbox.component';
 
 @Component({
   selector: 'app-register-mentor',
@@ -31,6 +31,7 @@ import { isValidEmail } from '../../../../@core/validators/email/email.validator
     FloatLabelModule,
     DatePickerModule,
     SelectModule,
+    TermsCheckboxComponent,
   ],
   templateUrl: './register-mentor.component.html',
   styleUrls: ['./register-mentor.component.css'],
@@ -44,13 +45,13 @@ export class RegisterMentorComponent implements OnInit {
   showPassword = false;
   tokenUrl!: string;
   screenValidated = false;
+  acceptedTerms = false;
 
   email: string | null = null;
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private registerService: RegisterService,
     private verificationService: VerificationService,
     private mentorService: MentorService,
     private toast: ToastService,
@@ -106,6 +107,10 @@ export class RegisterMentorComponent implements OnInit {
 
   handleSubmit() {
     if (this.mentorForm.valid) {
+      if (!this.acceptedTerms) {
+        this.toast.error('Você deve aceitar os termos para continuar.');
+        return;
+      }
       const mentorData: RegisterMentor = {
         ...this.mentorForm.getRawValue(),
         role: this.verificationService.getRole(),
