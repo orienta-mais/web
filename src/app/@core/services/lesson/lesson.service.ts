@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { Observable } from 'rxjs';
-import { CreateLeason } from '../../interfaces/mentor.interface';
+import { CreateLesson } from '../../interfaces/mentor.interface';
 import { LeasonListResponse } from '../../interfaces/mentor.interface';
 
 @Injectable({ providedIn: 'root' })
@@ -11,8 +11,8 @@ export class LessonService {
 
   constructor(private http: HttpClient) {}
 
-  createLeason(body: CreateLeason): Observable<void> {
-    return this.http.post<void>(`${this._baseApi}`, { body });
+  createLeason(body: CreateLesson): Observable<void> {
+    return this.http.post<void>(`${this._baseApi}`, body);
   }
 
   findAllLessons(mentorId: string): Observable<LeasonListResponse[]> {
@@ -23,8 +23,8 @@ export class LessonService {
     return this.http.get<LeasonListResponse>(`${this._baseApi}/${lessonId}`);
   }
 
-  updateLesson(body: CreateLeason & { leasonId: string }): Observable<void> {
-    return this.http.put<void>(`${this._baseApi}/update-leason`, { body });
+  updateLesson(body: CreateLesson, lessonId: string): Observable<void> {
+    return this.http.put<void>(`${this._baseApi}/${lessonId}`, body);
   }
 
   deleteLesson(lessonId: string): Observable<void> {

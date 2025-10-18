@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { Observable } from 'rxjs';
-import { CreateLeason, RegisterMentor } from '../../interfaces/mentor.interface';
+import { CreateLesson, RegisterMentor } from '../../interfaces/mentor.interface';
 import { UuidOfTokenRegisterRequest } from '../../interfaces/auth.interface';
 
 @Injectable({ providedIn: 'root' })

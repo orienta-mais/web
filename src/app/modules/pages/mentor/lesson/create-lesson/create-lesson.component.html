@@ -1,14 +1,13 @@
-<div class="flex justify-center items-center min-h-[calc(100vh-4rem)]">
-  <div class="w-full max-w-2xl p-8 bg-red rounded-2xl shadow-lg">
-    <div class="flex items-center justify-between mb-8">
+<div class="flex justify-center items-center min-h-[calc(100vh-4rem)] bg-gray-50">
+  <div class="w-full max-w-2xl p-8 bg-red rounded-2xl shadow-lg bg-white">
+    <div>
       <p-button
         label="Voltar"
-        icon="pi pi-arrow-left"
-        styleClass="hover:bg-yellow-500 text-gray-800 font-medium border-none shadow-sm px-4 py-2 rounded-md transition-all duration-200"
+        styleClass="hover:bg-yellow-500 text-gray-800 font-medium border-none shadow-sm px-4"
         (click)="returnBack()"
       ></p-button>
 
-      <h2 class="text-3xl font-bold text-gray-800 text-center flex-1">Cadastrar Aula</h2>
+      <h2 class="text-3xl font-bold text-gray-800 text-center flex-1 mb-6">Cadastrar Aula</h2>
     </div>
 
     <form [formGroup]="form" (ngSubmit)="handleSubmit()" class="space-y-5">
@@ -67,12 +66,12 @@
           >
           <input
             type="time"
-            id="initialTime"
-            formControlName="initialTime"
+            id="startTime"
+            formControlName="startTime"
             class="w-full border rounded-md px-3 py-2"
           />
           <div
-            *ngIf="f['initialTime'].touched && f['initialTime'].errors?.['required']"
+            *ngIf="f['startTime'].touched && f['startTime'].errors?.['required']"
             class="text-red-500 text-sm"
           >
             A hora de início é obrigatória.
@@ -80,15 +79,15 @@
         </div>
 
         <div>
-          <label for="finalTime" class="block text-gray-700 font-medium mb-2">Hora de fim</label>
+          <label for="endTime" class="block text-gray-700 font-medium mb-2">Hora de fim</label>
           <input
             type="time"
-            id="finalTime"
-            formControlName="finalTime"
+            id="endTime"
+            formControlName="endTime"
             class="w-full border rounded-md px-3 py-2"
           />
           <div
-            *ngIf="f['finalTime'].touched && f['finalTime'].errors?.['required']"
+            *ngIf="f['endTime'].touched && f['endTime'].errors?.['required']"
             class="text-red-500 text-sm"
           >
             A hora de fim é obrigatória.

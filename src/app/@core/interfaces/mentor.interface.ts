@@ -12,12 +12,12 @@ export interface RegisterMentor {
   token: string;
 }
 
-export interface CreateLeason {
+export interface CreateLesson {
   title: string;
   description: string;
   date: string;
-  initialTime: string;
-  finalTime: string;
+  startTime: string;
+  endTime: string;
   mentorId: string;
 }
 
@@ -30,8 +30,8 @@ export interface LeasonListResponse {
   title: string;
   description: string;
   date: string;
-  initialTime: string;
-  finalTime: string;
+  startTime: string;
+  endTime: string;
 }
 
 export interface LeasonDetailsResponse {
@@ -39,6 +39,6 @@ export interface LeasonDetailsResponse {
   title: string;
   description: string;
   date: string;
-  initialTime: string;
-  finalTime: string;
+  startTime: string;
+  endTime: string;
 }

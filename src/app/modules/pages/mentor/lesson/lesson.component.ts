@@ -16,7 +16,7 @@ import { LeasonListResponse as LessonListResponse } from '../../../../@core/inte
   styleUrls: ['./lesson.component.css'],
 })
 export class LessonListComponent implements OnInit {
-  leasons: LessonListResponse[] = [];
+  lessons: LessonListResponse[] = [];
   loading = false;
 
   constructor(
@@ -36,7 +36,7 @@ export class LessonListComponent implements OnInit {
       .pipe(take(1))
       .subscribe({
         next: (data) => {
-          this.leasons = data;
+          this.lessons = data;
           this.loading = false;
         },
         error: () => {

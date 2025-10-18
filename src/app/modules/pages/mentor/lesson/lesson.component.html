@@ -1,39 +1,46 @@
-<div class="p-4">
-  <div class="flex justify-between items-center mb-4">
-    <h2 class="text-2xl font-bold">Minhas Aulas</h2>
-    <p-button
-      label="Criar Aula"
-      icon="pi pi-plus"
-      (click)="goToCreate()"
-      class="p-button-sm"
-    ></p-button>
-  </div>
+<div class="flex justify-center min-h-[calc(100vh-4rem)] bg-gray-50 p-6">
+  <div class="w-full p-8 bg-red rounded-2xl shadow-lg bg-white">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-2xl font-bold">Minhas Aulas</h2>
+      <p-button
+        label="Criar Aula"
+        icon="pi pi-plus"
+        (click)="goToCreate()"
+        class="p-button-sm"
+      ></p-button>
+    </div>
 
-  <p-table [value]="leasons" [loading]="loading" [paginator]="true" [rows]="5">
-    <ng-template pTemplate="header">
-      <tr>
-        <th>Título</th>
-        <th>Data</th>
-        <th>Hora Início</th>
-        <th>Hora Fim</th>
-        <th>Ações</th>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-leason>
-      <tr>
-        <td>{{ leason.title }}</td>
-        <td>{{ leason.date | date: 'dd/MM/yyyy' }}</td>
-        <td>{{ leason.initialTime }}</td>
-        <td>{{ leason.finalTime }}</td>
-        <td>
-          <p-button
-            label="Detalhes"
-            icon="pi pi-info-circle"
-            class="p-button-text p-button-sm"
-            (click)="showDetails(leason.id)"
-          ></p-button>
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
+    <p-table
+      [value]="lessons"
+      [loading]="loading"
+      [paginator]="true"
+      [rows]="7"
+      paginatorPosition="bottom"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Título</th>
+          <th>Data</th>
+          <th>Hora Início</th>
+          <th>Hora Fim</th>
+          <th>Ações</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-lesson>
+        <tr>
+          <td>{{ lesson.title }}</td>
+          <td>{{ lesson.date | date: 'dd/MM/yyyy' }}</td>
+          <td>{{ lesson.startTime?.slice(0, 5) }}</td>
+          <td>{{ lesson.endTime?.slice(0, 5) }}</td>
+          <td>
+            <p-button
+              label="Detalhes"
+              class="p-button-text p-button-sm"
+              (click)="showDetails(lesson.id)"
+            ></p-button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
 </div>

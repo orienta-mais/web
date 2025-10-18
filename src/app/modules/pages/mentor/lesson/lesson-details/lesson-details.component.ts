@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -13,6 +13,7 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { TextareaModule } from 'primeng/textarea';
 import { DatePickerModule } from 'primeng/datepicker';
+import { UserService } from '../../../../../@core/services/user/user.service';
 
 @Component({
   selector: 'app-lesson-details',
@@ -35,6 +36,7 @@ export class LeasonDetailsComponent implements OnInit {
   form!: FormGroup;
   loading = false;
   editMode = false;
+  lessonId: string | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -43,32 +45,32 @@ export class LeasonDetailsComponent implements OnInit {
     private fb: FormBuilder,
     private toast: ToastService,
     private confirmService: ConfirmationService,
+    private userService: UserService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
-    console.log('[LeasonDetails] ngOnInit');
-
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.loadLeason(id);
-    }
+    this.lessonId = this.route.snapshot.paramMap.get('id');
+    if (this.lessonId) this.loadLeason(this.lessonId);
   }
 
-  loadLeason(id: string) {
+  loadLeason(lessonId: string) {
     this.leasonService
-      .findLessonById(id)
+      .findLessonById(lessonId)
       .pipe(take(1))
       .subscribe({
         next: (data) => {
           this.leason = data;
           this.form = this.fb.group({
-            id: [data.id],
-            title: [data.title, Validators.required],
-            description: [data.description, Validators.required],
-            date: [new Date(data.date), Validators.required],
-            initialTime: [data.initialTime, Validators.required],
-            finalTime: [data.finalTime, Validators.required],
+            title: [data.title, [Validators.required]],
+            description: [data.description, [Validators.required]],
+            date: [data.date ? new Date(data.date) : null, Validators.required],
+            initialTime: [data.startTime?.slice(0, 5) || '', Validators.required],
+            finalTime: [data.endTime?.slice(0, 5) || '', Validators.required],
+            mentorId: [this.userService.getId()],
           });
+
+          this.cdr.detectChanges();
         },
         error: () => this.toast.error('Erro ao carregar aula'),
       });
@@ -76,10 +78,22 @@ export class LeasonDetailsComponent implements OnInit {
 
   enableEdit() {
     this.editMode = true;
+    this.cdr.detectChanges();
   }
 
   cancelEdit() {
     this.editMode = false;
+
+    if (this.leason && this.form) {
+      this.form.reset({
+        title: this.leason.title,
+        description: this.leason.description,
+        date: new Date(this.leason.date),
+        initialTime: this.leason.startTime?.slice(0, 5) || '',
+        finalTime: this.leason.endTime?.slice(0, 5) || '',
+        mentorId: this.userService.getId(),
+      });
+    }
   }
 
   handleUpdate() {
@@ -88,13 +102,25 @@ export class LeasonDetailsComponent implements OnInit {
       return;
     }
 
+    const { title, description, date, initialTime, finalTime } = this.form.value;
+
+    const payload = {
+      title,
+      description,
+      date: new Date(date).toISOString().split('T')[0],
+      startTime: initialTime,
+      endTime: finalTime,
+      mentorId: this.userService.getId(),
+    };
+
     this.loading = true;
     this.leasonService
-      .updateLesson(this.form.value)
+      .updateLesson(payload, this.leason!.id)
       .pipe(take(1))
       .subscribe({
         next: () => {
           this.toast.success('Aula atualizada com sucesso!');
+          this.loadLeason(this.leason!.id);
           this.loading = false;
           this.editMode = false;
         },
@@ -113,7 +139,7 @@ export class LeasonDetailsComponent implements OnInit {
       acceptLabel: 'Sim',
       rejectLabel: 'Não',
       rejectButtonStyleClass: 'p-button-secondary',
-      acceptButtonStyleClass: 'p-button-green',
+      acceptButtonStyleClass: 'p-button-success',
       accept: () => this.deleteLeason(),
     });
   }
@@ -131,5 +157,13 @@ export class LeasonDetailsComponent implements OnInit {
         },
         error: () => this.toast.error('Erro ao excluir aula.'),
       });
+  }
+
+  returnBack() {
+    this.router.navigate(['/lesson']);
+  }
+
+  get f() {
+    return this.form.controls;
   }
 }

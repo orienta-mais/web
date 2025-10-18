@@ -6,13 +6,13 @@ import { Router } from '@angular/router';
 import { TextareaModule } from 'primeng/textarea';
 import { ButtonModule } from 'primeng/button';
 import { DatePickerModule } from 'primeng/datepicker';
+import { FloatLabelModule } from 'primeng/floatlabel';
 import { ToastService } from '../../../../../shared/components/toast/toast.service';
 import { take } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { UserService } from '../../../../../@core/services/user/user.service';
-import { CreateLeason } from '../../../../../@core/interfaces/mentor.interface';
-import { FloatLabelModule } from 'primeng/floatlabel';
 import { LessonService } from '../../../../../@core/services/lesson/lesson.service';
+import { CreateLesson } from '../../../../../@core/interfaces/mentor.interface';
 
 @Component({
   selector: 'app-create-lesson',
@@ -42,43 +42,49 @@ export class CreateLeasonComponent {
     private router: Router,
   ) {
     this.form = this.fb.group({
-      title: ['', [Validators.required, Validators.maxLength(100)]],
-      description: ['', [Validators.required, Validators.maxLength(500)]],
+      title: ['', [Validators.required, Validators.maxLength(200)]],
+      description: ['', [Validators.maxLength(1000)]],
       date: [null, Validators.required],
-      initialTime: ['', Validators.required],
-      finalTime: ['', Validators.required],
+      startTime: ['', Validators.required],
+      endTime: ['', Validators.required],
     });
   }
 
   handleSubmit() {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+      this.toast.error('Preencha todos os campos obrigatórios.');
       return;
     }
 
-    const { title, description, date, initialTime, finalTime } = this.form.value;
+    const { title, description, date, startTime, endTime } = this.form.value;
 
-    const [hInit, mInit] = initialTime.split(':').map(Number);
-    const [hEnd, mEnd] = finalTime.split(':').map(Number);
+    const [hInit, mInit] = startTime.split(':').map(Number);
+    const [hEnd, mEnd] = endTime.split(':').map(Number);
     const diffHours = hEnd + mEnd / 60 - (hInit + mInit / 60);
 
     if (diffHours <= 0) {
       this.toast.error('A hora de término deve ser posterior à de início.');
       return;
     }
+
     if (diffHours > 6) {
       this.toast.error('A aula não pode ter mais de 6 horas de duração.');
       return;
     }
 
     const mentorId = this.userService.getId();
+    if (!mentorId) {
+      this.toast.error('Erro ao identificar mentor. Faça login novamente.');
+      return;
+    }
 
-    const payload: CreateLeason = {
-      title,
-      description,
-      date: new Date(date).toISOString().split('T')[0],
-      initialTime,
-      finalTime,
+    const payload: CreateLesson = {
+      title: title.trim(),
+      description: description?.trim(),
+      date: this.formatDate(date),
+      startTime: this.ensureTimeFormat(startTime),
+      endTime: this.ensureTimeFormat(endTime),
       mentorId,
     };
 
@@ -92,12 +98,27 @@ export class CreateLeasonComponent {
           this.toast.success('Aula cadastrada com sucesso!');
           this.form.reset();
           this.loading = false;
+          this.router.navigate(['/lesson']);
         },
         error: (e: HttpErrorResponse) => {
-          this.toast.error(e.error?.error || 'Erro ao cadastrar aula.');
           this.loading = false;
+          const msg =
+            e.error?.error ||
+            e.error?.message ||
+            'Erro ao cadastrar aula. Verifique os dados e tente novamente.';
+          this.toast.error(msg);
         },
       });
+  }
+
+  private formatDate(date: Date | string): string {
+    if (!date) return '';
+    const d = new Date(date);
+    return d.toISOString().split('T')[0];
+  }
+
+  private ensureTimeFormat(time: string): string {
+    return time.length === 5 ? `${time}:00` : time;
   }
 
   get f() {
