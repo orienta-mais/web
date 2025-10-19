@@ -18,7 +18,7 @@
         Email não é válido
       </div>
 
-      <p-floatlabel class="mt-6">
+      <p-floatlabel class="mt-6 relative">
         <input
           pInputText
           [type]="showPassword ? 'text' : 'password'"
@@ -52,6 +52,19 @@
 
       <button class="text-blue-600 hover:underline cursor-pointer mt-2" (click)="forgotPassword()">
         Esqueceu a senha?
+      </button>
+    </div>
+
+    <!-- 🔽 Links de política e termos -->
+    <div
+      class="mt-6 text-center text-sm text-gray-500 flex flex-col sm:flex-row gap-2 justify-center"
+    >
+      <button class="hover:text-blue-600 underline" type="button" (click)="openPrivacy()">
+        Política de Privacidade
+      </button>
+      <span class="hidden sm:inline">•</span>
+      <button class="hover:text-blue-600 underline" type="button" (click)="openTerms()">
+        Termos de Uso
       </button>
     </div>
   </div>

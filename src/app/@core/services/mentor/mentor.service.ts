@@ -18,4 +18,16 @@ export class MentorService {
   validateUuidTokenRegister(body: UuidOfTokenRegisterRequest): Observable<void> {
     return this.http.post<void>(`${this._baseApi}/validate-uuid-password-reset`, body);
   }
+
+  getProfile(mentorId: string): Observable<RegisterMentor> {
+    return this.http.get<RegisterMentor>(`${this._baseApi}/${mentorId}`);
+  }
+
+  updateProfile(mentorId: string, body: RegisterMentor): Observable<void> {
+    return this.http.put<void>(`${this._baseApi}/${mentorId}`, body);
+  }
+
+  deleteAccount(mentorId: string): Observable<void> {
+    return this.http.delete<void>(`${this._baseApi}/${mentorId}`);
+  }
 }

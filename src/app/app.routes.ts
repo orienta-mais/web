@@ -12,6 +12,8 @@ import { ROLE } from './@core/enums/role.enum';
 import { CreateLeasonComponent } from './modules/pages/mentor/lesson/create-lesson/create-lesson.component';
 import { LessonListComponent } from './modules/pages/mentor/lesson/lesson.component';
 import { LeasonDetailsComponent } from './modules/pages/mentor/lesson/lesson-details/lesson-details.component';
+import { MentoredLessonComponent } from './modules/pages/mentored/mentored-lesson/mentored-lesson.component';
+import { MentorProfileDetailsComponent } from './modules/pages/mentor/profile/mentor-profile-details/mentor-profile-details.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -26,7 +28,6 @@ export const routes: Routes = [
     component: HomeComponent,
     canActivate: [AuthGuard],
     children: [
-      { path: 'meeting', component: MeetingComponent },
       {
         path: 'lesson',
         component: LessonListComponent,
@@ -45,6 +46,18 @@ export const routes: Routes = [
         canActivate: [AuthGuard],
         data: { roles: [ROLE.MENTOR] },
       },
+      {
+        path: 'mentored/lesson',
+        component: MentoredLessonComponent,
+        canActivate: [AuthGuard],
+        data: { roles: [ROLE.MENTORED] },
+      },
+      {
+        path: 'mentor/profile',
+        component: MentorProfileDetailsComponent,
+        canActivate: [AuthGuard],
+        data: { roles: [ROLE.MENTOR] },
+      },
     ],
   },
 
@@ -53,8 +66,8 @@ export const routes: Routes = [
 
   { path: '**', redirectTo: 'login' },
   {
-    path: 'termos',
-    redirectTo: '/termos.html',
+    path: 'termos-de-uso',
+    redirectTo: '/termos-de-uso.html',
     pathMatch: 'full',
   },
   {

@@ -1,0 +1,162 @@
+<div class="flex justify-center min-h-[calc(100vh-4rem)] bg-gray-100 py-8 px-4">
+  <div class="w-full max-w-3xl bg-white rounded-2xl shadow-lg p-8">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-3xl font-bold text-gray-800">Meu Perfil</h2>
+
+      <button
+        class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-3 py-1 rounded-md text-sm"
+        (click)="goBack()"
+      >
+        Voltar
+      </button>
+    </div>
+
+    <!-- Modo de Edição -->
+    <form *ngIf="editMode" [formGroup]="form" (ngSubmit)="handleUpdate()" class="space-y-5">
+      <!-- Email -->
+      <p-floatlabel>
+        <input pInputText formControlName="email" readonly class="w-full" />
+        <label>Email</label>
+      </p-floatlabel>
+
+      <!-- Nome e Sobrenome -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <p-floatlabel>
+          <input pInputText formControlName="name" class="w-full" />
+          <label>Nome</label>
+        </p-floatlabel>
+        <p-floatlabel>
+          <input pInputText formControlName="lastName" class="w-full" />
+          <label>Sobrenome</label>
+        </p-floatlabel>
+      </div>
+
+      <!-- Data e Telefone -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <p-floatlabel>
+          <p-datepicker
+            formControlName="birthDate"
+            [showIcon]="true"
+            dateFormat="dd/mm/yy"
+            [maxDate]="maxDate"
+            styleClass="w-full"
+          ></p-datepicker>
+          <label>Data de Nascimento</label>
+        </p-floatlabel>
+
+        <p-floatlabel>
+          <input pInputText formControlName="phone" class="w-full" />
+          <label>Telefone</label>
+        </p-floatlabel>
+      </div>
+
+      <!-- Descrição -->
+      <p-floatlabel>
+        <textarea pInputTextarea formControlName="description" rows="4" class="w-full"></textarea>
+        <label>Descrição</label>
+      </p-floatlabel>
+
+      <!-- Estado e Nacionalidade -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <p-floatlabel>
+          <p-select
+            formControlName="state"
+            [options]="states"
+            optionLabel="name"
+            class="w-full"
+          ></p-select>
+          <label>Estado</label>
+        </p-floatlabel>
+
+        <p-floatlabel>
+          <p-select
+            formControlName="nationality"
+            [options]="nationalities"
+            optionLabel="name"
+            class="w-full"
+          ></p-select>
+          <label>Nacionalidade</label>
+        </p-floatlabel>
+      </div>
+
+      <!-- Redes sociais -->
+      <p-floatlabel>
+        <input pInputText formControlName="socialMedias" class="w-full" />
+        <label>LinkedIn</label>
+      </p-floatlabel>
+
+      <!-- Botões -->
+      <div class="flex flex-col sm:flex-row gap-4 mt-6">
+        <button
+          type="submit"
+          class="flex-1 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700"
+          [disabled]="loading"
+        >
+          {{ loading ? 'Salvando...' : 'Salvar Alterações' }}
+        </button>
+
+        <button
+          type="button"
+          (click)="cancelEdit()"
+          class="flex-1 py-3 bg-gray-300 text-gray-800 rounded-xl hover:bg-gray-400"
+        >
+          Cancelar
+        </button>
+      </div>
+    </form>
+
+    <!-- Modo Visualização -->
+    <div *ngIf="!editMode" class="space-y-6">
+      <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">
+          Informações do Mentor
+        </h3>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <p><span class="font-medium text-gray-500">Nome:</span> {{ form.get('name')?.value }}</p>
+          <p>
+            <span class="font-medium text-gray-500">Sobrenome:</span>
+            {{ form.get('lastName')?.value }}
+          </p>
+          <p>
+            <span class="font-medium text-gray-500">Email:</span> {{ form.get('email')?.value }}
+          </p>
+          <p>
+            <span class="font-medium text-gray-500">Telefone:</span> {{ form.get('phone')?.value }}
+          </p>
+          <p>
+            <span class="font-medium text-gray-500">Estado:</span>
+            {{ form.get('state')?.value?.name }}
+          </p>
+          <p>
+            <span class="font-medium text-gray-500">Nacionalidade:</span>
+            {{ form.get('nationality')?.value?.name }}
+          </p>
+        </div>
+
+        <div class="mt-4">
+          <p class="font-medium text-gray-500 mb-1">Descrição:</p>
+          <p class="text-gray-700 whitespace-pre-line">{{ form.get('description')?.value }}</p>
+        </div>
+      </div>
+
+      <div class="flex flex-col sm:flex-row justify-center gap-4 mt-6">
+        <button
+          (click)="enableEdit()"
+          class="flex-1 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700"
+        >
+          Editar Perfil
+        </button>
+
+        <button
+          (click)="confirmDelete()"
+          class="flex-1 py-3 bg-red-600 text-white rounded-xl hover:bg-red-700"
+        >
+          Excluir Conta
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-confirmDialog></p-confirmDialog>

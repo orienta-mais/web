@@ -89,4 +89,12 @@ export class LoginComponent {
   get password() {
     return this.loginForm.get('password');
   }
+
+  openPrivacy() {
+    window.open('/politica-de-privacidade.html', '_blank');
+  }
+
+  openTerms() {
+    window.open('/termos-de-uso.html', '_blank');
+  }
 }

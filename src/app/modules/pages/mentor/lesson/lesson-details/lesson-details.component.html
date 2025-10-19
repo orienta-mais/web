@@ -108,7 +108,13 @@
         <div class="space-y-3">
           <div>
             <p class="text-sm text-gray-500 font-medium">Título</p>
-            <p class="text-base text-gray-800 font-semibold">{{ leason?.title }}</p>
+            <p class="text-base text-gray-800 font-semibold">
+              {{
+                (leason?.title || '').length > 60
+                  ? (leason?.title | slice: 0 : 60) + '…'
+                  : leason?.title
+              }}
+            </p>
           </div>
 
           <div>
