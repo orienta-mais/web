@@ -18,6 +18,8 @@ import { RegisterMentored } from '../../../../@core/interfaces/mentored.interfac
 import { MentoredService } from '../../../../@core/services/mentored/mentored.service';
 import { isValidEmail } from '../../../../@core/validators/email/email.validator';
 import { TermsCheckboxComponent } from '../../../../shared/terms-checkbox/terms-checkbox.component';
+import { InputMaskModule } from 'primeng/inputmask';
+import { removeMaskPhone } from '../../../../@core/utils/removeMaskPhone.utils';
 
 @Component({
   selector: 'app-register-mentored',
@@ -32,6 +34,7 @@ import { TermsCheckboxComponent } from '../../../../shared/terms-checkbox/terms-
     DatePickerModule,
     SelectModule,
     TermsCheckboxComponent,
+    InputMaskModule,
   ],
   templateUrl: './register-mentored.component.html',
   styleUrls: ['./register-mentored.component.css'],
@@ -76,7 +79,7 @@ export class RegisterMentoredComponent implements OnInit {
       ],
       state: ['', Validators.required],
       nationality: ['', Validators.required],
-      phone: ['', [Validators.required, Validators.pattern(/^\d+$/), Validators.maxLength(15)]],
+      phone: ['', [Validators.required, Validators.maxLength(15)]],
     });
   }
 
@@ -110,9 +113,14 @@ export class RegisterMentoredComponent implements OnInit {
         this.toast.error('Você deve aceitar os termos para continuar.');
         return;
       }
+
+      const rawPhone = this.mentoredForm.get('phone')?.value;
+      const cleanedPhone = removeMaskPhone(rawPhone);
+
       const mentoredData: RegisterMentored = {
         ...this.mentoredForm.getRawValue(),
         role: this.verificationService.getRole(),
+        phone: cleanedPhone,
         token: this.tokenUrl,
         state: this.mentoredForm.get('state')?.value?.name,
         nationality: this.mentoredForm.get('nationality')?.value?.name,

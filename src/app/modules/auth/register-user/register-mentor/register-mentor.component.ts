@@ -18,6 +18,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { RegisterMentor } from '../../../../@core/interfaces/mentor.interface';
 import { isValidEmail } from '../../../../@core/validators/email/email.validator';
 import { TermsCheckboxComponent } from '../../../../shared/terms-checkbox/terms-checkbox.component';
+import { InputMaskModule } from 'primeng/inputmask';
+import { removeMaskPhone } from '../../../../@core/utils/removeMaskPhone.utils';
 
 @Component({
   selector: 'app-register-mentor',
@@ -32,6 +34,7 @@ import { TermsCheckboxComponent } from '../../../../shared/terms-checkbox/terms-
     DatePickerModule,
     SelectModule,
     TermsCheckboxComponent,
+    InputMaskModule,
   ],
   templateUrl: './register-mentor.component.html',
   styleUrls: ['./register-mentor.component.css'],
@@ -77,7 +80,7 @@ export class RegisterMentorComponent implements OnInit {
       ],
       state: ['', Validators.required],
       nationality: ['', Validators.required],
-      phone: ['', [Validators.required, Validators.pattern(/^\d+$/), Validators.maxLength(15)]],
+      phone: ['', [Validators.required, Validators.maxLength(15)]],
     });
   }
 
@@ -111,8 +114,13 @@ export class RegisterMentorComponent implements OnInit {
         this.toast.error('Você deve aceitar os termos para continuar.');
         return;
       }
+
+      const rawPhone = this.mentorForm.get('phone')?.value;
+      const cleanedPhone = removeMaskPhone(rawPhone);
+
       const mentorData: RegisterMentor = {
         ...this.mentorForm.getRawValue(),
+        phone: cleanedPhone,
         role: this.verificationService.getRole(),
         token: this.tokenUrl,
         state: this.mentorForm.get('state')?.value?.name,
@@ -123,7 +131,7 @@ export class RegisterMentorComponent implements OnInit {
         .pipe(take(1))
         .subscribe({
           next: () => {
-            this.toast.success('Bem vindo a plataforma!', 5000);
+            this.toast.success('Cadastro realizado com sucesso!', 5000);
             setTimeout(() => {
               this.router.navigate(['/login']);
             }, 2000);

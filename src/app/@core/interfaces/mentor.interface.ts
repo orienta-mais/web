@@ -8,8 +8,8 @@ export interface RegisterMentor {
   description: string;
   state: string;
   nationality: string;
-  role: string;
   token: string;
+  phone: string;
 }
 
 export interface CreateLesson {
@@ -41,4 +41,5 @@ export interface LeasonDetailsResponse {
   date: string;
   startTime: string;
   endTime: string;
+  mentorName: string;
 }

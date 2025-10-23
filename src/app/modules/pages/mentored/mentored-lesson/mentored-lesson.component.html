@@ -1,1 +1,130 @@
-<p>TESTE</p>
+<div class="flex justify-center min-h-[calc(100vh-4rem)] bg-gray-50 p-6">
+  <div class="w-full max-w-6xl p-8 bg-white rounded-2xl shadow-lg">
+    <!-- Cabeçalho -->
+    <div class="flex justify-between items-center mb-8">
+      <h2 class="text-3xl font-bold text-gray-800">Minhas Aulas Mentoradas</h2>
+      <p-button
+        label="Minhas Reuniões"
+        icon="pi pi-calendar"
+        class="p-button-success p-button-sm"
+        (click)="goToMyMeetings()"
+      ></p-button>
+    </div>
+
+    <!-- 🔍 Filtros -->
+    <form
+      [formGroup]="filterForm"
+      (ngSubmit)="loadLessons()"
+      class="mb-8 grid grid-cols-1 sm:grid-cols-4 gap-4"
+    >
+      <!-- Campo Título -->
+      <div>
+        <label class="block text-sm font-medium text-gray-600 mb-1">Título</label>
+        <input
+          pInputText
+          formControlName="title"
+          placeholder="Digite o título"
+          class="w-full border border-gray-300 rounded-md px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition"
+        />
+      </div>
+
+      <!-- Campo Data -->
+      <div>
+        <label class="block text-sm font-medium text-gray-600 mb-1">Data</label>
+        <p-datepicker
+          formControlName="date"
+          dateFormat="dd/mm/yy"
+          [showIcon]="true"
+          inputId="date"
+          styleClass="w-full border border-gray-300 rounded-md"
+        ></p-datepicker>
+      </div>
+
+      <!-- Botões -->
+      <div class="flex items-end gap-2 justify-end sm:justify-start">
+        <p-button label="Buscar" icon="pi pi-search" type="submit" class="p-button-sm"></p-button>
+
+        <p-button
+          label="Limpar"
+          icon="pi pi-times"
+          class="p-button-secondary p-button-sm"
+          type="button"
+          (click)="clearFilters()"
+        ></p-button>
+      </div>
+    </form>
+
+    <!-- ⏫ Ordenação -->
+    <div
+      class="flex justify-end items-center gap-2 mb-6 text-gray-700 cursor-pointer select-none hover:text-blue-600 transition"
+      (click)="toggleOrder()"
+    >
+      <span class="font-medium">Ordenar por data</span>
+      <i
+        class="pi text-lg transition-transform duration-200"
+        [ngClass]="{
+          'pi-sort-amount-up-alt rotate-180': order === 'asc',
+          'pi-sort-amount-down': order === 'desc',
+        }"
+      ></i>
+    </div>
+
+    <!-- 💬 Cards -->
+    <div *ngIf="!loading; else loadingTpl">
+      <div
+        *ngIf="lessons.length > 0; else emptyTpl"
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+      >
+        <div
+          *ngFor="let lesson of lessons"
+          class="bg-gray-50 hover:bg-gray-100 transition rounded-2xl p-6 border border-gray-200 shadow-sm flex flex-col justify-between"
+        >
+          <div>
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">
+              {{
+                (lesson?.title || '').length > 60
+                  ? (lesson?.title | slice: 0 : 60) + '…'
+                  : lesson?.title
+              }}
+            </h3>
+
+            <p class="text-sm text-gray-600 mb-1 flex items-center">
+              <i class="pi pi-calendar text-blue-600 mr-2"></i>
+              <span class="font-medium text-gray-700">Data:</span>
+              <span class="ml-1">{{ lesson.date | date: 'dd/MM/yyyy' }}</span>
+            </p>
+
+            <p class="text-sm text-gray-600 flex items-center">
+              <i class="pi pi-clock text-blue-600 mr-2"></i>
+              <span class="font-medium text-gray-700">Hora:</span>
+              <span class="ml-1">
+                {{ lesson.startTime.slice(0, 5) }} - {{ lesson.endTime.slice(0, 5) }}
+              </span>
+            </p>
+          </div>
+
+          <div class="mt-5 flex justify-end">
+            <p-button
+              label="Ver Detalhes"
+              icon="pi pi-info-circle"
+              class="p-button-text p-button-sm"
+              (click)="showDetails(lesson.id)"
+            ></p-button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ⏳ Loading -->
+    <ng-template #loadingTpl>
+      <div class="flex justify-center items-center py-12">
+        <i class="pi pi-spin pi-spinner text-2xl text-gray-500"></i>
+      </div>
+    </ng-template>
+
+    <!-- 🚫 Vazio -->
+    <ng-template #emptyTpl>
+      <div class="text-center text-gray-500 py-12">Nenhuma aula encontrada.</div>
+    </ng-template>
+  </div>
+</div>

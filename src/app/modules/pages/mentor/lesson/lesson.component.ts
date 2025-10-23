@@ -32,7 +32,7 @@ export class LessonListComponent implements OnInit {
   loadLeasons() {
     this.loading = true;
     this.leasonService
-      .findAllLessons(this.userService.getId())
+      .findAllLessonsByMentor(this.userService.getId())
       .pipe(take(1))
       .subscribe({
         next: (data) => {

@@ -1,4 +1,4 @@
-<div class="flex items-center justify-center min-h-screen bg-gray-100 py-2 px-1">
+<div class="flex items-center justify-center min-h-screen bg-gray-100 py-5">
   <div class="w-full max-w-2xl p-8 bg-white rounded-2xl shadow-lg">
     <!-- Verifica se a tela é válida -->
     <ng-container *ngIf="screenValidated; else invalidScreen">
@@ -131,7 +131,11 @@
         <!-- Telefone -->
         <div>
           <p-floatlabel>
-            <input pInputText formControlName="phone" class="w-full" />
+            <p-inputmask
+              mask="(99) 99999-9999"
+              formControlName="phone"
+              placeholder="(99) 99999-9999"
+            />
             <label>Telefone</label>
           </p-floatlabel>
           <div
@@ -139,12 +143,6 @@
             class="text-red-500 text-sm mt-1"
           >
             Campo obrigatório
-          </div>
-          <div
-            *ngIf="f['phone'].touched && f['phone'].errors?.['pattern']"
-            class="text-red-500 text-sm mt-1"
-          >
-            Apenas números são permitidos
           </div>
           <div
             *ngIf="f['phone'].touched && f['phone'].errors?.['maxlength']"
