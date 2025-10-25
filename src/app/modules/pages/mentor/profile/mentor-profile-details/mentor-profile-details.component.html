@@ -1,14 +1,15 @@
 <div class="flex justify-center min-h-[calc(100vh-4rem)] bg-gray-100 py-8 px-4">
   <div class="w-full max-w-3xl bg-white rounded-2xl shadow-lg p-8">
-    <div class="flex justify-between items-center mb-6">
-      <h2 class="text-3xl font-bold text-gray-800">Meu Perfil</h2>
-
-      <button
-        class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-3 py-1 rounded-md text-sm"
+    <!-- Cabeçalho -->
+    <div class="flex items-center justify-between mb-6">
+      <p-button
+        label="Voltar"
+        icon="pi pi-arrow-left"
+        styleClass="p-button-text text-gray-700 hover:text-blue-600"
         (click)="goBack()"
-      >
-        Voltar
-      </button>
+      ></p-button>
+
+      <h2 class="text-3xl font-bold text-gray-800 text-center flex-1">Meu perfil</h2>
     </div>
 
     <!-- Modo de Edição -->
@@ -22,42 +23,29 @@
       <!-- Nome e Sobrenome -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <p-floatlabel>
-          <input pInputText formControlName="name" class="w-full" />
+          <input pInputText formControlName="name" maxlength="70" class="w-full" />
           <label>Nome</label>
         </p-floatlabel>
         <p-floatlabel>
-          <input pInputText formControlName="lastName" class="w-full" />
+          <input pInputText formControlName="lastName" maxlength="70" class="w-full" />
           <label>Sobrenome</label>
         </p-floatlabel>
       </div>
 
-      <!-- Data e Telefone -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <p-floatlabel>
-          <p-datepicker
-            formControlName="birthDate"
-            [showIcon]="true"
-            dateFormat="dd/mm/yy"
-            [maxDate]="maxDate"
-            styleClass="w-full"
-          ></p-datepicker>
-          <label>Data de Nascimento</label>
-        </p-floatlabel>
-
-        <p-floatlabel>
-          <input pInputText formControlName="phone" class="w-full" />
-          <label>Telefone</label>
-        </p-floatlabel>
-      </div>
-
-      <!-- Descrição -->
+      <!-- Data de Nascimento -->
       <p-floatlabel>
-        <textarea pInputTextarea formControlName="description" rows="4" class="w-full"></textarea>
-        <label>Descrição</label>
+        <p-datepicker
+          formControlName="birthDate"
+          [showIcon]="true"
+          dateFormat="dd/mm/yy"
+          [maxDate]="maxDate"
+          styleClass="w-full"
+        ></p-datepicker>
+        <label>Data de Nascimento</label>
       </p-floatlabel>
 
-      <!-- Estado e Nacionalidade -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <!-- Estado, Nacionalidade e LinkedIn -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <p-floatlabel>
           <p-select
             formControlName="state"
@@ -77,12 +65,23 @@
           ></p-select>
           <label>Nacionalidade</label>
         </p-floatlabel>
+
+        <p-floatlabel>
+          <input pInputText formControlName="socialMedias" maxlength="100" class="w-full" />
+          <label>LinkedIn</label>
+        </p-floatlabel>
       </div>
 
-      <!-- Redes sociais -->
+      <!-- Descrição -->
       <p-floatlabel>
-        <input pInputText formControlName="socialMedias" class="w-full" />
-        <label>LinkedIn</label>
+        <textarea
+          pInputTextarea
+          formControlName="description"
+          rows="4"
+          maxlength="1000"
+          class="w-full whitespace-pre-line break-words"
+        ></textarea>
+        <label>Descrição</label>
       </p-floatlabel>
 
       <!-- Botões -->
@@ -122,7 +121,8 @@
             <span class="font-medium text-gray-500">Email:</span> {{ form.get('email')?.value }}
           </p>
           <p>
-            <span class="font-medium text-gray-500">Telefone:</span> {{ form.get('phone')?.value }}
+            <span class="font-medium text-gray-500">Data de Nascimento:</span>
+            {{ form.get('birthDate')?.value | date: 'dd/MM/yyyy' }}
           </p>
           <p>
             <span class="font-medium text-gray-500">Estado:</span>
@@ -132,11 +132,17 @@
             <span class="font-medium text-gray-500">Nacionalidade:</span>
             {{ form.get('nationality')?.value?.name }}
           </p>
+          <p class="sm:col-span-2">
+            <span class="font-medium text-gray-500">LinkedIn:</span>
+            {{ form.get('socialMedias')?.value }}
+          </p>
         </div>
 
-        <div class="mt-4">
+        <div class="mt-4 break-words">
           <p class="font-medium text-gray-500 mb-1">Descrição:</p>
-          <p class="text-gray-700 whitespace-pre-line">{{ form.get('description')?.value }}</p>
+          <p class="text-gray-700 whitespace-pre-line break-words">
+            {{ form.get('description')?.value }}
+          </p>
         </div>
       </div>
 

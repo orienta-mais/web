@@ -19,7 +19,6 @@ import { RegisterMentor } from '../../../../@core/interfaces/mentor.interface';
 import { isValidEmail } from '../../../../@core/validators/email/email.validator';
 import { TermsCheckboxComponent } from '../../../../shared/terms-checkbox/terms-checkbox.component';
 import { InputMaskModule } from 'primeng/inputmask';
-import { removeMaskPhone } from '../../../../@core/utils/removeMaskPhone.utils';
 
 @Component({
   selector: 'app-register-mentor',
@@ -76,11 +75,10 @@ export class RegisterMentorComponent implements OnInit {
       socialMedias: ['', Validators.maxLength(100)],
       description: [
         '',
-        [Validators.required, Validators.minLength(100), Validators.maxLength(500)],
+        [Validators.required, Validators.minLength(100), Validators.maxLength(1000)],
       ],
       state: ['', Validators.required],
       nationality: ['', Validators.required],
-      phone: ['', [Validators.required, Validators.maxLength(15)]],
     });
   }
 
@@ -115,12 +113,8 @@ export class RegisterMentorComponent implements OnInit {
         return;
       }
 
-      const rawPhone = this.mentorForm.get('phone')?.value;
-      const cleanedPhone = removeMaskPhone(rawPhone);
-
       const mentorData: RegisterMentor = {
         ...this.mentorForm.getRawValue(),
-        phone: cleanedPhone,
         role: this.verificationService.getRole(),
         token: this.tokenUrl,
         state: this.mentorForm.get('state')?.value?.name,

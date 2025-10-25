@@ -44,8 +44,6 @@
             </button>
           </p-floatlabel>
 
-          <!-- Texto pequeno para alternar -->
-
           <div
             *ngIf="passwordCtrl?.touched && passwordCtrl?.errors?.['required']"
             class="text-red-500 text-sm"
@@ -71,7 +69,7 @@
         <!-- Nome -->
         <div>
           <p-floatlabel>
-            <input pInputText formControlName="name" class="w-full" />
+            <input pInputText formControlName="name" maxlength="70" class="w-full" />
             <label>Nome</label>
           </p-floatlabel>
           <div
@@ -80,18 +78,12 @@
           >
             Campo obrigatório
           </div>
-          <div
-            *ngIf="f['name'].touched && f['name'].errors?.['maxlength']"
-            class="text-red-500 text-sm"
-          >
-            Máximo de 50 caracteres
-          </div>
         </div>
 
         <!-- Sobrenome -->
         <div>
           <p-floatlabel>
-            <input pInputText formControlName="lastName" class="w-full" />
+            <input pInputText formControlName="lastName" maxlength="70" class="w-full" />
             <label>Sobrenome</label>
           </p-floatlabel>
           <div
@@ -100,12 +92,6 @@
           >
             Campo obrigatório
           </div>
-          <div
-            *ngIf="f['lastName'].touched && f['lastName'].errors?.['maxlength']"
-            class="text-red-500 text-sm"
-          >
-            Máximo de 50 caracteres
-          </div>
         </div>
 
         <!-- Data de nascimento -->
@@ -113,6 +99,7 @@
           <p-floatlabel>
             <p-datepicker
               formControlName="birthDate"
+              [defaultDate]="maxDate"
               dateFormat="dd/mm/yy"
               [maxDate]="maxDate"
               [showIcon]="true"
@@ -130,34 +117,10 @@
           </div>
         </div>
 
-        <!-- Telefone -->
-        <div>
-          <p-floatlabel>
-            <p-inputmask
-              mask="(99) 99999-9999"
-              formControlName="phone"
-              placeholder="(99) 99999-9999"
-            />
-            <label>Telefone</label>
-          </p-floatlabel>
-          <div
-            *ngIf="f['phone'].touched && f['phone'].errors?.['required']"
-            class="text-red-500 text-sm mt-1"
-          >
-            Campo obrigatório
-          </div>
-          <div
-            *ngIf="f['phone'].touched && f['phone'].errors?.['maxlength']"
-            class="text-red-500 text-sm mt-1"
-          >
-            Máximo de 15 caracteres
-          </div>
-        </div>
-
         <!-- LinkedIn -->
         <div>
           <p-floatlabel>
-            <input pInputText formControlName="socialMedias" class="w-full" />
+            <input pInputText formControlName="socialMedias" maxlength="100" class="w-full" />
             <label>LinkedIn</label>
           </p-floatlabel>
           <div
@@ -175,6 +138,7 @@
               pInputTextarea
               formControlName="description"
               rows="4"
+              maxlength="1000"
               class="w-full"
               placeholder="Fale sobre você"
             ></textarea>
@@ -196,7 +160,7 @@
             *ngIf="f['description'].touched && f['description'].errors?.['maxlength']"
             class="text-red-500 text-sm mt-1"
           >
-            Máximo de 500 caracteres
+            Máximo de 1000 caracteres
           </div>
         </div>
 

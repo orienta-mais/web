@@ -2,8 +2,8 @@
   <div class="w-full max-w-2xl p-8 bg-red rounded-2xl shadow-lg bg-white">
     <div>
       <p-button
-      label="Voltar"
-      styleClass="p-button-text text-gray-700 hover:text-blue-600"
+        label="Voltar"
+        styleClass="p-button-text text-gray-700 hover:text-blue-600"
         (click)="returnBack()"
       ></p-button>
       <h2 class="text-3xl font-bold text-gray-800 text-center flex-1 mb-6">
@@ -122,20 +122,22 @@
             <p class="text-base text-gray-700 whitespace-pre-line">{{ leason?.description }}</p>
           </div>
 
-          <div class="grid grid-cols-2 gap-6 mt-4">
+          <div class="space-y-4 mt-4">
             <div>
               <p class="text-sm text-gray-500 font-medium">Data</p>
               <p class="text-base text-gray-800">{{ leason?.date | date: 'dd/MM/yyyy' }}</p>
             </div>
 
-            <div>
-              <p class="text-sm text-gray-500 font-medium">Hora de início</p>
-              <p class="text-base text-gray-800">{{ leason?.startTime?.slice(0, 5) }}</p>
-            </div>
+            <div class="grid grid-cols-2 gap-6">
+              <div>
+                <p class="text-sm text-gray-500 font-medium">Hora de início</p>
+                <p class="text-base text-gray-800">{{ leason?.startTime?.slice(0, 5) }}</p>
+              </div>
 
-            <div>
-              <p class="text-sm text-gray-500 font-medium">Hora de fim</p>
-              <p class="text-base text-gray-800">{{ leason?.endTime?.slice(0, 5) }}</p>
+              <div>
+                <p class="text-sm text-gray-500 font-medium">Hora de fim</p>
+                <p class="text-base text-gray-800">{{ leason?.endTime?.slice(0, 5) }}</p>
+              </div>
             </div>
           </div>
         </div>
@@ -144,7 +146,6 @@
       <div class="flex gap-4 mt-8 justify-center">
         <p-button
           label="Editar Aula"
-          icon="pi pi-pencil"
           styleClass="w-40"
           severity="info"
           (click)="enableEdit()"
@@ -152,7 +153,6 @@
 
         <p-button
           label="Excluir Aula"
-          icon="pi pi-trash"
           severity="danger"
           styleClass="w-40"
           (click)="confirmDelete()"

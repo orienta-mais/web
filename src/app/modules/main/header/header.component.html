@@ -1,7 +1,6 @@
 <header
-  [ngClass]="{
-    'bg-blue-700': role === 'MENTOR',
-    'bg-yellow-500': role === 'MENTORED',
+  [ngStyle]="{
+    'background-color': role === 'MENTOR' ? '#DB7539' : '#4B88A2',
   }"
   class="text-white shadow-md"
 >
@@ -9,23 +8,28 @@
     <div class="flex justify-between items-center h-16">
       <!-- Logo -->
       <div class="flex items-center space-x-2">
-        <div class="text-2xl font-bold">🚀 OrientaMais</div>
+        <img
+          [src]="role === 'MENTOR' ? 'logoMentor.png' : 'logoMentored.png'"
+          alt="Logo Orienta Mais"
+          class="h-10 w-auto object-contain cursor-pointer"
+          (click)="goHome()"
+        />
       </div>
 
       <!-- Menu -->
       <div class="flex space-x-6 items-center">
         <ng-container *ngIf="role === 'MENTOR'">
           <a
-            routerLink="/lesson"
-            routerLinkActive="text-yellow-400"
-            class="hover:text-yellow-300 transition"
+            routerLink="/mentor/lesson"
+            routerLinkActive="text-gray-600"
+            class="hover:text-gray-600 transition"
           >
             Reunião
           </a>
           <a
             routerLink="/mentor/profile"
-            routerLinkActive="text-yellow-400"
-            class="hover:text-yellow-300 transition"
+            routerLinkActive="text-gray-600"
+            class="hover:text-gray-600 transition"
           >
             Perfil
           </a>
@@ -34,15 +38,15 @@
         <ng-container *ngIf="role === 'MENTORED'">
           <a
             routerLink="/mentored/lesson"
-            routerLinkActive="text-yellow-400"
-            class="hover:text-yellow-300 transition"
+            routerLinkActive="text-orange-300"
+            class="hover:text-orange-300 transition"
           >
             Reunião
           </a>
           <a
             routerLink="/home/pagina4"
-            routerLinkActive="text-yellow-400"
-            class="hover:text-yellow-300 transition"
+            routerLinkActive="text-orange-300"
+            class="hover:text-orange-300 transition"
           >
             Página 4
           </a>
@@ -51,9 +55,8 @@
 
       <!-- Usuário / Logout -->
       <div class="flex items-center space-x-4">
-        <span class="text-sm font-medium">Olá, {{ name }}</span>
         <button
-          class="px-3 py-1 bg-red-600 hover:bg-red-700 rounded-md text-white text-sm"
+          class="px-3 py-1 bg-red-600 hover:bg-red-700 rounded-md text-white text-sm cursor-pointer"
           (click)="logout()"
         >
           Sair

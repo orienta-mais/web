@@ -46,10 +46,10 @@ export class LessonListComponent implements OnInit {
   }
 
   goToCreate() {
-    this.router.navigate(['/lesson/create-leason']);
+    this.router.navigate(['/mentor/lesson/create-leason']);
   }
 
   showDetails(leasonId: string) {
-    this.router.navigate([`/lesson/details/${leasonId}`]);
+    this.router.navigate([`/mentor/lesson/details/${leasonId}`]);
   }
 }

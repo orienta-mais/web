@@ -53,24 +53,23 @@ export class MentorProfileDetailsComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.mentorId = this.userService.getId();
     const today = new Date();
     this.maxDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
     this.initializeForm();
     this.loadMentorData();
-    this.mentorId = this.userService.getId();
   }
 
   initializeForm() {
     this.form = this.fb.group({
       email: [{ value: '', disabled: true }],
-      name: ['', [Validators.required, Validators.maxLength(50)]],
-      lastName: ['', [Validators.required, Validators.maxLength(50)]],
+      name: ['', [Validators.required, Validators.maxLength(70)]],
+      lastName: ['', [Validators.required, Validators.maxLength(70)]],
       birthDate: ['', Validators.required],
-      phone: ['', [Validators.required, Validators.pattern(/^\d+$/), Validators.maxLength(15)]],
       socialMedias: ['', Validators.maxLength(100)],
       description: [
         '',
-        [Validators.required, Validators.minLength(100), Validators.maxLength(500)],
+        [Validators.required, Validators.minLength(100), Validators.maxLength(1000)],
       ],
       state: ['', Validators.required],
       nationality: ['', Validators.required],
@@ -89,7 +88,6 @@ export class MentorProfileDetailsComponent implements OnInit {
               name: data.name,
               lastName: data.lastName,
               birthDate: new Date(data.birthDate),
-              //phone: data.phone,
               socialMedias: data.socialMedias,
               description: data.description,
               state: this.states.find((s) => s.name === data.state),
@@ -109,14 +107,17 @@ export class MentorProfileDetailsComponent implements OnInit {
 
   cancelEdit() {
     this.editMode = false;
-    this.loadMentorData(); // restaura os dados originais
+    this.loadMentorData();
   }
 
   handleUpdate() {
+    console.log('chegou 1');
+
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
+    console.log('chegou 2');
 
     const payload = {
       ...this.form.getRawValue(),
@@ -127,6 +128,7 @@ export class MentorProfileDetailsComponent implements OnInit {
     this.loading = true;
 
     if (this.mentorId) {
+      console.log('chegou 3');
       this.mentorService
         .updateProfile(this.mentorId, payload)
         .pipe(take(1))

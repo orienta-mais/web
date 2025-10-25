@@ -19,7 +19,6 @@ import { MentoredService } from '../../../../@core/services/mentored/mentored.se
 import { isValidEmail } from '../../../../@core/validators/email/email.validator';
 import { TermsCheckboxComponent } from '../../../../shared/terms-checkbox/terms-checkbox.component';
 import { InputMaskModule } from 'primeng/inputmask';
-import { removeMaskPhone } from '../../../../@core/utils/removeMaskPhone.utils';
 
 @Component({
   selector: 'app-register-mentored',
@@ -70,22 +69,21 @@ export class RegisterMentoredComponent implements OnInit {
           Validators.pattern(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&^()\-_=+{}[\]|;:'",.<>]).+$/),
         ],
       ],
-      name: ['', [Validators.required, Validators.maxLength(50)]],
-      lastName: ['', [Validators.required, Validators.maxLength(50)]],
+      name: ['', [Validators.required, Validators.maxLength(70)]],
+      lastName: ['', [Validators.required, Validators.maxLength(70)]],
       birthDate: ['', Validators.required],
       description: [
         '',
-        [Validators.required, Validators.minLength(100), Validators.maxLength(500)],
+        [Validators.required, Validators.minLength(100), Validators.maxLength(1000)],
       ],
       state: ['', Validators.required],
       nationality: ['', Validators.required],
-      phone: ['', [Validators.required, Validators.maxLength(15)]],
     });
   }
 
   ngOnInit() {
     const today = new Date();
-    this.maxDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+    this.maxDate = new Date(today.getFullYear() - 16, today.getMonth(), today.getDate());
 
     this.routeUrl.queryParamMap.subscribe((pm) => {
       const token = pm.get('token');
@@ -113,14 +111,9 @@ export class RegisterMentoredComponent implements OnInit {
         this.toast.error('Você deve aceitar os termos para continuar.');
         return;
       }
-
-      const rawPhone = this.mentoredForm.get('phone')?.value;
-      const cleanedPhone = removeMaskPhone(rawPhone);
-
       const mentoredData: RegisterMentored = {
         ...this.mentoredForm.getRawValue(),
         role: this.verificationService.getRole(),
-        phone: cleanedPhone,
         token: this.tokenUrl,
         state: this.mentoredForm.get('state')?.value?.name,
         nationality: this.mentoredForm.get('nationality')?.value?.name,

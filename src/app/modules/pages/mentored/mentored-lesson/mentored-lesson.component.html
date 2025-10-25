@@ -2,13 +2,8 @@
   <div class="w-full max-w-6xl p-8 bg-white rounded-2xl shadow-lg">
     <!-- Cabeçalho -->
     <div class="flex justify-between items-center mb-8">
-      <h2 class="text-3xl font-bold text-gray-800">Minhas Aulas Mentoradas</h2>
-      <p-button
-        label="Minhas Reuniões"
-        icon="pi pi-calendar"
-        class="p-button-success p-button-sm"
-        (click)="goToMyMeetings()"
-      ></p-button>
+      <h2 class="text-3xl font-bold text-gray-800">Aulas disponiveis</h2>
+      <p-button label="Minhas Reuniões" severity="info" (click)="goToMyMeetings()"></p-button>
     </div>
 
     <!-- 🔍 Filtros -->
@@ -42,12 +37,11 @@
 
       <!-- Botões -->
       <div class="flex items-end gap-2 justify-end sm:justify-start">
-        <p-button label="Buscar" icon="pi pi-search" type="submit" class="p-button-sm"></p-button>
+        <p-button label="Buscar" type="submit" class="p-button-sm"></p-button>
 
         <p-button
           label="Limpar"
-          icon="pi pi-times"
-          class="p-button-secondary p-button-sm"
+          class="p-button-sm"
           type="button"
           (click)="clearFilters()"
         ></p-button>
@@ -60,11 +54,12 @@
       (click)="toggleOrder()"
     >
       <span class="font-medium">Ordenar por data</span>
+
       <i
         class="pi text-lg transition-transform duration-200"
         [ngClass]="{
           'pi-sort-amount-up-alt rotate-180': order === 'asc',
-          'pi-sort-amount-down': order === 'desc',
+          'pi-sort-amount-up': order === 'desc',
         }"
       ></i>
     </div>

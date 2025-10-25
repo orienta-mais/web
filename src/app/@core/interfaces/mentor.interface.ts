@@ -9,7 +9,6 @@ export interface RegisterMentor {
   state: string;
   nationality: string;
   token: string;
-  phone: string;
 }
 
 export interface CreateLesson {

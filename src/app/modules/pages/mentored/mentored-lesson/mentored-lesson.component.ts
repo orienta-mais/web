@@ -30,7 +30,7 @@ export class MentoredLessonComponent implements OnInit {
   lessons: LessonListResponse[] = [];
   loading = false;
   filterForm: FormGroup;
-  order: 'asc' | 'desc' = 'desc'; // ordem inicial
+  order: 'asc' | 'desc' = 'desc';
 
   constructor(
     private fb: FormBuilder,

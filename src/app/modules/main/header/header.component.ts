@@ -33,4 +33,8 @@ export class HeaderComponent implements OnInit {
     this.userService.clear();
     this.router.navigate(['/login']);
   }
+
+  goHome() {
+    this.router.navigate(['/home']);
+  }
 }
