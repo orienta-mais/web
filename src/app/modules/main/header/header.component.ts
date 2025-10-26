@@ -30,7 +30,7 @@ export class HeaderComponent implements OnInit {
   }
 
   logout() {
-    this.userService.clear();
+    this.userService.logout();
   }
 
   goHome() {

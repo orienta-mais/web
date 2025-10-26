@@ -11,12 +11,6 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "assets": [
-            {
-              "glob": "**/*",
-              "input": "public"
-            }
-          ],
           "builder": "@angular/build:application",
           "options": {
             "outputPath": "dist/orienta-mais",

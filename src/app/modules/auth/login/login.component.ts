@@ -25,7 +25,6 @@ export class LoginComponent {
   showPassword = false;
 
   ngOnInit() {
-    this.service.logout();
     this.verificationService.clear();
   }
 

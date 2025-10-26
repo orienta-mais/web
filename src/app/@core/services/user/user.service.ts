@@ -54,10 +54,7 @@ export class UserService {
     return this.email;
   }
 
-  clear() {
-    this.name = null;
-    this.role = null;
-    this.email = null;
+  logout() {
     this.authService.logout();
   }
 }
