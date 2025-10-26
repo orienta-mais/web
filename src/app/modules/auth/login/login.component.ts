@@ -26,6 +26,7 @@ export class LoginComponent {
 
   ngOnInit() {
     this.service.logout();
+    this.verificationService.clear();
   }
 
   constructor(
@@ -66,11 +67,11 @@ export class LoginComponent {
         next: (res: LoginResponse) => {
           this.verificationService.clear();
           this.service.saveTokens(res);
-          this.router.navigate(['']);
+          this.router.navigate(['home']);
           this.toast.success('Login realizado com sucesso');
         },
         error: (e: HttpErrorResponse) => {
-          this.toast.error(e.error?.error);
+          this.toast.error(e.error?.message);
         },
       });
   }

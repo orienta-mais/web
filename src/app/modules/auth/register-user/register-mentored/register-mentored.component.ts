@@ -76,6 +76,7 @@ export class RegisterMentoredComponent implements OnInit {
         '',
         [Validators.required, Validators.minLength(100), Validators.maxLength(1000)],
       ],
+      socialMedias: ['', Validators.maxLength(100)],
       state: ['', Validators.required],
       nationality: ['', Validators.required],
     });
@@ -131,7 +132,7 @@ export class RegisterMentoredComponent implements OnInit {
           },
           error: (e: HttpErrorResponse) => {
             if (e.status === 400) {
-              this.toast.error(e.error?.error);
+              this.toast.error(e.error?.message);
             } else {
               this.toast.error('Ocorreu um erro inesperado.');
             }

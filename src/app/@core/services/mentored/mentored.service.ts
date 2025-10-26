@@ -13,4 +13,16 @@ export class MentoredService {
   register(body: RegisterMentored): Observable<void> {
     return this.http.post<void>(`${this._baseApi}/register`, body);
   }
+
+  getProfile(mentoredId: string): Observable<RegisterMentored> {
+    return this.http.get<RegisterMentored>(`${this._baseApi}/${mentoredId}`);
+  }
+
+  updateProfile(mentoredId: string, body: RegisterMentored): Observable<void> {
+    return this.http.put<void>(`${this._baseApi}/${mentoredId}`, body);
+  }
+
+  deleteAccount(mentoredId: string): Observable<void> {
+    return this.http.delete<void>(`${this._baseApi}/${mentoredId}`);
+  }
 }

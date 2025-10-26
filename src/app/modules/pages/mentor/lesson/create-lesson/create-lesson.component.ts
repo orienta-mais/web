@@ -103,7 +103,7 @@ export class CreateLeasonComponent {
         error: (e: HttpErrorResponse) => {
           this.loading = false;
           const msg =
-            e.error?.error ||
+            e.error?.message ||
             e.error?.message ||
             'Erro ao cadastrar aula. Verifique os dados e tente novamente.';
           this.toast.error(msg);
@@ -125,7 +125,7 @@ export class CreateLeasonComponent {
     return this.form.controls;
   }
 
-  returnBack() {
+  goBack() {
     this.router.navigate(['/lesson']);
   }
 }

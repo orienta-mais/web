@@ -83,6 +83,6 @@ export class MentoredLessonDetailsComponent implements OnInit {
   }
 
   returnBack() {
-    this.router.navigate(['/mentored']);
+    this.router.navigate(['/mentored/lesson']);
   }
 }

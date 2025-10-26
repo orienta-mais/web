@@ -73,7 +73,7 @@ export class SendValidateEmailComponent implements OnInit {
       },
       error: (e: HttpErrorResponse) => {
         this.isLoading = false;
-        this.toast.error(e.error?.error);
+        this.toast.error(e.error?.message);
       },
     });
   }

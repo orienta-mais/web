@@ -116,6 +116,19 @@
             Campo obrigatório
           </div>
         </div>
+
+        <div>
+          <p-floatlabel>
+            <input pInputText formControlName="socialMedias" maxlength="100" class="w-full" />
+            <label>LinkedIn</label>
+          </p-floatlabel>
+          <div
+            *ngIf="f['socialMedias'].touched && f['socialMedias'].errors?.['maxlength']"
+            class="text-red-500 text-sm mt-1"
+          >
+            Máximo de 100 caracteres
+          </div>
+        </div>
         <div>
           <p-floatlabel>
             <textarea

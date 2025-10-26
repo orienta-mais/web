@@ -31,7 +31,6 @@ export class HeaderComponent implements OnInit {
 
   logout() {
     this.userService.clear();
-    this.router.navigate(['/login']);
   }
 
   goHome() {

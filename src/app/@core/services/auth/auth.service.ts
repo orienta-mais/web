@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import {
@@ -11,6 +11,7 @@ import {
 } from '../../interfaces/auth.interface';
 import { Observable } from 'rxjs';
 import { ROLE } from '../../enums/role.enum';
+import { Router } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -19,7 +20,10 @@ export class AuthService {
   private ACCESS_TOKEN_KEY = 'access_token';
   private REFRESH_TOKEN_KEY = 'refresh_token';
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+  ) {}
 
   login(body: LoginRequest): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this._baseApi}/auth/login`, body);
@@ -77,5 +81,6 @@ export class AuthService {
   logout() {
     localStorage.removeItem(this.ACCESS_TOKEN_KEY);
     localStorage.removeItem(this.REFRESH_TOKEN_KEY);
+    this.router.navigate(['/login']);
   }
 }

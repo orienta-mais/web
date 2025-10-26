@@ -153,14 +153,14 @@ export class LeasonDetailsComponent implements OnInit {
       .subscribe({
         next: () => {
           this.toast.success('Aula excluída com sucesso!');
-          this.router.navigate(['/lesson']);
+          this.router.navigate(['/mentor/lesson']);
         },
         error: () => this.toast.error('Erro ao excluir aula.'),
       });
   }
 
   returnBack() {
-    this.router.navigate(['/lesson']);
+    this.router.navigate(['/mentor/lesson']);
   }
 
   get f() {

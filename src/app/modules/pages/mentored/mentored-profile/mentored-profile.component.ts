@@ -7,18 +7,18 @@ import { TextareaModule } from 'primeng/textarea';
 import { ButtonModule } from 'primeng/button';
 import { DatePickerModule } from 'primeng/datepicker';
 import { SelectModule } from 'primeng/select';
-import { COUNTRIES, STATES } from '../../../../../shared/constants';
+import { COUNTRIES, STATES } from '../../../../shared/constants';
 import { Router } from '@angular/router';
-import { MentorService } from '../../../../../@core/services/mentor/mentor.service';
-import { UserService } from '../../../../../@core/services/user/user.service';
-import { ToastService } from '../../../../../shared/components/toast/toast.service';
+import { MentoredService } from '../../../../@core/services/mentored/mentored.service';
+import { UserService } from '../../../../@core/services/user/user.service';
+import { ToastService } from '../../../../shared/components/toast/toast.service';
 import { take } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 
 @Component({
-  selector: 'app-mentor-profile-details',
+  selector: 'app-mentored-profile',
   standalone: true,
   imports: [
     CommonModule,
@@ -32,20 +32,20 @@ import { ConfirmationService } from 'primeng/api';
     ConfirmDialogModule,
   ],
   providers: [ConfirmationService],
-  templateUrl: './mentor-profile-details.component.html',
+  templateUrl: './mentored-profile.component.html',
 })
-export class MentorProfileDetailsComponent implements OnInit {
+export class MentoredProfileComponent implements OnInit {
   form!: FormGroup;
   loading = false;
   maxDate!: Date;
   states = STATES;
   nationalities = COUNTRIES;
   editMode = false;
-  mentorId: string | null = null;
+  mentoredId: string | null = null;
 
   constructor(
     private fb: FormBuilder,
-    private mentorService: MentorService,
+    private mentoredService: MentoredService,
     private toast: ToastService,
     private router: Router,
     private confirmService: ConfirmationService,
@@ -53,11 +53,11 @@ export class MentorProfileDetailsComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.mentorId = this.userService.getId();
+    this.mentoredId = this.userService.getId();
     const today = new Date();
     this.maxDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
     this.initializeForm();
-    this.loadMentorData();
+    this.loadMentoredData();
   }
 
   initializeForm() {
@@ -76,10 +76,10 @@ export class MentorProfileDetailsComponent implements OnInit {
     });
   }
 
-  loadMentorData() {
-    if (this.mentorId) {
-      this.mentorService
-        .getProfile(this.mentorId)
+  loadMentoredData() {
+    if (this.mentoredId) {
+      this.mentoredService
+        .getProfile(this.mentoredId)
         .pipe(take(1))
         .subscribe({
           next: (data) => {
@@ -95,7 +95,7 @@ export class MentorProfileDetailsComponent implements OnInit {
             });
           },
           error: () => {
-            this.toast.error('Erro ao carregar dados do mentor.');
+            this.toast.error('Erro ao carregar dados do mentorado.');
           },
         });
     }
@@ -107,17 +107,14 @@ export class MentorProfileDetailsComponent implements OnInit {
 
   cancelEdit() {
     this.editMode = false;
-    this.loadMentorData();
+    this.loadMentoredData();
   }
 
   handleUpdate() {
-    console.log('chegou 1');
-
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
-    console.log('chegou 2');
 
     const payload = {
       ...this.form.getRawValue(),
@@ -127,10 +124,9 @@ export class MentorProfileDetailsComponent implements OnInit {
 
     this.loading = true;
 
-    if (this.mentorId) {
-      console.log('chegou 3');
-      this.mentorService
-        .updateProfile(this.mentorId, payload)
+    if (this.mentoredId) {
+      this.mentoredService
+        .updateProfile(this.mentoredId, payload)
         .pipe(take(1))
         .subscribe({
           next: () => {
@@ -160,9 +156,9 @@ export class MentorProfileDetailsComponent implements OnInit {
   }
 
   deleteProfile() {
-    if (this.mentorId) {
-      this.mentorService
-        .deleteAccount(this.mentorId)
+    if (this.mentoredId) {
+      this.mentoredService
+        .deleteAccount(this.mentoredId)
         .pipe(take(1))
         .subscribe({
           next: () => {

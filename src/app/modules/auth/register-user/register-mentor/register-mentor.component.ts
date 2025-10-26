@@ -132,7 +132,7 @@ export class RegisterMentorComponent implements OnInit {
           },
           error: (e: HttpErrorResponse) => {
             if (e.status === 400) {
-              this.toast.error(e.error?.error);
+              this.toast.error(e.error?.message);
             } else {
               this.toast.error('Ocorreu um erro inesperado.');
             }
