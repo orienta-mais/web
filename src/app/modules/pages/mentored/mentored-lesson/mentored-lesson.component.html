@@ -96,6 +96,11 @@
                 {{ lesson.startTime.slice(0, 5) }} - {{ lesson.endTime.slice(0, 5) }}
               </span>
             </p>
+            <p class="text-sm text-gray-600 mt-1 flex items-center">
+              <i class="pi pi-user text-blue-600 mr-2"></i>
+              <span class="font-medium text-gray-700">Mentor:</span>
+              <span class="ml-1">{{ lesson.mentorName }}</span>
+            </p>
           </div>
 
           <div class="mt-5 flex justify-end">

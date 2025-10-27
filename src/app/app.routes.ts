@@ -17,6 +17,7 @@ import { MentorProfileDetailsComponent } from './modules/pages/mentor/profile/me
 import { MentoredLessonDetailsComponent } from './modules/pages/mentored/mentored-lesson/mentored-lesson-details/mentored-lesson-details.component';
 import { HomeComponent } from './modules/main/home/home.component';
 import { MentoredProfileComponent } from './modules/pages/mentored/mentored-profile/mentored-profile.component';
+import { MentoredLessonRegisteredComponent } from './modules/pages/mentored/mentored-lesson/mentored-lesson-registered/mentored-lesson-registered.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -81,6 +82,12 @@ export const routes: Routes = [
       {
         path: 'mentored/profile',
         component: MentoredProfileComponent,
+        canActivate: [AuthGuard],
+        data: { roles: [ROLE.MENTORED] },
+      },
+      {
+        path: 'mentored/lessons/registered',
+        component: MentoredLessonRegisteredComponent,
         canActivate: [AuthGuard],
         data: { roles: [ROLE.MENTORED] },
       },

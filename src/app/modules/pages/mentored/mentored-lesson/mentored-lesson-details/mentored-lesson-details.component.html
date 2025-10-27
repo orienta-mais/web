@@ -59,11 +59,16 @@
       </p>
 
       <p-button
+        *ngIf="!isRegistered"
         label="Cadastrar-se na Aula"
         icon="pi pi-user-plus"
         styleClass="p-button-lg w-full sm:w-auto"
         (click)="confirmRegister()"
       ></p-button>
+
+      <p *ngIf="isRegistered" class="text-green-600 font-medium mt-4 text-center">
+        ✅ Você já está cadastrado nesta aula.
+      </p>
     </div>
   </div>
 </div>

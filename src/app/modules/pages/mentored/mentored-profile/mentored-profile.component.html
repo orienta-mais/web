@@ -3,6 +3,7 @@
     <!-- Cabeçalho -->
     <div>
       <p-button
+        icon="pi pi-arrow-left"
         label="Voltar"
         styleClass="p-button-text text-gray-700 hover:text-blue-600"
         (click)="goBack()"
@@ -12,7 +13,7 @@
     </div>
 
     <!-- Modo de Edição -->
-    <form *ngIf="editMode" [formGroup]="form" (ngSubmit)="handleUpdate()" class="space-y-5">
+    <form *ngIf="editMode" [formGroup]="form" (ngSubmit)="handleUpdate()" class="space-y-7">
       <!-- Email -->
       <p-floatlabel>
         <input pInputText formControlName="email" readonly class="w-full" />
@@ -44,7 +45,7 @@
       </p-floatlabel>
 
       <!-- Estado e Nacionalidade -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 space-y-3">
         <p-floatlabel>
           <p-select
             formControlName="state"
@@ -72,16 +73,17 @@
       </div>
 
       <!-- Descrição -->
-      <p-floatlabel>
+      <div class="flex flex-col">
+        <label class="text-gray-500 text-sm font-medium mb-1 ml-3">Descrição</label>
         <textarea
           pInputTextarea
           formControlName="description"
           rows="4"
           maxlength="1000"
-          class="w-full whitespace-pre-line break-words"
+          [autoResize]="true"
+          class="w-full border border-gray-300 rounded-md p-3 whitespace-pre-line break-words focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition"
         ></textarea>
-        <label>Descrição</label>
-      </p-floatlabel>
+      </div>
 
       <!-- Botões -->
       <div class="flex flex-col sm:flex-row gap-4 mt-6">

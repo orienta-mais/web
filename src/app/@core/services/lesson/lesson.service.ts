@@ -51,4 +51,8 @@ export class LessonService {
   registerMentoredInLesson(lessonId: string): Observable<void> {
     return this.http.post<void>(`${this._baseApi}/${lessonId}/register-mentored`, {});
   }
+
+  findAllRegisteredLessonsByMentored(mentoredId: string): Observable<LeasonListResponse[]> {
+    return this.http.get<LeasonListResponse[]>(`${this._baseApi}/mentored/${mentoredId}/lessons`);
+  }
 }

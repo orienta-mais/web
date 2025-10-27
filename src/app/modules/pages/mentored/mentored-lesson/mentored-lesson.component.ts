@@ -6,7 +6,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { DatePickerModule } from 'primeng/datepicker';
 import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-import { take } from 'rxjs';
+import { take, forkJoin } from 'rxjs';
 import { LessonService } from '../../../../@core/services/lesson/lesson.service';
 import { UserService } from '../../../../@core/services/user/user.service';
 import { LeasonListResponse as LessonListResponse } from '../../../../@core/interfaces/mentor.interface';
@@ -54,7 +54,7 @@ export class MentoredLessonComponent implements OnInit {
   }
 
   goToMyMeetings() {
-    this.router.navigate(['/mentored/my-meetings']);
+    this.router.navigate(['/mentored/lessons/registered']);
   }
 
   loadLessons() {
@@ -66,12 +66,17 @@ export class MentoredLessonComponent implements OnInit {
       order: this.order,
     };
 
-    this.lessonService
-      .findAllLessonsByMentored(filters)
+    const userId = this.userService.getId();
+
+    forkJoin({
+      allLessons: this.lessonService.findAllLessonsByMentored(filters),
+      registeredLessons: this.lessonService.findAllRegisteredLessonsByMentored(userId),
+    })
       .pipe(take(1))
       .subscribe({
-        next: (data) => {
-          this.lessons = data;
+        next: ({ allLessons, registeredLessons }) => {
+          const registeredIds = new Set(registeredLessons.map((r) => r.id));
+          this.lessons = allLessons.filter((l) => !registeredIds.has(l.id));
           this.loading = false;
         },
         error: () => {

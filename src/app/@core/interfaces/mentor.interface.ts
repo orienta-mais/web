@@ -31,6 +31,7 @@ export interface LeasonListResponse {
   date: string;
   startTime: string;
   endTime: string;
+  mentorName: string;
 }
 
 export interface LeasonDetailsResponse {

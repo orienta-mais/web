@@ -4,10 +4,12 @@ import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import { ActivatedRoute, Router } from '@angular/router';
-import { take } from 'rxjs';
+import { take, forkJoin } from 'rxjs';
 import { LessonService } from '../../../../../@core/services/lesson/lesson.service';
 import { ToastService } from '../../../../../shared/components/toast/toast.service';
 import { LeasonDetailsResponse } from '../../../../../@core/interfaces/mentor.interface';
+import { HttpErrorResponse } from '@angular/common/http';
+import { UserService } from '../../../../../@core/services/user/user.service';
 
 @Component({
   selector: 'app-mentored-lesson-details',
@@ -19,6 +21,7 @@ import { LeasonDetailsResponse } from '../../../../../@core/interfaces/mentor.in
 export class MentoredLessonDetailsComponent implements OnInit {
   lesson?: LeasonDetailsResponse;
   loading = false;
+  isRegistered = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -26,30 +29,33 @@ export class MentoredLessonDetailsComponent implements OnInit {
     private lessonService: LessonService,
     private toast: ToastService,
     private confirmService: ConfirmationService,
+    private userService: UserService,
   ) {}
 
   ngOnInit() {
     const lessonId = this.route.snapshot.paramMap.get('id');
-    if (lessonId) {
-      this.loadLesson(lessonId);
-    }
-  }
+    const userId = this.userService.getId();
 
-  loadLesson(lessonId: string) {
-    this.loading = true;
-    this.lessonService
-      .findLessonById(lessonId)
-      .pipe(take(1))
-      .subscribe({
-        next: (data) => {
-          this.lesson = data;
-          this.loading = false;
-        },
-        error: () => {
-          this.toast.error('Erro ao carregar detalhes da aula.');
-          this.loading = false;
-        },
-      });
+    if (lessonId && userId) {
+      this.loading = true;
+
+      forkJoin({
+        lesson: this.lessonService.findLessonById(lessonId),
+        registered: this.lessonService.findAllRegisteredLessonsByMentored(userId),
+      })
+        .pipe(take(1))
+        .subscribe({
+          next: ({ lesson, registered }) => {
+            this.lesson = lesson;
+            this.isRegistered = registered.some((r) => r.id === lessonId);
+            this.loading = false;
+          },
+          error: () => {
+            this.toast.error('Erro ao carregar detalhes da aula.');
+            this.loading = false;
+          },
+        });
+    }
   }
 
   confirmRegister() {
@@ -73,12 +79,10 @@ export class MentoredLessonDetailsComponent implements OnInit {
       .pipe(take(1))
       .subscribe({
         next: () => {
-          this.toast.success(
-            'Cadastro realizado com sucesso! Verifique seu e-mail para o link da aula.',
-            6000,
-          );
+          this.toast.success('Cadastro realizado com sucesso!');
+          this.isRegistered = true;
         },
-        error: () => this.toast.error('Erro ao se cadastrar na aula.'),
+        error: (e: HttpErrorResponse) => this.toast.error(e.error?.message),
       });
   }
 
