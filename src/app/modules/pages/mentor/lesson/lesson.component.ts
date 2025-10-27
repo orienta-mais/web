@@ -36,7 +36,18 @@ export class LessonListComponent implements OnInit {
       .pipe(take(1))
       .subscribe({
         next: (data) => {
-          this.lessons = data;
+          this.lessons = data.sort((a, b) => {
+            const dateA = new Date(a.date).getTime();
+            const dateB = new Date(b.date).getTime();
+            if (dateA !== dateB) {
+              return dateA - dateB;
+            }
+            const startA = a.startTime.localeCompare(b.startTime);
+            if (startA !== 0) {
+              return startA;
+            }
+            return a.endTime.localeCompare(b.endTime);
+          });
           this.loading = false;
         },
         error: () => {
