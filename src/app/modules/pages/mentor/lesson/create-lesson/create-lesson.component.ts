@@ -98,7 +98,7 @@ export class CreateLeasonComponent {
           this.toast.success('Aula cadastrada com sucesso!');
           this.form.reset();
           this.loading = false;
-          this.router.navigate(['/lesson']);
+          this.router.navigate(['/mentor/lesson']);
         },
         error: (e: HttpErrorResponse) => {
           this.loading = false;
@@ -126,6 +126,6 @@ export class CreateLeasonComponent {
   }
 
   goBack() {
-    this.router.navigate(['/lesson']);
+    this.router.navigate(['/mentor/lesson']);
   }
 }
