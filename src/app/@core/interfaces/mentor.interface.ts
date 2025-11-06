@@ -40,6 +40,8 @@ export interface LeasonDetailsResponse {
   description: string;
   date: string;
   startTime: string;
+  presentCode: string;
   endTime: string;
   mentorName: string;
+  link: string;
 }

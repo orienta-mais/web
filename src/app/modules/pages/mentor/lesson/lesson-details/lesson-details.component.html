@@ -1,51 +1,65 @@
 <div class="flex justify-center items-center min-h-[calc(100vh-4rem)] bg-gray-50 py-6">
-  <div class="w-full max-w-2xl p-8 bg-red rounded-2xl shadow-lg bg-white">
-    <div>
+  <div class="w-full max-w-2xl p-8 bg-white rounded-2xl shadow-lg">
+    <!-- Cabeçalho -->
+    <div class="flex items-center justify-between mb-6">
       <p-button
         icon="pi pi-arrow-left"
         label="Voltar"
         styleClass="p-button-text text-gray-700 hover:text-blue-600"
         (click)="returnBack()"
       ></p-button>
-      <h2 class="text-3xl font-bold text-gray-800 text-center flex-1 mb-6">
+
+      <h2 class="text-3xl font-bold text-gray-800 text-center flex-1">
         {{ editMode ? 'Editar Aula' : 'Detalhes da Aula' }}
       </h2>
     </div>
 
     <!-- MODO DE EDIÇÃO -->
-    <form *ngIf="editMode" [formGroup]="form" (ngSubmit)="handleUpdate()" class="space-y-4">
-      <!-- TÍTULO -->
+    <form *ngIf="editMode" [formGroup]="form" (ngSubmit)="handleUpdate()" class="space-y-5">
+      <!-- Título -->
       <p-floatlabel>
-        <input pInputText formControlName="title" class="w-full" />
+        <input pInputText formControlName="title" id="title" class="w-full" maxlength="200" />
         <label for="title">Título</label>
       </p-floatlabel>
-      <div
-        *ngIf="f['title'].touched && f['title'].errors?.['required']"
-        class="text-red-500 text-sm"
-      >
+      <div *ngIf="f['title'].touched && f['title'].errors?.['required']" class="text-red-500 text-sm">
         O título é obrigatório.
       </div>
 
-      <!-- DESCRIÇÃO -->
+      <!-- Descrição -->
       <div class="flex flex-col">
         <label class="text-gray-500 text-sm font-medium mb-1 ml-3">Descrição</label>
         <textarea
           pInputTextarea
           formControlName="description"
+          id="description"
           rows="4"
           maxlength="1000"
-          [autoResize]="true"
-          class="w-full border border-gray-300 rounded-md p-3 whitespace-pre-line break-words focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition"
+          class="w-full whitespace-pre-line break-words"
         ></textarea>
       </div>
-      <div
-        *ngIf="f['description'].touched && f['description'].errors?.['required']"
-        class="text-red-500 text-sm"
-      >
+      <div *ngIf="f['description'].touched && f['description'].errors?.['required']" class="text-red-500 text-sm">
         A descrição é obrigatória.
       </div>
 
-      <!-- DATA -->
+      <!-- Código de Presença -->
+      <p-floatlabel>
+        <input
+          pInputText
+          id="presentCode"
+          formControlName="presentCode"
+          maxlength="5"
+          class="w-full"
+        />
+        <label for="presentCode">Código de presença</label>
+      </p-floatlabel>
+      <div *ngIf="f['presentCode'].touched && f['presentCode'].errors?.['required']" class="text-red-500 text-sm">
+        O código de presença é obrigatório.
+      </div>
+      <div *ngIf="f['presentCode'].errors?.['maxlength']" class="text-red-500 text-sm">
+        Máximo de 5 caracteres.
+      </div>
+
+      <!-- Data -->
       <div>
         <label class="block text-gray-700 font-medium mb-2">Data</label>
         <p-datepicker
@@ -54,43 +68,31 @@
           dateFormat="dd/mm/yy"
           styleClass="w-full"
         ></p-datepicker>
-        <div
-          *ngIf="f['date'].touched && f['date'].errors?.['required']"
-          class="text-red-500 text-sm mt-1"
-        >
+        <div *ngIf="f['date'].touched && f['date'].errors?.['required']" class="text-red-500 text-sm mt-1">
           A data da aula é obrigatória.
         </div>
       </div>
 
-      <!-- HORA DE INÍCIO -->
-      <div>
-        <label class="block text-gray-700 font-medium mb-2">Hora de início</label>
-        <input
-          type="time"
-          formControlName="initialTime"
-          class="w-full border rounded-md px-3 py-2"
-        />
-        <div
-          *ngIf="f['initialTime'].touched && f['initialTime'].errors?.['required']"
-          class="text-red-500 text-sm mt-1"
-        >
-          A hora de início é obrigatória.
+      <!-- Hora de início e fim -->
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-gray-700 font-medium mb-2">Hora de início</label>
+          <input type="time" formControlName="initialTime" class="w-full border rounded-md px-3 py-2" />
+          <div *ngIf="f['initialTime'].touched && f['initialTime'].errors?.['required']" class="text-red-500 text-sm">
+            A hora de início é obrigatória.
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-gray-700 font-medium mb-2">Hora de fim</label>
+          <input type="time" formControlName="finalTime" class="w-full border rounded-md px-3 py-2" />
+          <div *ngIf="f['finalTime'].touched && f['finalTime'].errors?.['required']" class="text-red-500 text-sm">
+            A hora de fim é obrigatória.
+          </div>
         </div>
       </div>
 
-      <!-- HORA DE FIM -->
-      <div>
-        <label class="block text-gray-700 font-medium mb-2">Hora de fim</label>
-        <input type="time" formControlName="finalTime" class="w-full border rounded-md px-3 py-2" />
-        <div
-          *ngIf="f['finalTime'].touched && f['finalTime'].errors?.['required']"
-          class="text-red-500 text-sm mt-1"
-        >
-          A hora de fim é obrigatória.
-        </div>
-      </div>
-
-      <!-- BOTÕES -->
+      <!-- Botões -->
       <p-button
         type="submit"
         label="Salvar Alterações"
@@ -113,16 +115,10 @@
       <div class="bg-gray-50 rounded-xl p-5 border border-gray-200 shadow-sm">
         <h3 class="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Informações da Aula</h3>
 
-        <div class="space-y-3">
+        <div class="space-y-4">
           <div>
             <p class="text-sm text-gray-500 font-medium">Título</p>
-            <p class="text-base text-gray-800 font-semibold">
-              {{
-                (leason?.title || '').length > 60
-                  ? (leason?.title | slice: 0 : 60) + '…'
-                  : leason?.title
-              }}
-            </p>
+            <p class="text-base text-gray-800 font-semibold">{{ leason?.title }}</p>
           </div>
 
           <div>
@@ -130,41 +126,53 @@
             <p class="text-base text-gray-700 whitespace-pre-line">{{ leason?.description }}</p>
           </div>
 
-          <div class="space-y-4 mt-4">
+          <div>
+            <p class="text-sm text-gray-500 font-medium">Código de presença</p>
+            <p class="text-base text-gray-800">{{ leason?.presentCode || '-' }}</p>
+          </div>
+
+          <div class="grid grid-cols-2 gap-6 mt-4">
             <div>
               <p class="text-sm text-gray-500 font-medium">Data</p>
               <p class="text-base text-gray-800">{{ leason?.date | date: 'dd/MM/yyyy' }}</p>
             </div>
-
-            <div class="grid grid-cols-2 gap-6">
-              <div>
-                <p class="text-sm text-gray-500 font-medium">Hora de início</p>
-                <p class="text-base text-gray-800">{{ leason?.startTime?.slice(0, 5) }}</p>
-              </div>
-
-              <div>
-                <p class="text-sm text-gray-500 font-medium">Hora de fim</p>
-                <p class="text-base text-gray-800">{{ leason?.endTime?.slice(0, 5) }}</p>
-              </div>
+          </div>
+          
+          <div class="grid grid-cols-2 gap-6 mt-4">
+            <div>
+              <p class="text-sm text-gray-500 font-medium">Hora de início</p>
+              <p class="text-base text-gray-800">{{ leason?.startTime?.slice(0, 5) }}</p>
             </div>
+
+            <div>
+              <p class="text-sm text-gray-500 font-medium">Hora de fim</p>
+              <p class="text-base text-gray-800">{{ leason?.endTime?.slice(0, 5) }}</p>
+            </div>
+          </div>
+
+          <div class="flex justify-center mt-4 mb-2">
+            <ng-container *ngIf="leason?.link; else noLink">
+              <a
+                [href]="leason?.link"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-blue-600 font-medium hover:underline bg-blue-200 py-2 px-3 rounded-2xl"
+              >
+                Acesse a reunião
+              </a>
+            </ng-container>
+          
+            <ng-template #noLink>
+              <p class="text-gray-500 italic">Link indisponível no momento.</p>
+            </ng-template>
           </div>
         </div>
       </div>
 
+      <!-- Botões -->
       <div class="flex gap-4 mt-8 justify-center">
-        <p-button
-          label="Editar Aula"
-          styleClass="w-40"
-          severity="info"
-          (click)="enableEdit()"
-        ></p-button>
-
-        <p-button
-          label="Excluir Aula"
-          severity="danger"
-          styleClass="w-40"
-          (click)="confirmDelete()"
-        ></p-button>
+        <p-button label="Editar Aula" styleClass="w-40" severity="info" (click)="enableEdit()"></p-button>
+        <p-button label="Excluir Aula" styleClass="w-40" severity="danger" (click)="confirmDelete()"></p-button>
       </div>
     </div>
   </div>

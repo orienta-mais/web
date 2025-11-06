@@ -44,9 +44,10 @@ export class CreateLeasonComponent {
     this.form = this.fb.group({
       title: ['', [Validators.required, Validators.maxLength(200)]],
       description: ['', [Validators.maxLength(1000)]],
-      date: [null, Validators.required],
-      startTime: ['', Validators.required],
-      endTime: ['', Validators.required],
+      presentCode: [null, Validators.required, Validators.maxLength(5)],
+      date: [null, [Validators.required]],
+      startTime: ['', [Validators.required]],
+      endTime: ['', [Validators.required]],
     });
   }
 
@@ -87,6 +88,11 @@ export class CreateLeasonComponent {
       endTime: this.ensureTimeFormat(endTime),
       mentorId,
     };
+
+    if (!startTime || !endTime) {
+      this.toast.error('Preencha os horários de início e fim.');
+      return;
+    }
 
     this.loading = true;
 

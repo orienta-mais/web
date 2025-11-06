@@ -48,6 +48,22 @@
             <p class="text-base text-gray-800">{{ lesson?.mentorName }}</p>
           </div>
         </div>
+        <div class="flex justify-center mt-4 mb-2">
+          <ng-container *ngIf="lesson?.link; else noLink">
+            <a
+              [href]="lesson?.link"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-blue-600 font-medium hover:underline bg-blue-200 py-2 px-3 rounded-2xl"
+            >
+              Acesse a reunião
+            </a>
+          </ng-container>
+        
+          <ng-template #noLink>
+            <p class="text-gray-500 italic">Link indisponível no momento.</p>
+          </ng-template>
+        </div>
       </div>
     </div>
 
