@@ -9,10 +9,14 @@
         (click)="goBack()"
       ></p-button>
 
-      <h2 class="text-3xl font-bold text-gray-800 text-center flex-1 mb-6">Meu perfil</h2>
+      <h2 class="text-3xl font-bold text-gray-800 text-center flex-1 mb-6">
+        {{ editPassword ? 'Alterar Senha' : editMode ? 'Editar Perfil' : 'Meu Perfil' }}
+      </h2>
     </div>
 
-    <!-- Modo de Edição -->
+    <!-- ======================== -->
+    <!-- FORMULÁRIO DE EDIÇÃO PERFIL -->
+    <!-- ======================== -->
     <form *ngIf="editMode" [formGroup]="form" (ngSubmit)="handleUpdate()" class="space-y-5">
       <!-- Email -->
       <p-floatlabel>
@@ -105,8 +109,110 @@
       </div>
     </form>
 
-    <!-- Modo Visualização -->
-    <div *ngIf="!editMode" class="space-y-6">
+    <!-- ======================== -->
+    <!-- FORMULÁRIO DE ALTERAR SENHA -->
+    <!-- ======================== -->
+    <form
+      *ngIf="editPassword"
+      [formGroup]="passwordForm"
+      (ngSubmit)="handlePasswordUpdate()"
+      class="space-y-5"
+    >
+      <!-- Senha atual -->
+      <div class="relative w-full">
+        <p-floatlabel class="w-full">
+          <input
+            pInputText
+            [type]="showCurrentPassword ? 'text' : 'password'"
+            formControlName="currentPassword"
+            class="w-full pr-20"
+          />
+          <label>Senha atual</label>
+          <button
+            type="button"
+            class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-blue-600 hover:underline"
+            (click)="toggleCurrentPasswordVisibility()"
+          >
+            {{ showCurrentPassword ? 'Ocultar' : 'Mostrar' }}
+          </button>
+        </p-floatlabel>
+
+        <div
+          *ngIf="fpass['currentPassword'].touched && fpass['currentPassword'].errors?.['required']"
+          class="text-red-500 text-sm mt-1"
+        >
+          Campo obrigatório
+        </div>
+        <div
+          *ngIf="fpass['currentPassword'].touched && fpass['currentPassword'].errors?.['minlength']"
+          class="text-red-500 text-sm mt-1"
+        >
+          Senha deve ter no mínimo 6 caracteres
+        </div>
+      </div>
+
+      <!-- Nova senha -->
+      <div class="relative w-full">
+        <p-floatlabel class="w-full">
+          <input
+            pInputText
+            [type]="showNewPassword ? 'text' : 'password'"
+            formControlName="newPassword"
+            autocomplete="off"
+            class="w-full pr-20"
+          />
+          <label>Nova senha</label>
+          <button
+            type="button"
+            class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-blue-600 hover:underline"
+            (click)="toggleNewPasswordVisibility()"
+          >
+            {{ showNewPassword ? 'Ocultar' : 'Mostrar' }}
+          </button>
+        </p-floatlabel>
+
+        <div
+          *ngIf="fpass['newPassword'].touched && fpass['newPassword'].errors?.['required']"
+          class="text-red-500 text-sm mt-1"
+        >
+          Campo obrigatório
+        </div>
+        <div
+          *ngIf="fpass['newPassword'].touched && fpass['newPassword'].errors?.['minlength']"
+          class="text-red-500 text-sm mt-1"
+        >
+          Senha deve ter no mínimo 8 caracteres
+        </div>
+        <div
+          *ngIf="fpass['newPassword'].touched && fpass['newPassword'].errors?.['pattern']"
+          class="text-red-500 text-sm mt-1"
+        >
+          A senha deve conter letra, número e caractere especial
+        </div>
+      </div>
+
+      <!-- Botões -->
+      <div class="flex justify-end space-x-3 pt-2">
+        <p-button
+          label="Cancelar"
+          severity="secondary"
+          styleClass="p-button-text"
+          (click)="cancelPasswordEdit()"
+        ></p-button>
+
+        <p-button
+          type="submit"
+          label="Salvar nova senha"
+          severity="primary"
+          [loading]="loading"
+        ></p-button>
+      </div>
+    </form>
+
+    <!-- ======================== -->
+    <!-- MODO VISUALIZAÇÃO -->
+    <!-- ======================== -->
+    <div *ngIf="!editMode && !editPassword" class="space-y-6">
       <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
         <h3 class="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">
           Informações do Mentor
@@ -153,6 +259,13 @@
           class="flex-1 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700"
         >
           Editar Perfil
+        </button>
+
+        <button
+          (click)="enablePasswordEdit()"
+          class="flex-1 py-3 bg-amber-500 text-white rounded-xl hover:bg-amber-600"
+        >
+          Editar Senha
         </button>
 
         <button

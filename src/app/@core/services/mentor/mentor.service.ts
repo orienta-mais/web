@@ -3,13 +3,17 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { Observable } from 'rxjs';
 import { CreateLesson, RegisterMentor } from '../../interfaces/mentor.interface';
-import { UuidOfTokenRegisterRequest } from '../../interfaces/auth.interface';
+import { UpdatePasswordRequest, UuidOfTokenRegisterRequest } from '../../interfaces/auth.interface';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable({ providedIn: 'root' })
 export class MentorService {
   private readonly _baseApi = `${environment.BASE_API}/mentor`;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService,
+  ) {}
 
   register(body: RegisterMentor): Observable<void> {
     return this.http.post<void>(`${this._baseApi}/register`, body);
@@ -29,5 +33,9 @@ export class MentorService {
 
   deleteAccount(mentorId: string): Observable<void> {
     return this.http.delete<void>(`${this._baseApi}/${mentorId}`);
+  }
+
+  updatePassword(body: UpdatePasswordRequest): Observable<void> {
+    return this.authService.updatePassword(body);
   }
 }

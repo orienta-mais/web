@@ -5,9 +5,11 @@ import {
   ConfirmEmailRequest,
   LoginRequest,
   LoginResponse,
+  SendEmailForgotPasswordRequest,
   SendValidateEmailRequest,
-  UpdatePasswordRequest,
+  ResetPasswordRequest,
   UuidOfUpdatePasswordRequest,
+  UpdatePasswordRequest,
 } from '../../interfaces/auth.interface';
 import { Observable } from 'rxjs';
 import { ROLE } from '../../enums/role.enum';
@@ -40,12 +42,16 @@ export class AuthService {
     return this.http.post<void>(`${this._baseApi}/confirm-email`, body);
   }
 
-  validateUpdatePassword(body: SendValidateEmailRequest): Observable<void> {
-    return this.http.post<void>(`${this._baseApi}/update-password`, body);
+  validateUpdatePassword(body: SendEmailForgotPasswordRequest): Observable<void> {
+    return this.http.post<void>(`${this._baseApi}/auth/forget-password`, body);
+  }
+
+  resetPassword(body: ResetPasswordRequest): Observable<void> {
+    return this.http.post<void>(`${this._baseApi}/auth/reset-password`, body);
   }
 
   updatePassword(body: UpdatePasswordRequest): Observable<void> {
-    return this.http.post<void>(`${this._baseApi}/update-password`, body);
+    return this.http.post<void>(`${this._baseApi}/auth/change-password`, body);
   }
 
   validateUUIDPasswordReset(body: UuidOfUpdatePasswordRequest): Observable<void> {

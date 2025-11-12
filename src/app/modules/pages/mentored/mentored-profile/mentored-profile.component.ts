@@ -36,12 +36,17 @@ import { ConfirmationService } from 'primeng/api';
 })
 export class MentoredProfileComponent implements OnInit {
   form!: FormGroup;
+  passwordForm!: FormGroup;
   loading = false;
   maxDate!: Date;
   states = STATES;
   nationalities = COUNTRIES;
   editMode = false;
+  editPassword = false;
   mentoredId: string | null = null;
+
+  showCurrentPassword = false;
+  showNewPassword = false;
 
   constructor(
     private fb: FormBuilder,
@@ -57,6 +62,7 @@ export class MentoredProfileComponent implements OnInit {
     const today = new Date();
     this.maxDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
     this.initializeForm();
+    this.initializePasswordForm();
     this.loadMentoredData();
   }
 
@@ -73,6 +79,20 @@ export class MentoredProfileComponent implements OnInit {
       ],
       state: ['', Validators.required],
       nationality: ['', Validators.required],
+    });
+  }
+
+  initializePasswordForm() {
+    this.passwordForm = this.fb.group({
+      currentPassword: ['', [Validators.required, Validators.minLength(6)]],
+      newPassword: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(8),
+          Validators.pattern(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&^()\-_=+{}[\]|;:'",.<>]).+$/),
+        ],
+      ],
     });
   }
 
@@ -103,11 +123,22 @@ export class MentoredProfileComponent implements OnInit {
 
   enableEdit() {
     this.editMode = true;
+    this.editPassword = false;
   }
 
   cancelEdit() {
     this.editMode = false;
     this.loadMentoredData();
+  }
+
+  enablePasswordEdit() {
+    this.editPassword = true;
+    this.editMode = false;
+  }
+
+  cancelPasswordEdit() {
+    this.editPassword = false;
+    this.passwordForm.reset();
   }
 
   handleUpdate() {
@@ -140,6 +171,45 @@ export class MentoredProfileComponent implements OnInit {
           },
         });
     }
+  }
+
+  handlePasswordUpdate() {
+    if (this.passwordForm.invalid) {
+      this.passwordForm.markAllAsTouched();
+      return;
+    }
+
+    const payload = {
+      email: this.form.getRawValue().email,
+      currentPassword: this.passwordForm.get('currentPassword')?.value,
+      newPassword: this.passwordForm.get('newPassword')?.value,
+    };
+
+    this.loading = true;
+
+    this.mentoredService
+      .updatePassword(payload)
+      .pipe(take(1))
+      .subscribe({
+        next: () => {
+          this.toast.success('Senha atualizada com sucesso!');
+          this.loading = false;
+          this.editPassword = false;
+          this.passwordForm.reset();
+        },
+        error: (e: HttpErrorResponse) => {
+          this.toast.error(e.error?.message || 'Erro ao atualizar senha.');
+          this.loading = false;
+        },
+      });
+  }
+
+  toggleCurrentPasswordVisibility() {
+    this.showCurrentPassword = !this.showCurrentPassword;
+  }
+
+  toggleNewPasswordVisibility() {
+    this.showNewPassword = !this.showNewPassword;
   }
 
   confirmDelete() {
@@ -178,5 +248,9 @@ export class MentoredProfileComponent implements OnInit {
 
   get f() {
     return this.form.controls;
+  }
+
+  get fpass() {
+    return this.passwordForm.controls;
   }
 }

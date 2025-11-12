@@ -1,38 +1,37 @@
 <div class="flex justify-center min-h-[calc(100vh-4rem)] bg-gray-100 py-8 px-4">
   <div class="w-full max-w-3xl bg-white rounded-2xl shadow-lg p-8">
-    <!-- Cabeçalho -->
     <div>
       <p-button
         icon="pi pi-arrow-left"
         label="Voltar"
-        styleClass="p-button-text text-gray-700 hover:text-blue-600"
+        styleClass="p-button-text text-gray-700 hover:text-yellow-600"
         (click)="goBack()"
       ></p-button>
 
-      <h2 class="text-3xl font-bold text-gray-800 text-center flex-1 mb-6">Meu perfil</h2>
+      <h2 class="text-3xl font-bold text-gray-800 text-center flex-1 mb-6">
+        {{ editPassword ? 'Alterar Senha' : editMode ? 'Editar Perfil' : 'Meu Perfil' }}
+      </h2>
     </div>
 
-    <!-- Modo de Edição -->
+    <!-- FORMULÁRIO DE EDIÇÃO -->
     <form *ngIf="editMode" [formGroup]="form" (ngSubmit)="handleUpdate()" class="space-y-7">
-      <!-- Email -->
       <p-floatlabel>
         <input pInputText formControlName="email" readonly class="w-full" />
         <label>Email</label>
       </p-floatlabel>
 
-      <!-- Nome e Sobrenome -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <p-floatlabel>
           <input pInputText formControlName="name" maxlength="70" class="w-full" />
           <label>Nome</label>
         </p-floatlabel>
+
         <p-floatlabel>
           <input pInputText formControlName="lastName" maxlength="70" class="w-full" />
           <label>Sobrenome</label>
         </p-floatlabel>
       </div>
 
-      <!-- Data de Nascimento -->
       <p-floatlabel>
         <p-datepicker
           formControlName="birthDate"
@@ -44,8 +43,7 @@
         <label>Data de Nascimento</label>
       </p-floatlabel>
 
-      <!-- Estado e Nacionalidade -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 space-y-3">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <p-floatlabel>
           <p-select
             formControlName="state"
@@ -65,14 +63,13 @@
           ></p-select>
           <label>Nacionalidade</label>
         </p-floatlabel>
-
-        <p-floatlabel>
-          <input pInputText formControlName="socialMedias" maxlength="100" class="w-full" />
-          <label>LinkedIn</label>
-        </p-floatlabel>
       </div>
 
-      <!-- Descrição -->
+      <p-floatlabel>
+        <input pInputText formControlName="socialMedias" maxlength="100" class="w-full" />
+        <label>LinkedIn</label>
+      </p-floatlabel>
+
       <div class="flex flex-col">
         <label class="text-gray-500 text-sm font-medium mb-1 ml-3">Descrição</label>
         <textarea
@@ -81,11 +78,10 @@
           rows="4"
           maxlength="1000"
           [autoResize]="true"
-          class="w-full border border-gray-300 rounded-md p-3 whitespace-pre-line break-words focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition"
+          class="w-full border border-gray-300 rounded-md p-3 whitespace-pre-line focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 transition"
         ></textarea>
       </div>
 
-      <!-- Botões -->
       <div class="flex flex-col sm:flex-row gap-4 mt-6">
         <button
           type="submit"
@@ -105,8 +101,104 @@
       </div>
     </form>
 
-    <!-- Modo Visualização -->
-    <div *ngIf="!editMode" class="space-y-6">
+    <!-- ALTERAR SENHA -->
+    <form
+      *ngIf="editPassword"
+      [formGroup]="passwordForm"
+      (ngSubmit)="handlePasswordUpdate()"
+      class="space-y-5"
+    >
+      <!-- Senha atual -->
+      <div class="relative w-full">
+        <p-floatlabel class="w-full">
+          <input
+            pInputText
+            [type]="showCurrentPassword ? 'text' : 'password'"
+            formControlName="currentPassword"
+            class="w-full pr-20"
+          />
+          <label>Senha atual</label>
+          <button
+            type="button"
+            class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-yellow-600 hover:underline"
+            (click)="toggleCurrentPasswordVisibility()"
+          >
+            {{ showCurrentPassword ? 'Ocultar' : 'Mostrar' }}
+          </button>
+        </p-floatlabel>
+
+        <div
+          *ngIf="fpass['currentPassword'].touched && fpass['currentPassword'].errors?.['required']"
+          class="text-red-500 text-sm mt-1"
+        >
+          Campo obrigatório
+        </div>
+        <div
+          *ngIf="fpass['currentPassword'].touched && fpass['currentPassword'].errors?.['minlength']"
+          class="text-red-500 text-sm mt-1"
+        >
+          Senha deve ter no mínimo 6 caracteres
+        </div>
+      </div>
+
+      <!-- Nova senha -->
+      <div class="relative w-full">
+        <p-floatlabel class="w-full">
+          <input
+            pInputText
+            [type]="showNewPassword ? 'text' : 'password'"
+            formControlName="newPassword"
+            class="w-full pr-20"
+          />
+          <label>Nova senha</label>
+          <button
+            type="button"
+            class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-yellow-600 hover:underline"
+            (click)="toggleNewPasswordVisibility()"
+          >
+            {{ showNewPassword ? 'Ocultar' : 'Mostrar' }}
+          </button>
+        </p-floatlabel>
+
+        <div
+          *ngIf="fpass['newPassword'].touched && fpass['newPassword'].errors?.['required']"
+          class="text-red-500 text-sm mt-1"
+        >
+          Campo obrigatório
+        </div>
+        <div
+          *ngIf="fpass['newPassword'].touched && fpass['newPassword'].errors?.['minlength']"
+          class="text-red-500 text-sm mt-1"
+        >
+          Senha deve ter no mínimo 8 caracteres
+        </div>
+        <div
+          *ngIf="fpass['newPassword'].touched && fpass['newPassword'].errors?.['pattern']"
+          class="text-red-500 text-sm mt-1"
+        >
+          A senha deve conter letra, número e caractere especial
+        </div>
+      </div>
+
+      <div class="flex justify-end space-x-3 pt-2">
+        <p-button
+          label="Cancelar"
+          severity="secondary"
+          styleClass="p-button-text"
+          (click)="cancelPasswordEdit()"
+        ></p-button>
+
+        <p-button
+          type="submit"
+          label="Salvar nova senha"
+          severity="primary"
+          [loading]="loading"
+        ></p-button>
+      </div>
+    </form>
+
+    <!-- VISUALIZAÇÃO -->
+    <div *ngIf="!editMode && !editPassword" class="space-y-6">
       <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
         <h3 class="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">
           Informações do Mentorado
@@ -150,9 +242,16 @@
       <div class="flex flex-col sm:flex-row justify-center gap-4 mt-6">
         <button
           (click)="enableEdit()"
-          class="flex-1 py-3 bg-yellow-500 text-white rounded-xl hover:bg-yellow-600"
+          class="flex-1 py-3 bg-blue-600 text-white rounded-xl hover:bg-yellow-600"
         >
           Editar Perfil
+        </button>
+
+        <button
+          (click)="enablePasswordEdit()"
+          class="flex-1 py-3 bg-amber-500 text-white rounded-xl hover:bg-amber-600"
+        >
+          Editar Senha
         </button>
 
         <button

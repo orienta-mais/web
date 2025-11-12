@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 import { SendEmailForgotPasswordRequest } from '../../../@core/interfaces/auth.interface';
 import { take } from 'rxjs/operators';
 import { emailValidator } from '../../../@core/validators';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-forgot-password',
@@ -20,6 +21,7 @@ import { emailValidator } from '../../../@core/validators';
 export class ForgotPasswordComponent {
   form: FormGroup;
   sendEmailSuccess = false;
+  loading = false;
 
   constructor(
     private toast: ToastService,
@@ -41,21 +43,21 @@ export class ForgotPasswordComponent {
   }
 
   submitSendValidateEmail(value: SendEmailForgotPasswordRequest) {
+    this.loading = true;
     this.service
       .validateUpdatePassword(value)
       .pipe(take(1))
       .subscribe({
         next: () => {
-          this.router.navigate(['/register/email/confirm']);
-        },
-        error: () => {
+          this.loading = false;
           this.sendEmailSuccess = true;
-          this.toast.error(
-            'Erro ao enviar e-mail de validação. Verifique se o e-mail está correto.',
-          );
           setTimeout(() => {
             this.router.navigate(['/login']);
           }, 10000);
+        },
+        error: (e: HttpErrorResponse) => {
+          this.loading = false;
+          this.toast.error(e.error?.message);
         },
       });
   }
