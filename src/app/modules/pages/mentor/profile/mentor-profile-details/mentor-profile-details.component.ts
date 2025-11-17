@@ -84,7 +84,7 @@ export class MentorProfileDetailsComponent implements OnInit {
 
   initializePasswordForm() {
     this.passwordForm = this.fb.group({
-      currentPassword: ['', [Validators.required, Validators.minLength(6)]],
+      currentPassword: ['', [Validators.required, Validators.minLength(8)]],
       newPassword: [
         '',
         [

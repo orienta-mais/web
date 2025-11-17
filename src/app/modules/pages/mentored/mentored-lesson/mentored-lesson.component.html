@@ -6,39 +6,48 @@
       <p-button label="Minhas Reuniões" severity="info" (click)="goToMyMeetings()"></p-button>
     </div>
 
-    <!-- 🔍 Filtros -->
+    <!-- Filtros -->
     <form
       [formGroup]="filterForm"
       (ngSubmit)="loadLessons()"
       class="mb-8 grid grid-cols-1 sm:grid-cols-4 gap-4"
     >
-      <!-- Campo Título -->
       <div>
         <label class="block text-sm font-medium text-gray-600 mb-1">Título</label>
         <input
           pInputText
           formControlName="title"
           placeholder="Digite o título"
-          class="w-full border border-gray-300 rounded-md px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition"
+          class="w-full border border-gray-300 rounded-md px-3 py-2"
         />
       </div>
 
-      <!-- Campo Data -->
       <div>
         <label class="block text-sm font-medium text-gray-600 mb-1">Data</label>
         <p-datepicker
           formControlName="date"
           dateFormat="dd/mm/yy"
           [showIcon]="true"
-          inputId="date"
-          styleClass="w-full border border-gray-300 rounded-md"
+          styleClass="w-full"
         ></p-datepicker>
       </div>
 
-      <!-- Botões -->
+      <div>
+        <label class="block text-sm font-medium text-gray-600 mb-1">Itens por página</label>
+        <select
+          class="w-full border border-gray-300 rounded-md px-3 py-2"
+          [(ngModel)]="size"
+          (ngModelChange)="changeSize()"
+          name="size"
+        >
+          <option [value]="20">20</option>
+          <option [value]="50">50</option>
+          <option [value]="100">100</option>
+        </select>
+      </div>
+
       <div class="flex items-end gap-2 justify-end sm:justify-start">
         <p-button label="Buscar" type="submit" class="p-button-sm"></p-button>
-
         <p-button
           label="Limpar"
           class="p-button-sm"
@@ -48,23 +57,22 @@
       </div>
     </form>
 
-    <!-- ⏫ Ordenação -->
+    <!-- Ordenação -->
     <div
-      class="flex justify-end items-center gap-2 mb-6 text-gray-700 cursor-pointer select-none hover:text-blue-600 transition"
+      class="flex justify-end items-center gap-2 mb-6 text-gray-700 cursor-pointer hover:text-blue-600"
       (click)="toggleOrder()"
     >
       <span class="font-medium">Ordenar por data</span>
-
       <i
-        class="pi text-lg transition-transform duration-200"
+        class="pi text-lg"
         [ngClass]="{
-          'pi-sort-amount-up-alt rotate-180': order === 'asc',
-          'pi-sort-amount-up': order === 'desc',
+          'pi-sort-amount-up-alt rotate-180': order === 'desc',
+          'pi-sort-amount-up': order === 'asc',
         }"
       ></i>
     </div>
 
-    <!-- 💬 Cards -->
+    <!-- Cards -->
     <div *ngIf="!loading; else loadingTpl">
       <div
         *ngIf="lessons.length > 0; else emptyTpl"
@@ -75,31 +83,24 @@
           class="bg-gray-50 hover:bg-gray-100 transition rounded-2xl p-6 border border-gray-200 shadow-sm flex flex-col justify-between"
         >
           <div>
-            <h3 class="text-lg font-semibold text-gray-800 mb-2">
-              {{
-                (lesson?.title || '').length > 60
-                  ? (lesson?.title | slice: 0 : 60) + '…'
-                  : lesson?.title
-              }}
-            </h3>
+            <h3 class="text-lg font-semibold mb-2">{{ lesson.title }}</h3>
 
-            <p class="text-sm text-gray-600 mb-1 flex items-center">
+            <p class="text-sm text-gray-600 mb-1">
               <i class="pi pi-calendar text-blue-600 mr-2"></i>
-              <span class="font-medium text-gray-700">Data:</span>
-              <span class="ml-1">{{ lesson.date | date: 'dd/MM/yyyy' }}</span>
+              <span class="font-medium">Data:</span>
+              {{ lesson.date | date: 'dd/MM/yyyy' }}
             </p>
 
-            <p class="text-sm text-gray-600 flex items-center">
+            <p class="text-sm text-gray-600">
               <i class="pi pi-clock text-blue-600 mr-2"></i>
-              <span class="font-medium text-gray-700">Hora:</span>
-              <span class="ml-1">
-                {{ lesson.startTime.slice(0, 5) }} - {{ lesson.endTime.slice(0, 5) }}
-              </span>
+              <span class="font-medium">Hora:</span>
+              {{ lesson.startTime.slice(0, 5) }} - {{ lesson.endTime.slice(0, 5) }}
             </p>
-            <p class="text-sm text-gray-600 mt-1 flex items-center">
+
+            <p class="text-sm text-gray-600 mt-1">
               <i class="pi pi-user text-blue-600 mr-2"></i>
-              <span class="font-medium text-gray-700">Mentor:</span>
-              <span class="ml-1">{{ lesson.mentorName }}</span>
+              <span class="font-medium">Mentor:</span>
+              {{ lesson.mentorName }}
             </p>
           </div>
 
@@ -115,14 +116,62 @@
       </div>
     </div>
 
-    <!-- ⏳ Loading -->
+    <!-- Paginação -->
+    <div class="flex justify-center items-center gap-4 mt-10" *ngIf="totalItems > size">
+      <!-- Botão Início -->
+      <button
+        pButton
+        [disabled]="page === 1"
+        (click)="goToStart()"
+        class="p-button-rounded p-button-text"
+        icon="pi pi-angle-double-left"
+        tooltip="Primeira página"
+      ></button>
+
+      <!-- Página anterior -->
+      <button
+        pButton
+        [disabled]="page === 1"
+        (click)="prevPage()"
+        class="p-button-rounded p-button-text"
+        icon="pi pi-angle-left"
+        tooltip="Anterior"
+      ></button>
+
+      <!-- Indicador de página -->
+      <span class="text-gray-700 font-medium text-sm px-4 py-2 bg-gray-100 rounded-full shadow-sm">
+        Página {{ page }} de {{ totalPages }}
+      </span>
+
+      <!-- Próxima -->
+      <button
+        pButton
+        [disabled]="page === totalPages"
+        (click)="nextPage()"
+        class="p-button-rounded p-button-text"
+        icon="pi pi-angle-right"
+        tooltip="Próxima"
+      ></button>
+
+      <!-- Última -->
+      <button
+        pButton
+        [disabled]="page === totalPages"
+        (click)="goToEnd()"
+        class="p-button-rounded p-button-text"
+        icon="pi pi-angle-double-right"
+        tooltip="Última página"
+      ></button>
+    </div>
+
+    <!-- Loading -->
     <ng-template #loadingTpl>
       <div class="flex justify-center items-center py-12">
         <i class="pi pi-spin pi-spinner text-2xl text-gray-500"></i>
       </div>
     </ng-template>
 
-    <!-- 🚫 Vazio -->
+    <!-- Vazio -->
     <ng-template #emptyTpl>
       <div class="text-center text-gray-500 py-12">Nenhuma aula encontrada.</div>
     </ng-template>

@@ -24,6 +24,16 @@ export interface MentorId {
   mentorId: string;
 }
 
+export interface PaginatedLeasonListResponse {
+  content: LeasonListResponse[];
+  size: number;
+  total: number;
+  totalPages: number;
+  currentPage: number;
+  nextPage: string | null;
+  previousPage: string | null;
+}
+
 export interface LeasonListResponse {
   id: string;
   title: string;
