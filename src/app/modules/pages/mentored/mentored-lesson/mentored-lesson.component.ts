@@ -58,6 +58,7 @@ export class MentoredLessonComponent implements OnInit {
     this.loadLessons();
   }
 
+  // Alterna ordenação
   toggleOrder() {
     this.order = this.order === 'asc' ? 'desc' : 'asc';
     this.loadLessons();
@@ -67,6 +68,7 @@ export class MentoredLessonComponent implements OnInit {
     this.router.navigate(['/mentored/lessons/registered']);
   }
 
+  // 🔥 Carrega lista de aulas
   loadLessons() {
     this.loading = true;
 
@@ -74,7 +76,7 @@ export class MentoredLessonComponent implements OnInit {
       title: this.filterForm.get('title')?.value || null,
       date: this.filterForm.get('date')?.value || null,
       order: this.order,
-      page: this.page - 1,
+      page: this.page - 1, // backend começa em 0
       size: this.size,
     };
 
@@ -89,16 +91,28 @@ export class MentoredLessonComponent implements OnInit {
         next: ({ allLessons, registeredLessons }) => {
           const registeredIds = new Set(registeredLessons.map((r) => r.id));
 
-          const items = allLessons?.content ?? [];
+          if (!allLessons) {
+            this.lessons = [];
+            this.totalItems = 0;
+            this.totalPages = 1;
+            this.loading = false;
+            return;
+          }
 
+          // Conteúdo base
+          const items = allLessons.content ?? [];
+
+          // Remove aulas já registradas
           this.lessons = items.filter((l) => !registeredIds.has(l.id));
 
-          this.totalItems = typeof allLessons.total === 'number' ? allLessons.total : items.length;
+          // Totais
+          this.totalItems = allLessons.total ?? items.length;
           this.totalPages = Math.max(
             1,
             allLessons.totalPages ?? Math.ceil(this.totalItems / this.size),
           );
 
+          // Atualiza página exibida (backend retorna currentPage começando em 0)
           this.page =
             (typeof allLessons.currentPage === 'number' ? allLessons.currentPage : this.page - 1) +
             1;
@@ -111,6 +125,7 @@ export class MentoredLessonComponent implements OnInit {
       });
   }
 
+  // Limpar filtros
   clearFilters() {
     this.filterForm.reset();
     this.order = 'desc';
@@ -119,10 +134,12 @@ export class MentoredLessonComponent implements OnInit {
     this.loadLessons();
   }
 
+  // Abrir detalhes
   showDetails(id: string) {
     this.router.navigate([`/mentored/lesson/details/${id}`]);
   }
 
+  // Paginação
   nextPage() {
     if (this.page < this.totalPages) {
       this.page++;
@@ -137,11 +154,13 @@ export class MentoredLessonComponent implements OnInit {
     }
   }
 
+  // Alterar tamanho da página
   changeSize() {
     this.page = 1;
     this.loadLessons();
   }
 
+  // Ir para primeira página
   goToStart() {
     if (this.page !== 1) {
       this.page = 1;
@@ -149,6 +168,7 @@ export class MentoredLessonComponent implements OnInit {
     }
   }
 
+  // Ir para última página
   goToEnd() {
     if (this.page !== this.totalPages) {
       this.page = this.totalPages;
