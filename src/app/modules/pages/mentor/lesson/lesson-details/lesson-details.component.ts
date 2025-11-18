@@ -1,6 +1,13 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+  FormArray,
+  FormControl,
+} from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LessonService } from '../../../../../@core/services/lesson/lesson.service';
 import { LeasonDetailsResponse } from '../../../../../@core/interfaces/mentor.interface';
@@ -33,7 +40,7 @@ import { HttpErrorResponse } from '@angular/common/http';
   templateUrl: './lesson-details.component.html',
 })
 export class LeasonDetailsComponent implements OnInit {
-  leason?: LeasonDetailsResponse;
+  leason?: LeasonDetailsResponse & { additionalLinks?: string[] };
   form!: FormGroup;
   loading = false;
   editMode = false;
@@ -61,7 +68,9 @@ export class LeasonDetailsComponent implements OnInit {
       .pipe(take(1))
       .subscribe({
         next: (data) => {
-          this.leason = data;
+          const links = data.additionalLinks ?? [];
+          this.leason = { ...data, additionalLinks: links };
+
           this.form = this.fb.group({
             title: [data.title, [Validators.required, Validators.maxLength(200)]],
             description: [data.description, [Validators.required, Validators.maxLength(1000)]],
@@ -70,6 +79,8 @@ export class LeasonDetailsComponent implements OnInit {
             initialTime: [data.startTime?.slice(0, 5) || '', Validators.required],
             finalTime: [data.endTime?.slice(0, 5) || '', Validators.required],
             mentorId: [this.userService.getId()],
+            additionalLinks: this.fb.array(links.map((l) => this.fb.control(l))),
+            maxGuest: [data.maxGuest ?? 1, [Validators.required, Validators.min(1)]],
           });
 
           this.cdr.detectChanges();
@@ -78,11 +89,40 @@ export class LeasonDetailsComponent implements OnInit {
       });
   }
 
+  get additionalLinks(): FormArray {
+    return this.form.get('additionalLinks') as FormArray;
+  }
+
+  get additionalLinksControls(): FormControl[] {
+    return this.additionalLinks.controls as FormControl[];
+  }
+
+  addLink() {
+    const ctrl = new FormControl('');
+    this.additionalLinks.push(ctrl);
+
+    setTimeout(() => {
+      const inputs = document.querySelectorAll('input[placeholder="https://..."]');
+      const last = inputs[inputs.length - 1] as HTMLInputElement | undefined;
+      last?.focus();
+    }, 0);
+  }
+
+  removeLink(index: number) {
+    this.additionalLinks.removeAt(index);
+  }
+
+  removeLinkIfEmpty(index: number) {
+    const value = this.additionalLinks.at(index).value;
+    if (!value || (typeof value === 'string' && value.trim().length === 0)) {
+      this.removeLink(index);
+    }
+  }
+
   private parseDate(dateString: string): Date | null {
     if (!dateString) return null;
     const d = new Date(dateString);
-    const local = new Date(d.getTime() + d.getTimezoneOffset() * 60000);
-    return local;
+    return new Date(d.getTime() + d.getTimezoneOffset() * 60000);
   }
 
   enableEdit() {
@@ -92,17 +132,7 @@ export class LeasonDetailsComponent implements OnInit {
 
   cancelEdit() {
     this.editMode = false;
-    if (this.leason && this.form) {
-      this.form.reset({
-        title: this.leason.title,
-        description: this.leason.description,
-        presentCode: this.leason.presentCode,
-        date: this.parseDate(this.leason.date),
-        initialTime: this.leason.startTime?.slice(0, 5),
-        finalTime: this.leason.endTime?.slice(0, 5),
-        mentorId: this.userService.getId(),
-      });
-    }
+    if (this.lessonId) this.loadLeason(this.lessonId);
   }
 
   handleUpdate() {
@@ -112,30 +142,21 @@ export class LeasonDetailsComponent implements OnInit {
       return;
     }
 
-    const { title, description, date, initialTime, finalTime, presentCode } = this.form.value;
+    const cleanLinks =
+      (this.additionalLinks.value as string[] | undefined)
+        ?.map((l) => (l ? l.trim() : ''))
+        .filter((l) => l && l.length > 0) ?? [];
 
-    const [hInit, mInit] = initialTime.split(':').map(Number);
-    const [hEnd, mEnd] = finalTime.split(':').map(Number);
-    const diffHours = hEnd + mEnd / 60 - (hInit + mInit / 60);
-
-    if (diffHours <= 0) {
-      this.toast.error('A hora de término deve ser posterior à de início.');
-      return;
-    }
-
-    if (diffHours > 6) {
-      this.toast.error('A aula não pode ter mais de 6 horas de duração.');
-      return;
-    }
-
-    const payload = {
-      title: title.trim(),
-      description: description.trim(),
-      presentCode: presentCode.trim(),
-      date: this.formatDate(date),
-      startTime: this.ensureTimeFormat(initialTime),
-      endTime: this.ensureTimeFormat(finalTime),
+    const payload: any = {
+      title: this.form.value.title.trim(),
+      maxGuest: this.form.value.maxGuest,
+      description: (this.form.value.description ?? '').trim(),
+      presentCode: (this.form.value.presentCode ?? '').trim(),
+      date: this.formatDate(this.form.value.date),
+      startTime: this.ensureTimeFormat(this.form.value.initialTime),
+      endTime: this.ensureTimeFormat(this.form.value.finalTime),
       mentorId: this.userService.getId(),
+      ...(cleanLinks.length > 0 ? { additionalLinks: cleanLinks } : {}),
     };
 
     this.loading = true;
@@ -146,7 +167,7 @@ export class LeasonDetailsComponent implements OnInit {
       .subscribe({
         next: () => {
           this.toast.success('Aula atualizada com sucesso!');
-          this.loadLeason(this.leason!.id);
+          if (this.leason?.id) this.loadLeason(this.leason.id);
           this.loading = false;
           this.editMode = false;
         },
@@ -159,12 +180,11 @@ export class LeasonDetailsComponent implements OnInit {
 
   private formatDate(date: Date | string): string {
     const d = new Date(date);
-    const corrected = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
-    return corrected.toISOString().split('T')[0];
+    return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().split('T')[0];
   }
 
   private ensureTimeFormat(time: string): string {
-    return time.length === 5 ? `${time}:00` : time;
+    return time && time.length === 5 ? time + ':00' : time;
   }
 
   confirmDelete() {
@@ -174,8 +194,6 @@ export class LeasonDetailsComponent implements OnInit {
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Sim',
       rejectLabel: 'Não',
-      rejectButtonStyleClass: 'p-button-secondary',
-      acceptButtonStyleClass: 'p-button-success',
       accept: () => this.deleteLeason(),
     });
   }

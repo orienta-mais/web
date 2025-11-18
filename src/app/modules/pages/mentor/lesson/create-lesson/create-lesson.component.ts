@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, ViewChildren, QueryList, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormArray } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { Router } from '@angular/router';
 import { TextareaModule } from 'primeng/textarea';
@@ -34,6 +34,8 @@ export class CreateLeasonComponent {
   loading = false;
   today = new Date();
 
+  @ViewChildren('linkInput') linkInputs!: QueryList<ElementRef>;
+
   constructor(
     private fb: FormBuilder,
     private toast: ToastService,
@@ -44,11 +46,38 @@ export class CreateLeasonComponent {
     this.form = this.fb.group({
       title: ['', [Validators.required, Validators.maxLength(200)]],
       description: ['', [Validators.maxLength(1000)]],
-      presentCode: [null, Validators.required, Validators.maxLength(5)],
-      date: [null, [Validators.required]],
-      startTime: ['', [Validators.required]],
-      endTime: ['', [Validators.required]],
+      presentCode: [null, Validators.required],
+      maxGuest: [null, [Validators.required, Validators.min(1)]],
+      date: [null, Validators.required],
+      startTime: ['', Validators.required],
+      endTime: ['', Validators.required],
+      additionalLinks: this.fb.array([]),
     });
+  }
+
+  get additionalLinks(): FormArray {
+    return this.form.get('additionalLinks') as FormArray;
+  }
+
+  addLink() {
+    this.additionalLinks.push(this.fb.control(''));
+
+    setTimeout(() => {
+      const last = this.linkInputs.last;
+      if (last) last.nativeElement.focus();
+    }, 50);
+  }
+
+  removeLink(index: number) {
+    this.additionalLinks.removeAt(index);
+  }
+
+  onLinkBlur(index: number) {
+    const value = this.additionalLinks.at(index).value?.trim();
+
+    if (!value) {
+      this.removeLink(index);
+    }
   }
 
   handleSubmit() {
@@ -58,10 +87,12 @@ export class CreateLeasonComponent {
       return;
     }
 
-    const { title, description, date, startTime, endTime } = this.form.value;
+    const { title, description, date, startTime, endTime, maxGuest, additionalLinks } =
+      this.form.value;
 
     const [hInit, mInit] = startTime.split(':').map(Number);
     const [hEnd, mEnd] = endTime.split(':').map(Number);
+
     const diffHours = hEnd + mEnd / 60 - (hInit + mInit / 60);
 
     if (diffHours <= 0) {
@@ -75,24 +106,22 @@ export class CreateLeasonComponent {
     }
 
     const mentorId = this.userService.getId();
-    if (!mentorId) {
-      this.toast.error('Erro ao identificar mentor. Faça login novamente.');
-      return;
-    }
+
+    const filteredLinks = (additionalLinks || [])
+      .map((l: string) => l?.trim())
+      .filter((l: string) => l);
 
     const payload: CreateLesson = {
       title: title.trim(),
       description: description?.trim(),
+      presentCode: this.form.value.presentCode,
+      maxGuest: Number(maxGuest),
       date: this.formatDate(date),
       startTime: this.ensureTimeFormat(startTime),
       endTime: this.ensureTimeFormat(endTime),
       mentorId,
+      additionalLinks: filteredLinks,
     };
-
-    if (!startTime || !endTime) {
-      this.toast.error('Preencha os horários de início e fim.');
-      return;
-    }
 
     this.loading = true;
 
@@ -108,27 +137,19 @@ export class CreateLeasonComponent {
         },
         error: (e: HttpErrorResponse) => {
           this.loading = false;
-          const msg =
-            e.error?.message ||
-            e.error?.message ||
-            'Erro ao cadastrar aula. Verifique os dados e tente novamente.';
+          const msg = e.error?.message || 'Erro ao cadastrar aula.';
           this.toast.error(msg);
         },
       });
   }
 
   private formatDate(date: Date | string): string {
-    if (!date) return '';
     const d = new Date(date);
     return d.toISOString().split('T')[0];
   }
 
   private ensureTimeFormat(time: string): string {
     return time.length === 5 ? `${time}:00` : time;
-  }
-
-  get f() {
-    return this.form.controls;
   }
 
   goBack() {

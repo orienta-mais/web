@@ -1,8 +1,6 @@
 <div class="flex justify-center items-center min-h-[calc(100vh-4rem)] bg-gray-50 py-6">
   <div class="w-full max-w-2xl p-8 bg-white rounded-2xl shadow-lg">
-    <!-- Cabeçalho -->
     <div class="flex items-center justify-center relative mb-6">
-      <!-- Botão Voltar -->
       <div class="absolute left-0">
         <p-button
           icon="pi pi-arrow-left"
@@ -12,46 +10,29 @@
         ></p-button>
       </div>
 
-      <!-- Título centralizado -->
       <h2 class="text-3xl font-bold text-gray-800 text-center">
         {{ editMode ? 'Editar Aula' : 'Detalhes da Aula' }}
       </h2>
     </div>
 
-    <!-- MODO DE EDIÇÃO -->
+    <!-- ===================== EDIT MODE ===================== -->
     <form *ngIf="editMode" [formGroup]="form" (ngSubmit)="handleUpdate()" class="space-y-5">
-      <!-- Título -->
       <p-floatlabel>
         <input pInputText formControlName="title" id="title" class="w-full" maxlength="200" />
         <label for="title">Título</label>
       </p-floatlabel>
-      <div
-        *ngIf="f['title'].touched && f['title'].errors?.['required']"
-        class="text-red-500 text-sm"
-      >
-        O título é obrigatório.
-      </div>
 
-      <!-- Descrição -->
       <div class="flex flex-col">
         <label class="text-gray-500 text-sm font-medium mb-1 ml-3">Descrição</label>
         <textarea
           pInputTextarea
           formControlName="description"
-          id="description"
           rows="4"
           maxlength="1000"
-          class="w-full whitespace-pre-line break-words"
+          class="w-full whitespace-pre-line"
         ></textarea>
       </div>
-      <div
-        *ngIf="f['description'].touched && f['description'].errors?.['required']"
-        class="text-red-500 text-sm"
-      >
-        A descrição é obrigatória.
-      </div>
 
-      <!-- Código de Presença -->
       <p-floatlabel>
         <input
           pInputText
@@ -62,17 +43,20 @@
         />
         <label for="presentCode">Código de presença</label>
       </p-floatlabel>
-      <div
-        *ngIf="f['presentCode'].touched && f['presentCode'].errors?.['required']"
-        class="text-red-500 text-sm"
-      >
-        O código de presença é obrigatório.
-      </div>
-      <div *ngIf="f['presentCode'].errors?.['maxlength']" class="text-red-500 text-sm">
-        Máximo de 5 caracteres.
-      </div>
 
-      <!-- Data -->
+      <!-- ===================== MAX GUEST INPUT ===================== -->
+      <p-floatlabel>
+        <input
+          type="number"
+          pInputText
+          id="maxGuest"
+          formControlName="maxGuest"
+          min="0"
+          class="w-full"
+        />
+        <label for="maxGuest">Máximo de convidados</label>
+      </p-floatlabel>
+
       <div>
         <label class="block text-gray-700 font-medium mb-2">Data</label>
         <p-datepicker
@@ -81,15 +65,8 @@
           dateFormat="dd/mm/yy"
           styleClass="w-full"
         ></p-datepicker>
-        <div
-          *ngIf="f['date'].touched && f['date'].errors?.['required']"
-          class="text-red-500 text-sm mt-1"
-        >
-          A data da aula é obrigatória.
-        </div>
       </div>
 
-      <!-- Hora de início e fim -->
       <div class="grid grid-cols-2 gap-4">
         <div>
           <label class="block text-gray-700 font-medium mb-2">Hora de início</label>
@@ -98,14 +75,7 @@
             formControlName="initialTime"
             class="w-full border rounded-md px-3 py-2"
           />
-          <div
-            *ngIf="f['initialTime'].touched && f['initialTime'].errors?.['required']"
-            class="text-red-500 text-sm"
-          >
-            A hora de início é obrigatória.
-          </div>
         </div>
-
         <div>
           <label class="block text-gray-700 font-medium mb-2">Hora de fim</label>
           <input
@@ -113,16 +83,45 @@
             formControlName="finalTime"
             class="w-full border rounded-md px-3 py-2"
           />
-          <div
-            *ngIf="f['finalTime'].touched && f['finalTime'].errors?.['required']"
-            class="text-red-500 text-sm"
-          >
-            A hora de fim é obrigatória.
-          </div>
         </div>
       </div>
 
-      <!-- Botões -->
+      <!-- ================== Additional Links ================== -->
+      <div class="mt-6">
+        <label class="text-gray-700 font-medium mb-2 block">Links adicionais</label>
+
+        <div class="space-y-3">
+          <div
+            *ngFor="let ctrl of additionalLinksControls; let i = index"
+            class="flex items-center gap-3"
+          >
+            <input
+              pInputText
+              class="flex-1"
+              [formControl]="ctrl"
+              placeholder="https://..."
+              (blur)="removeLinkIfEmpty(i)"
+            />
+
+            <button
+              type="button"
+              pButton
+              icon="pi pi-trash"
+              severity="danger"
+              (click)="removeLink(i)"
+            ></button>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="mt-3 text-blue-600 font-medium hover:underline"
+          (click)="addLink()"
+        >
+          + Adicionar link
+        </button>
+      </div>
+
       <p-button
         type="submit"
         label="Salvar Alterações"
@@ -130,7 +129,6 @@
         styleClass="w-full mt-4"
         [loading]="loading"
       ></p-button>
-
       <p-button
         type="button"
         label="Cancelar"
@@ -140,66 +138,36 @@
       ></p-button>
     </form>
 
-    <!-- MODO DE VISUALIZAÇÃO -->
+    <!-- ===================== VIEW MODE ===================== -->
     <div *ngIf="!editMode" class="space-y-6">
       <div class="bg-gray-50 rounded-xl p-5 border border-gray-200 shadow-sm">
         <h3 class="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Informações da Aula</h3>
 
-        <div class="space-y-4">
-          <div>
-            <p class="text-sm text-gray-500 font-medium">Título</p>
-            <p class="text-base text-gray-800 font-semibold">{{ leason?.title }}</p>
-          </div>
+        <p><strong>Título:</strong> {{ leason?.title }}</p>
+        <p><strong>Descrição:</strong> {{ leason?.description }}</p>
+        <p><strong>Código presença:</strong> {{ leason?.presentCode }}</p>
 
-          <div>
-            <p class="text-sm text-gray-500 font-medium">Descrição</p>
-            <p class="text-base text-gray-700 whitespace-pre-line">{{ leason?.description }}</p>
-          </div>
+        <!-- ===================== MAX GUEST VIEW ===================== -->
+        <p><strong>Máximo de convidados:</strong> {{ leason?.maxGuest }}</p>
 
-          <div>
-            <p class="text-sm text-gray-500 font-medium">Código de presença</p>
-            <p class="text-base text-gray-800">{{ leason?.presentCode || '-' }}</p>
-          </div>
+        <p><strong>Data:</strong> {{ leason?.date | date: 'dd/MM/yyyy' }}</p>
+        <p><strong>Início:</strong> {{ leason?.startTime?.slice(0, 5) }}</p>
+        <p><strong>Fim:</strong> {{ leason?.endTime?.slice(0, 5) }}</p>
 
-          <div class="grid grid-cols-2 gap-6 mt-4">
-            <div>
-              <p class="text-sm text-gray-500 font-medium">Data</p>
-              <p class="text-base text-gray-800">{{ leason?.date | date: 'dd/MM/yyyy' }}</p>
-            </div>
-          </div>
+        <div class="mt-4">
+          <strong>Links adicionais:</strong>
+          <ul class="mt-2 space-y-1" *ngIf="leason?.additionalLinks?.length; else noLinks">
+            <li *ngFor="let link of leason!.additionalLinks">
+              <a [href]="link" target="_blank" class="text-blue-600 hover:underline">{{ link }}</a>
+            </li>
+          </ul>
 
-          <div class="grid grid-cols-2 gap-6 mt-4">
-            <div>
-              <p class="text-sm text-gray-500 font-medium">Hora de início</p>
-              <p class="text-base text-gray-800">{{ leason?.startTime?.slice(0, 5) }}</p>
-            </div>
-
-            <div>
-              <p class="text-sm text-gray-500 font-medium">Hora de fim</p>
-              <p class="text-base text-gray-800">{{ leason?.endTime?.slice(0, 5) }}</p>
-            </div>
-          </div>
-
-          <div class="flex justify-center mt-4 mb-2">
-            <ng-container *ngIf="leason?.link; else noLink">
-              <a
-                [href]="leason?.link"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="text-blue-600 font-medium hover:underline bg-blue-200 py-2 px-3 rounded-2xl"
-              >
-                Acesse a reunião
-              </a>
-            </ng-container>
-
-            <ng-template #noLink>
-              <p class="text-gray-500 italic">Link indisponível no momento.</p>
-            </ng-template>
-          </div>
+          <ng-template #noLinks>
+            <p class="text-gray-500 italic">Nenhum link adicionado.</p>
+          </ng-template>
         </div>
       </div>
 
-      <!-- Botões -->
       <div class="flex gap-4 mt-8 justify-center">
         <p-button
           label="Editar Aula"

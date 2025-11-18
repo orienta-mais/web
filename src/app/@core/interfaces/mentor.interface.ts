@@ -18,6 +18,9 @@ export interface CreateLesson {
   startTime: string;
   endTime: string;
   mentorId: string;
+  presentCode: string;
+  maxGuest: number;
+  additionalLinks?: string[];
 }
 
 export interface MentorId {
@@ -41,6 +44,7 @@ export interface LeasonListResponse {
   date: string;
   startTime: string;
   endTime: string;
+  maxGuest: number;
   mentorName: string;
 }
 
@@ -53,5 +57,7 @@ export interface LeasonDetailsResponse {
   presentCode: string;
   endTime: string;
   mentorName: string;
+  additionalLinks?: string[];
+  maxGuest: number;
   link: string;
 }
