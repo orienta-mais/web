@@ -199,68 +199,94 @@
 
     <!-- VISUALIZAÇÃO -->
     <div *ngIf="!editMode && !editPassword" class="space-y-6">
-      <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
-        <h3 class="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">
+      <div class="bg-gray-50 rounded-xl p-6 border border-gray-200 shadow-sm">
+        <h3 class="text-xl font-semibold text-gray-800 mb-5 text-center">
           Informações do Mentorado
         </h3>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <p><span class="font-medium text-gray-500">Nome:</span> {{ form.get('name')?.value }}</p>
-          <p>
-            <span class="font-medium text-gray-500">Sobrenome:</span>
-            {{ form.get('lastName')?.value }}
-          </p>
-          <p>
-            <span class="font-medium text-gray-500">Email:</span> {{ form.get('email')?.value }}
-          </p>
-          <p>
-            <span class="font-medium text-gray-500">Data de Nascimento:</span>
-            {{ form.get('birthDate')?.value | date: 'dd/MM/yyyy' }}
-          </p>
-          <p>
-            <span class="font-medium text-gray-500">Estado:</span>
-            {{ form.get('state')?.value?.name }}
-          </p>
-          <p>
-            <span class="font-medium text-gray-500">Nacionalidade:</span>
-            {{ form.get('nationality')?.value?.name }}
-          </p>
-          <p class="sm:col-span-2">
-            <span class="font-medium text-gray-500">LinkedIn:</span>
-            {{ form.get('socialMedias')?.value }}
-          </p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-base">
+          <!-- NOME -->
+          <div>
+            <span class="text-gray-600 text-sm">Nome</span>
+            <p class="font-medium text-gray-900">{{ form.get('name')?.value }}</p>
+          </div>
+
+          <!-- SOBRENOME -->
+          <div>
+            <span class="text-gray-600 text-sm">Sobrenome</span>
+            <p class="font-medium text-gray-900">{{ form.get('lastName')?.value }}</p>
+          </div>
+
+          <!-- EMAIL -->
+          <div>
+            <span class="text-gray-600 text-sm">Email</span>
+            <p class="font-medium text-gray-900 break-all">{{ form.get('email')?.value }}</p>
+          </div>
+
+          <!-- DATA NASCIMENTO -->
+          <div>
+            <span class="text-gray-600 text-sm">Data de Nascimento</span>
+            <p class="font-medium text-gray-900">
+              {{ form.get('birthDate')?.value | date: 'dd/MM/yyyy' }}
+            </p>
+          </div>
+
+          <!-- ESTADO -->
+          <div>
+            <span class="text-gray-600 text-sm">Estado</span>
+            <p class="font-medium text-gray-900">
+              {{ form.get('state')?.value?.name }}
+            </p>
+          </div>
+
+          <!-- NACIONALIDADE -->
+          <div>
+            <span class="text-gray-600 text-sm">Nacionalidade</span>
+            <p class="font-medium text-gray-900">
+              {{ form.get('nationality')?.value?.name }}
+            </p>
+          </div>
+
+          <!-- LINKEDIN -->
+          <div class="sm:col-span-2">
+            <span class="text-gray-600 text-sm">LinkedIn</span>
+            <p class="font-medium text-blue-600 break-all">
+              {{ form.get('socialMedias')?.value || '—' }}
+            </p>
+          </div>
         </div>
 
-        <div class="mt-4 break-words">
-          <p class="font-medium text-gray-500 mb-1">Descrição:</p>
-          <p class="text-gray-700 whitespace-pre-line break-words">
-            {{ form.get('description')?.value }}
+        <!-- DESCRIÇÃO -->
+        <div class="mt-5">
+          <span class="text-gray-600 text-sm block mb-1">Descrição</span>
+          <p class="text-base text-gray-800 whitespace-pre-line break-words">
+            {{ form.get('description')?.value || 'Nenhuma descrição adicionada.' }}
           </p>
         </div>
       </div>
+    </div>
 
-      <div class="flex flex-col sm:flex-row justify-center gap-4 mt-6">
-        <button
-          (click)="enableEdit()"
-          class="flex-1 py-3 bg-blue-600 text-white rounded-xl hover:bg-yellow-600"
-        >
-          Editar Perfil
-        </button>
+    <div class="flex flex-col sm:flex-row justify-center gap-4 mt-6">
+      <button
+        (click)="enableEdit()"
+        class="flex-1 py-3 bg-gray-400 text-white rounded-xl hover:bg-gray-500"
+      >
+        Editar Perfil
+      </button>
 
-        <button
-          (click)="enablePasswordEdit()"
-          class="flex-1 py-3 bg-amber-500 text-white rounded-xl hover:bg-amber-600"
-        >
-          Editar Senha
-        </button>
+      <button
+        (click)="enablePasswordEdit()"
+        class="flex-1 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-500"
+      >
+        Editar Senha
+      </button>
 
-        <button
-          (click)="confirmDelete()"
-          class="flex-1 py-3 bg-red-600 text-white rounded-xl hover:bg-red-700"
-        >
-          Excluir Conta
-        </button>
-      </div>
+      <button
+        (click)="confirmDelete()"
+        class="flex-1 py-3 bg-red-600 text-white rounded-xl hover:bg-red-700"
+      >
+        Excluir Conta
+      </button>
     </div>
   </div>
 </div>

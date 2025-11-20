@@ -1,4 +1,4 @@
-<div class="flex justify-center items-center min-h-[calc(100vh-4rem)] bg-gray-50">
+<div class="flex justify-center items-center min-h-[calc(100vh-4rem)] bg-gray-50 py-5">
   <div class="w-full max-w-2xl p-8 rounded-2xl shadow-lg bg-white">
     <div>
       <p-button
@@ -12,14 +12,15 @@
     </div>
 
     <form [formGroup]="form" (ngSubmit)="handleSubmit()" class="space-y-5">
-      <!-- Título -->
-      <p-floatlabel>
+      <!-- TÍTULO -->
+      <div class="flex flex-col">
+        <label for="title" class="text-gray-700 font-medium mb-1">Título</label>
         <input pInputText id="title" formControlName="title" maxlength="200" class="w-full" />
-        <label for="title">Título</label>
-      </p-floatlabel>
+      </div>
 
-      <!-- Descrição -->
-      <p-floatlabel>
+      <!-- DESCRIÇÃO -->
+      <div class="flex flex-col">
+        <label for="description" class="text-gray-700 font-medium mb-1">Descrição</label>
         <textarea
           pInputTextarea
           id="description"
@@ -27,11 +28,11 @@
           rows="4"
           class="w-full"
         ></textarea>
-        <label for="description">Descrição</label>
-      </p-floatlabel>
+      </div>
 
-      <!-- Código -->
-      <p-floatlabel>
+      <!-- CÓDIGO -->
+      <div class="flex flex-col">
+        <label for="presentCode" class="text-gray-700 font-medium mb-1">Código de presença</label>
         <input
           pInputText
           id="presentCode"
@@ -39,11 +40,11 @@
           maxlength="5"
           class="w-full"
         />
-        <label for="presentCode">Código de presença</label>
-      </p-floatlabel>
+      </div>
 
       <!-- MAX GUEST -->
-      <p-floatlabel>
+      <div class="flex flex-col">
+        <label for="maxGuest" class="text-gray-700 font-medium mb-1">Máximo de convidados</label>
         <input
           pInputText
           id="maxGuest"
@@ -52,12 +53,11 @@
           min="1"
           class="w-full"
         />
-        <label for="maxGuest">Máximo de convidados</label>
-      </p-floatlabel>
+      </div>
 
-      <!-- Data -->
-      <div>
-        <label class="block text-gray-700 font-medium mb-2">Data da aula</label>
+      <!-- DATA -->
+      <div class="flex flex-col">
+        <label class="text-gray-700 font-medium mb-2">Data da aula</label>
         <p-datepicker
           formControlName="date"
           [showIcon]="true"
@@ -68,10 +68,10 @@
         ></p-datepicker>
       </div>
 
-      <!-- Horários -->
+      <!-- HORÁRIOS -->
       <div class="grid grid-cols-2 gap-4">
-        <div>
-          <label class="block text-gray-700 font-medium mb-2">Hora de início</label>
+        <div class="flex flex-col">
+          <label class="text-gray-700 font-medium mb-2">Hora de início</label>
           <input
             type="time"
             formControlName="startTime"
@@ -79,8 +79,8 @@
           />
         </div>
 
-        <div>
-          <label class="block text-gray-700 font-medium mb-2">Hora de fim</label>
+        <div class="flex flex-col">
+          <label class="text-gray-700 font-medium mb-2">Hora de fim</label>
           <input type="time" formControlName="endTime" class="w-full border rounded-md px-3 py-2" />
         </div>
       </div>
@@ -122,7 +122,7 @@
         </button>
       </div>
 
-      <!-- Salvar -->
+      <!-- SALVAR -->
       <p-button
         type="submit"
         label="Salvar Aula"

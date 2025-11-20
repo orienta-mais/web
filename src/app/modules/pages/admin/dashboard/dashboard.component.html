@@ -1,0 +1,109 @@
+<div class="p-6 space-y-8 bg-sky-50">
+  <!-- HEADER -->
+  <div>
+    <h1 class="text-3xl font-bold text-gray-800">Dashboard</h1>
+    <p class="text-gray-500">Resumo rápido da atividade atual da plataforma</p>
+  </div>
+
+  <!-- LOADING -->
+  <div *ngIf="loading" class="flex justify-center items-center h-64">
+    <p-progressSpinner></p-progressSpinner>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div *ngIf="!loading" class="space-y-10">
+    <!-- CARDS SUPERIORES -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <p-card class="shadow rounded-xl hover:shadow-lg transition p-4">
+        <div class="flex flex-col gap-1">
+          <span class="text-gray-600 text-sm">Mentores ativos na plataforma</span>
+          <span class="text-4xl font-bold text-blue-600">{{ mentors }}</span>
+          <span class="text-xs text-gray-400"
+            >Quantidade total de mentores cadastrados e habilitados.</span
+          >
+        </div>
+      </p-card>
+
+      <p-card class="shadow rounded-xl hover:shadow-lg transition p-4">
+        <div class="flex flex-col gap-1">
+          <span class="text-gray-600 text-sm">Mentorados registrados</span>
+          <span class="text-4xl font-bold text-green-600">{{ mentoreds }}</span>
+          <span class="text-xs text-gray-400">Usuários que recebem mentoria atualmente.</span>
+        </div>
+      </p-card>
+
+      <p-card class="shadow rounded-xl hover:shadow-lg transition p-4">
+        <div class="flex flex-col gap-1">
+          <span class="text-gray-600 text-sm">Aulas futuras agendadas</span>
+          <span class="text-4xl font-bold text-indigo-600">{{ upcomingLessons }}</span>
+          <span class="text-xs text-gray-400">Aulas já confirmadas e ainda não realizadas.</span>
+        </div>
+      </p-card>
+
+      <p-card class="shadow rounded-xl hover:shadow-lg transition p-4">
+        <div class="flex flex-col gap-1">
+          <span class="text-gray-600 text-sm">Aulas indisponíveis</span>
+          <span class="text-4xl font-bold text-red-600">{{ unavailableLessons }}</span>
+          <span class="text-xs text-gray-400">Aulas canceladas ou bloqueadas no momento.</span>
+        </div>
+      </p-card>
+    </div>
+
+    <!-- GRÁFICO DE ESTADOS -->
+    <p-card class="shadow rounded-xl p-4">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl font-semibold text-gray-800">Distribuição por Estado</h2>
+        <p class="text-sm text-gray-500">Visualização dos cadastros por unidade federativa.</p>
+      </div>
+
+      <div class="w-full flex justify-center">
+        <p-chart
+          type="bar"
+          [data]="barData"
+          [options]="barOptions"
+          style="width: 900px; height: 400px"
+        ></p-chart>
+      </div>
+    </p-card>
+
+    <!-- TABELA E EXPORT CSV -->
+    <p-card class="shadow rounded-xl p-4">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h2 class="text-xl font-semibold text-gray-800">Lista de Estados</h2>
+          <p class="text-sm text-gray-500">
+            Tabela detalhada com a quantidade de usuários por estado.
+          </p>
+        </div>
+
+        <button
+          pButton
+          label="Exportar CSV"
+          icon="pi pi-download"
+          class="p-button-sm p-button-outlined"
+          (click)="exportCSV()"
+        ></button>
+      </div>
+
+      <p-table
+        [value]="states"
+        class="rounded-xl overflow-hidden"
+        [tableStyle]="{ 'min-width': '400px' }"
+      >
+        <ng-template pTemplate="header">
+          <tr class="bg-gray-100">
+            <th class="py-3 px-2">Estado</th>
+            <th class="py-3 px-2">Total Registrados</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-row>
+          <tr class="hover:bg-gray-50 transition">
+            <td class="py-3 px-2">{{ row.state }}</td>
+            <td class="py-3 px-2 font-semibold">{{ row.totalRegistered }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-card>
+  </div>
+</div>

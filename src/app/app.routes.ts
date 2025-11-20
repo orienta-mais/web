@@ -17,6 +17,7 @@ import { MentoredLessonDetailsComponent } from './modules/pages/mentored/mentore
 import { HomeComponent } from './modules/main/home/home.component';
 import { MentoredProfileComponent } from './modules/pages/mentored/mentored-profile/mentored-profile.component';
 import { MentoredLessonRegisteredComponent } from './modules/pages/mentored/mentored-lesson/mentored-lesson-registered/mentored-lesson-registered.component';
+import { DashboardComponent } from './modules/pages/admin/dashboard/dashboard.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -25,6 +26,8 @@ export const routes: Routes = [
   { path: 'forgot-password', component: ForgotPasswordComponent },
 
   { path: 'register/email/send-validation', component: SendValidateEmailComponent },
+
+  { path: 'admin/dashboard', component: DashboardComponent },
 
   {
     path: '',

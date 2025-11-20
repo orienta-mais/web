@@ -51,6 +51,16 @@
             Perfil
           </a>
         </ng-container>
+
+        <ng-container *ngIf="role === 'ADMIN'">
+          <a
+            routerLink="/admin/dashboard"
+            routerLinkActive="text-gray-600"
+            class="hover:text-gray-600 transition"
+          >
+            DashBoard
+          </a>
+        </ng-container>
       </div>
 
       <div class="flex items-center space-x-4">

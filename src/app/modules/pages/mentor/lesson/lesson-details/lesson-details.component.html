@@ -1,16 +1,14 @@
 <div class="flex justify-center items-center min-h-[calc(100vh-4rem)] bg-gray-50 py-6">
   <div class="w-full max-w-2xl p-8 bg-white rounded-2xl shadow-lg">
-    <div class="flex items-center justify-center relative mb-6">
-      <div class="absolute left-0">
-        <p-button
-          icon="pi pi-arrow-left"
-          label="Voltar"
-          styleClass="p-button-text text-gray-700 hover:text-blue-600"
-          (click)="returnBack()"
-        ></p-button>
-      </div>
+    <div>
+      <p-button
+        icon="pi pi-arrow-left"
+        label="Voltar"
+        styleClass="p-button-text text-gray-700 hover:text-blue-600"
+        (click)="returnBack()"
+      ></p-button>
 
-      <h2 class="text-3xl font-bold text-gray-800 text-center">
+      <h2 class="text-3xl font-bold text-gray-800 text-center flex-1 mb-6">
         {{ editMode ? 'Editar Aula' : 'Detalhes da Aula' }}
       </h2>
     </div>
@@ -140,44 +138,91 @@
 
     <!-- ===================== VIEW MODE ===================== -->
     <div *ngIf="!editMode" class="space-y-6">
-      <div class="bg-gray-50 rounded-xl p-5 border border-gray-200 shadow-sm">
-        <h3 class="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Informações da Aula</h3>
+      <div class="bg-gray-50 rounded-xl p-6 border border-gray-200 shadow">
+        <div class="grid grid-cols-1 gap-4">
+          <!-- TÍTULO -->
+          <div>
+            <p class="font-semibold text-gray-900 text-2xl">{{ leason?.title }}</p>
+          </div>
 
-        <p><strong>Título:</strong> {{ leason?.title }}</p>
-        <p><strong>Descrição:</strong> {{ leason?.description }}</p>
-        <p><strong>Código presença:</strong> {{ leason?.presentCode }}</p>
+          <!-- DESCRIÇÃO -->
+          <div>
+            <span class="text-gray-600 text-sm">Descrição</span>
+            <p class="text-base text-gray-800 whitespace-pre-line">
+              {{ leason?.description || '—' }}
+            </p>
+          </div>
 
-        <!-- ===================== MAX GUEST VIEW ===================== -->
-        <p><strong>Máximo de convidados:</strong> {{ leason?.maxGuest }}</p>
+          <!-- CÓDIGO -->
+          <div>
+            <span class="text-gray-600 text-sm">Código de Presença</span>
+            <p class="text-base font-medium text-gray-800">{{ leason?.presentCode }}</p>
+          </div>
 
-        <p><strong>Data:</strong> {{ leason?.date | date: 'dd/MM/yyyy' }}</p>
-        <p><strong>Início:</strong> {{ leason?.startTime?.slice(0, 5) }}</p>
-        <p><strong>Fim:</strong> {{ leason?.endTime?.slice(0, 5) }}</p>
+          <!-- MAX GUEST -->
+          <div>
+            <span class="text-gray-600 text-sm">Máximo de Convidados</span>
+            <p class="text-base font-medium text-gray-800">{{ leason?.maxGuest }}</p>
+          </div>
 
-        <div class="mt-4">
-          <strong>Links adicionais:</strong>
-          <ul class="mt-2 space-y-1" *ngIf="leason?.additionalLinks?.length; else noLinks">
-            <li *ngFor="let link of leason!.additionalLinks">
-              <a [href]="link" target="_blank" class="text-blue-600 hover:underline">{{ link }}</a>
-            </li>
-          </ul>
+          <!-- DATA / HORÁRIOS -->
+          <div class="grid grid-cols-3 gap-4 text-center mt-2">
+            <div>
+              <span class="text-gray-600 text-sm block">Data</span>
+              <p class="text-base font-medium text-gray-900">
+                {{ leason?.date | date: 'dd/MM/yyyy' }}
+              </p>
+            </div>
 
-          <ng-template #noLinks>
-            <p class="text-gray-500 italic">Nenhum link adicionado.</p>
-          </ng-template>
+            <div>
+              <span class="text-gray-600 text-sm block">Início</span>
+              <p class="text-base font-medium text-gray-900">
+                {{ leason?.startTime?.slice(0, 5) }}
+              </p>
+            </div>
+
+            <div>
+              <span class="text-gray-600 text-sm block">Fim</span>
+              <p class="text-base font-medium text-gray-900">
+                {{ leason?.endTime?.slice(0, 5) }}
+              </p>
+            </div>
+          </div>
+
+          <!-- LINKS -->
+          <div class="mt-3">
+            <span class="text-gray-600 text-sm">Links adicionais</span>
+
+            <ng-container *ngIf="leason?.additionalLinks?.length; else noLinks">
+              <ul class="mt-2 space-y-2">
+                <li
+                  *ngFor="let link of leason!.additionalLinks"
+                  class="bg-white border rounded-md px-3 py-2 text-blue-600 hover:underline cursor-pointer break-all text-base text-center"
+                >
+                  <a [href]="link" target="_blank">{{ link }}</a>
+                </li>
+              </ul>
+            </ng-container>
+
+            <ng-template #noLinks>
+              <p class="text-gray-500 italic text-base mt-1 text-center">Nenhum link adicionado.</p>
+            </ng-template>
+          </div>
         </div>
       </div>
 
-      <div class="flex gap-4 mt-8 justify-center">
+      <!-- BOTÕES -->
+      <div class="flex gap-4 mt-6 justify-center">
         <p-button
-          label="Editar Aula"
-          styleClass="w-40"
+          label="Editar"
+          styleClass="w-36"
           severity="info"
           (click)="enableEdit()"
         ></p-button>
+
         <p-button
-          label="Excluir Aula"
-          styleClass="w-40"
+          label="Excluir"
+          styleClass="w-36"
           severity="danger"
           (click)="confirmDelete()"
         ></p-button>
