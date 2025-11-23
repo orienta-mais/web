@@ -36,7 +36,7 @@
           pInputText
           id="presentCode"
           formControlName="presentCode"
-          maxlength="5"
+          maxlength="6"
           class="w-full"
         />
         <label for="presentCode">Código de presença</label>
@@ -211,8 +211,15 @@
         </div>
       </div>
 
+      <div
+        *ngIf="lessonFinalized"
+        class="with-full bg-green-100 border border-green-300 rounded-lg p-4 text-center"
+      >
+        <p class="text-2xl text-bold text-green-600">Aula finalizada!</p>
+      </div>
+
       <!-- BOTÕES -->
-      <div class="flex gap-4 mt-6 justify-center">
+      <div class="flex gap-4 mt-6 justify-center" *ngIf="!lessonFinalized">
         <p-button
           label="Editar"
           styleClass="w-36"

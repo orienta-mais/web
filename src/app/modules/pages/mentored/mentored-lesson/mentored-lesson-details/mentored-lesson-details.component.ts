@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { FormsModule } from '@angular/forms';
 import { ConfirmationService } from 'primeng/api';
 import { ActivatedRoute, Router } from '@angular/router';
 import { take, forkJoin } from 'rxjs';
@@ -14,7 +15,7 @@ import { UserService } from '../../../../../@core/services/user/user.service';
 @Component({
   selector: 'app-mentored-lesson-details',
   standalone: true,
-  imports: [CommonModule, ButtonModule, ConfirmDialogModule],
+  imports: [CommonModule, ButtonModule, ConfirmDialogModule, FormsModule],
   providers: [ConfirmationService],
   templateUrl: './mentored-lesson-details.component.html',
 })
@@ -22,6 +23,14 @@ export class MentoredLessonDetailsComponent implements OnInit {
   lesson?: LeasonDetailsResponse;
   loading = false;
   isRegistered = false;
+
+  showPresenceInput = false;
+  showFeedback = false;
+  presenceCode = '';
+  feedbackText = '';
+  hasStarted = false;
+
+  registerLoading = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -49,6 +58,7 @@ export class MentoredLessonDetailsComponent implements OnInit {
             this.lesson = lesson;
             this.isRegistered = registered.some((r) => r.id === lessonId);
             this.loading = false;
+            this.showBoxLessonStarted();
           },
           error: () => {
             this.toast.error('Erro ao carregar detalhes da aula.');
@@ -58,6 +68,17 @@ export class MentoredLessonDetailsComponent implements OnInit {
     }
   }
 
+  showBoxLessonStarted() {
+    if (this.lesson?.date && this.lesson?.startTime) {
+      const dateTimeString = `${this.lesson.date}T${this.lesson.startTime}`;
+      const lessonStart = new Date(dateTimeString);
+      const now = new Date();
+
+      this.hasStarted = lessonStart <= now;
+    }
+  }
+
+  // 🔵 CONFIRMAR INSCRIÇÃO
   confirmRegister() {
     this.confirmService.confirm({
       header: 'Confirmar inscrição',
@@ -73,6 +94,7 @@ export class MentoredLessonDetailsComponent implements OnInit {
 
   registerInLesson() {
     if (!this.lesson?.id) return;
+    this.registerLoading = true;
 
     this.lessonService
       .registerMentoredInLesson(this.lesson.id)
@@ -81,8 +103,57 @@ export class MentoredLessonDetailsComponent implements OnInit {
         next: () => {
           this.toast.success('Cadastro realizado com sucesso!');
           this.isRegistered = true;
+          this.registerLoading = false;
         },
-        error: (e: HttpErrorResponse) => this.toast.error(e.error?.message),
+        error: (e: HttpErrorResponse) => {
+          this.toast.error(e.error?.message);
+          this.registerLoading = false;
+        },
+      });
+  }
+
+  // 🔵 PRESENÇA E FEEDBACK
+  submitPresence() {
+    if (!this.lesson?.presentCodeFilled) {
+      this.toast.error('Voce pulou etapas, confirme sua presença primeiro.');
+      return;
+    }
+
+    this.lessonService
+      .sendPresenceCode(this.lesson!.id, this.presenceCode)
+      .pipe(take(1))
+      .subscribe({
+        next: () => {
+          if (this.showFeedback && this.feedbackText.trim()) {
+            this.submitFeedback();
+          }
+
+          this.toast.success('Presença confirmada!');
+          this.lesson!.presentCodeFilled = true;
+        },
+        error: () => this.toast.error('Erro ao confirmar presença.'),
+      });
+  }
+
+  submitFeedback() {
+    // this.lessonService.sendFeedback(this.lesson!.id, this.feedbackText)
+    //   .pipe(take(1))
+    //   .subscribe({
+    //     next: () => this.toast.success("Feedback enviado!"),
+    //     error: () => this.toast.error("Erro ao enviar feedback."),
+    //   });
+  }
+
+  // 🔵 DOWNLOAD CERTIFICADO
+  downloadCertificate() {
+    this.lessonService
+      .downloadCertificate(this.lesson!.id)
+      .pipe(take(1))
+      .subscribe({
+        next: () => {
+          this.toast.success('Certificado baixado com sucesso!');
+        },
+        error: () => this.toast.error('Erro ao baixar certificado.'),
       });
   }
 

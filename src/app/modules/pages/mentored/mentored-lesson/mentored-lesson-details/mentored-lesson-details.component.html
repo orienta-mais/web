@@ -8,9 +8,10 @@
         (click)="returnBack()"
       ></p-button>
 
-      <h2 class="text-3xl font-bold text-gray-800 text-center flex-1 mb-6">Detalhes da Aula'</h2>
+      <h2 class="text-3xl font-bold text-gray-800 text-center flex-1 mb-6">Detalhes da Aula</h2>
     </div>
 
+    <!-- CARD PRINCIPAL -->
     <div class="bg-gray-50 rounded-xl p-6 border border-gray-200 shadow-sm">
       <div class="space-y-4">
         <div>
@@ -51,9 +52,8 @@
           </div>
         </div>
 
-        <!-- Área de links -->
+        <!-- LINKS -->
         <div class="flex flex-col justify-center items-center mt-4 mb-2 gap-2">
-          <!-- LINK PRINCIPAL -->
           <ng-container *ngIf="lesson?.link; else noLink">
             <a
               [href]="lesson?.link"
@@ -65,7 +65,6 @@
             </a>
           </ng-container>
 
-          <!-- LINKS ADICIONAIS -->
           <ng-container *ngIf="lesson?.additionalLinks?.length">
             <h4 class="text-sm font-semibold text-gray-700 mt-2">Links adicionais</h4>
 
@@ -86,30 +85,106 @@
             <p class="text-gray-500 italic">Nenhum link disponível no momento.</p>
           </ng-template>
         </div>
-        <!-- FIM DOS LINKS -->
+
+        <!-- PARTICIPAÇÃO NA AULA (só aparece se a aula já começou) -->
+        <div
+          *ngIf="lesson && hasStarted && !lesson.presentCodeFilled"
+          class="mt-8 bg-white border border-gray-200 rounded-2xl p-6 shadow-md"
+        >
+          <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
+            <i class="pi pi-calendar-check text-blue-600"></i>
+            Participação na Aula
+          </h3>
+
+          <p class="text-gray-600 text-sm mb-4">
+            Confirme sua presença utilizando o código fornecido pelo mentor e, se desejar, deixe um
+            feedback sobre a aula.
+          </p>
+
+          <!-- CÓDIGO DE PRESENÇA ----------------------------------------- -->
+          <div class="bg-gray-50 border rounded-xl p-4 mb-4">
+            <label class="text-sm font-medium text-gray-700">Código de Presença</label>
+
+            <input
+              type="text"
+              placeholder="Digite o código"
+              [(ngModel)]="presenceCode"
+              class="w-full border rounded-lg px-3 py-2 mt-2 mb-2 focus:ring-2 focus:ring-blue-300 focus:outline-none"
+            />
+
+            <p-button
+              label="Confirmar Presença"
+              icon="pi pi-check"
+              class="w-full p-button-sm"
+              (click)="submitPresence()"
+            ></p-button>
+          </div>
+
+          <!-- FEEDBACK ---------------------------------------------------- -->
+          <div class="bg-gray-50 border rounded-xl p-4">
+            <button
+              class="text-blue-600 font-medium text-sm flex items-center gap-2"
+              (click)="showFeedback = !showFeedback"
+            >
+              <i class="pi pi-comment"></i>
+              {{ showFeedback ? 'Ocultar feedback' : 'Adicionar feedback sobre o mentor' }}
+            </button>
+
+            <textarea
+              *ngIf="showFeedback"
+              [(ngModel)]="feedbackText"
+              placeholder="Deixe seu feedback aqui..."
+              class="w-full border rounded-lg px-3 py-2 mt-3 mb-2 focus:ring-2 focus:ring-blue-300 focus:outline-none"
+              rows="3"
+            ></textarea>
+
+            <p-button
+              *ngIf="showFeedback"
+              label="Enviar Feedback"
+              icon="pi pi-send"
+              class="w-full p-button-sm"
+              (click)="submitFeedback()"
+            ></p-button>
+          </div>
+        </div>
+
+        <div
+          *ngIf="lesson && hasStarted && lesson.presentCodeFilled"
+          class="w-full flex justify-center items-center mt-8"
+        >
+          <p-button
+            label="Gerar certificado"
+            icon="pi pi-download
+"
+            class="w-full p-button-sm"
+            (click)="downloadCertificate()"
+            class="flex"
+          ></p-button>
+        </div>
+
+        <!-- TEXTO FINAL -->
+        <div class="mt-8 text-center">
+          <p *ngIf="!isRegistered" class="text-gray-600 mb-6 text-sm">
+            Ao se cadastrar na aula, você receberá um link no seu e-mail com as instruções de
+            participação.
+          </p>
+
+          <p-button
+            *ngIf="!isRegistered"
+            [loading]="registerLoading"
+            label="Cadastrar-se na Aula"
+            icon="pi pi-user-plus"
+            styleClass="p-button-lg w-full sm:w-auto"
+            (click)="confirmRegister()"
+          ></p-button>
+
+          <p *ngIf="isRegistered" class="text-green-600 font-medium mt-4 text-center">
+            ✅ Você já está cadastrado nesta aula.
+          </p>
+        </div>
       </div>
     </div>
 
-    <!-- 💬 Mensagem e Botão -->
-    <div class="mt-8 text-center">
-      <p class="text-gray-600 mb-6 text-sm">
-        Ao se cadastrar na aula, você receberá um link no seu e-mail com as instruções de
-        participação.
-      </p>
-
-      <p-button
-        *ngIf="!isRegistered"
-        label="Cadastrar-se na Aula"
-        icon="pi pi-user-plus"
-        styleClass="p-button-lg w-full sm:w-auto"
-        (click)="confirmRegister()"
-      ></p-button>
-
-      <p *ngIf="isRegistered" class="text-green-600 font-medium mt-4 text-center">
-        ✅ Você já está cadastrado nesta aula.
-      </p>
-    </div>
+    <p-confirmDialog></p-confirmDialog>
   </div>
 </div>
-
-<p-confirmDialog></p-confirmDialog>
