@@ -52,33 +52,36 @@
           </div>
         </div>
 
-        <!-- LINKS -->
-        <div class="flex flex-col justify-center items-center mt-4 mb-2 gap-2">
-          <ng-container *ngIf="lesson?.link; else noLink">
+        <ng-container *ngIf="lesson?.additionalLinks?.length && isRegistered">
+          <h4 class="text-sm font-semibold text-gray-700 mt-2">Links adicionais</h4>
+
+          <div class="flex flex-col gap-2 items-start">
             <a
-              [href]="lesson?.link"
+              *ngFor="let link of lesson?.additionalLinks"
+              [href]="link"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-blue-600 hover:underline bg-blue-100 px-3 py-1 rounded-lg text-sm"
+            >
+              {{ link | slice: 0 : 50 }}{{ link.length > 50 ? '...' : '' }}
+            </a>
+          </div>
+        </ng-container>
+
+        <!-- LINKS -->
+        <div
+          class="flex flex-col justify-center items-center mt-4 mb-2 gap-2"
+          *ngIf="isRegistered && lesson && !lesson.presentCodeFilled"
+        >
+          <ng-container *ngIf="lesson.link; else noLink">
+            <a
+              [href]="lesson.link"
               target="_blank"
               rel="noopener noreferrer"
               class="text-blue-600 font-medium hover:underline bg-blue-200 py-2 px-3 rounded-2xl"
             >
               Acesse a reunião
             </a>
-          </ng-container>
-
-          <ng-container *ngIf="lesson?.additionalLinks?.length">
-            <h4 class="text-sm font-semibold text-gray-700 mt-2">Links adicionais</h4>
-
-            <div class="flex flex-col gap-2 items-center">
-              <a
-                *ngFor="let link of lesson?.additionalLinks"
-                [href]="link"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="text-blue-600 hover:underline bg-blue-100 px-3 py-1 rounded-lg text-sm"
-              >
-                {{ link }}
-              </a>
-            </div>
           </ng-container>
 
           <ng-template #noLink>
@@ -88,7 +91,7 @@
 
         <!-- PARTICIPAÇÃO NA AULA (só aparece se a aula já começou) -->
         <div
-          *ngIf="lesson && hasStarted && !lesson.presentCodeFilled"
+          *ngIf="lesson && hasStarted && !lesson.presentCodeFilled && isRegistered"
           class="mt-8 bg-white border border-gray-200 rounded-2xl p-6 shadow-md"
         >
           <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
@@ -108,6 +111,7 @@
             <input
               type="text"
               placeholder="Digite o código"
+              maxlength="6"
               [(ngModel)]="presenceCode"
               class="w-full border rounded-lg px-3 py-2 mt-2 mb-2 focus:ring-2 focus:ring-blue-300 focus:outline-none"
             />
@@ -119,33 +123,6 @@
               (click)="submitPresence()"
             ></p-button>
           </div>
-
-          <!-- FEEDBACK ---------------------------------------------------- -->
-          <div class="bg-gray-50 border rounded-xl p-4">
-            <button
-              class="text-blue-600 font-medium text-sm flex items-center gap-2"
-              (click)="showFeedback = !showFeedback"
-            >
-              <i class="pi pi-comment"></i>
-              {{ showFeedback ? 'Ocultar feedback' : 'Adicionar feedback sobre o mentor' }}
-            </button>
-
-            <textarea
-              *ngIf="showFeedback"
-              [(ngModel)]="feedbackText"
-              placeholder="Deixe seu feedback aqui..."
-              class="w-full border rounded-lg px-3 py-2 mt-3 mb-2 focus:ring-2 focus:ring-blue-300 focus:outline-none"
-              rows="3"
-            ></textarea>
-
-            <p-button
-              *ngIf="showFeedback"
-              label="Enviar Feedback"
-              icon="pi pi-send"
-              class="w-full p-button-sm"
-              (click)="submitFeedback()"
-            ></p-button>
-          </div>
         </div>
 
         <div
@@ -153,7 +130,7 @@
           class="w-full flex justify-center items-center mt-8"
         >
           <p-button
-            label="Gerar certificado"
+            label="Gerar certificado novamente"
             icon="pi pi-download
 "
             class="w-full p-button-sm"
@@ -178,9 +155,13 @@
             (click)="confirmRegister()"
           ></p-button>
 
-          <p *ngIf="isRegistered" class="text-green-600 font-medium mt-4 text-center">
-            ✅ Você já está cadastrado nesta aula.
-          </p>
+          <div
+            *ngIf="isRegistered"
+            class="flex items-center justify-center gap-2 mt-4 text-green-600 font-semibold"
+          >
+            <i class="pi pi-check-circle text-lg"></i>
+            <span>Inscrição confirmada para esta aula.</span>
+          </div>
         </div>
       </div>
     </div>

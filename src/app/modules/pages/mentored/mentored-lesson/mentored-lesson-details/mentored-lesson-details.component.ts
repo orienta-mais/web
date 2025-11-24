@@ -11,6 +11,7 @@ import { ToastService } from '../../../../../shared/components/toast/toast.servi
 import { LeasonDetailsResponse } from '../../../../../@core/interfaces/mentor.interface';
 import { HttpErrorResponse } from '@angular/common/http';
 import { UserService } from '../../../../../@core/services/user/user.service';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-mentored-lesson-details',
@@ -39,6 +40,7 @@ export class MentoredLessonDetailsComponent implements OnInit {
     private toast: ToastService,
     private confirmService: ConfirmationService,
     private userService: UserService,
+    private location: Location,
   ) {}
 
   ngOnInit() {
@@ -112,10 +114,9 @@ export class MentoredLessonDetailsComponent implements OnInit {
       });
   }
 
-  // 🔵 PRESENÇA E FEEDBACK
   submitPresence() {
-    if (!this.lesson?.presentCodeFilled) {
-      this.toast.error('Voce pulou etapas, confirme sua presença primeiro.');
+    if (this.presenceCode.trim().length === 0) {
+      this.toast.error('Por favor, insira o código de presença.');
       return;
     }
 
@@ -124,40 +125,26 @@ export class MentoredLessonDetailsComponent implements OnInit {
       .pipe(take(1))
       .subscribe({
         next: () => {
-          if (this.showFeedback && this.feedbackText.trim()) {
-            this.submitFeedback();
-          }
-
           this.toast.success('Presença confirmada!');
           this.lesson!.presentCodeFilled = true;
         },
-        error: () => this.toast.error('Erro ao confirmar presença.'),
+        error: (e: HttpErrorResponse) => this.toast.error(e.error?.message),
       });
   }
 
-  submitFeedback() {
-    // this.lessonService.sendFeedback(this.lesson!.id, this.feedbackText)
-    //   .pipe(take(1))
-    //   .subscribe({
-    //     next: () => this.toast.success("Feedback enviado!"),
-    //     error: () => this.toast.error("Erro ao enviar feedback."),
-    //   });
-  }
-
-  // 🔵 DOWNLOAD CERTIFICADO
   downloadCertificate() {
     this.lessonService
       .downloadCertificate(this.lesson!.id)
       .pipe(take(1))
       .subscribe({
         next: () => {
-          this.toast.success('Certificado baixado com sucesso!');
+          this.toast.success('Certificado enviado por email!');
         },
         error: () => this.toast.error('Erro ao baixar certificado.'),
       });
   }
 
   returnBack() {
-    this.router.navigate(['/mentored/lesson']);
+    this.location.back();
   }
 }

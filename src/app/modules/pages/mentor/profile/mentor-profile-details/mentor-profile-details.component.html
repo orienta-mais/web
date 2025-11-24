@@ -17,59 +17,66 @@
     <!-- ======================== -->
     <!-- FORMULÁRIO DE EDIÇÃO PERFIL -->
     <!-- ======================== -->
-    <form *ngIf="editMode" [formGroup]="form" (ngSubmit)="handleUpdate()" class="space-y-5">
+    <!-- Formulário de edição -->
+    <form *ngIf="editMode" [formGroup]="form" (ngSubmit)="handleUpdate()" class="space-y-7">
       <!-- Email -->
-      <p-floatlabel>
-        <input pInputText formControlName="email" readonly class="w-full" />
-        <label>Email</label>
-      </p-floatlabel>
-
-      <!-- Nome e Sobrenome -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
         <p-floatlabel>
-          <input pInputText formControlName="name" maxlength="70" class="w-full" />
-          <label>Nome</label>
-        </p-floatlabel>
-        <p-floatlabel>
-          <input pInputText formControlName="lastName" maxlength="70" class="w-full" />
-          <label>Sobrenome</label>
+          <input pInputText formControlName="email" readonly class="w-full" />
+          <label>Email</label>
         </p-floatlabel>
       </div>
 
+      <!-- Nome e Sobrenome -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <!-- Nome -->
+        <div>
+          <p-floatlabel>
+            <input pInputText formControlName="name" maxlength="70" class="w-full" />
+            <label>Nome</label>
+          </p-floatlabel>
+          <div *ngIf="f['name'].touched && f['name'].invalid" class="text-red-500 text-sm mt-1">
+            Nome é obrigatório.
+          </div>
+        </div>
+
+        <!-- Sobrenome -->
+        <div>
+          <p-floatlabel>
+            <input pInputText formControlName="lastName" maxlength="70" class="w-full" />
+            <label>Sobrenome</label>
+          </p-floatlabel>
+          <div
+            *ngIf="f['lastName'].touched && f['lastName'].invalid"
+            class="text-red-500 text-sm mt-1"
+          >
+            Sobrenome é obrigatório.
+          </div>
+        </div>
+      </div>
+
       <!-- Data de Nascimento -->
-      <p-floatlabel>
-        <p-datepicker
-          formControlName="birthDate"
-          [showIcon]="true"
-          dateFormat="dd/mm/yy"
-          [maxDate]="maxDate"
-          styleClass="w-full"
-        ></p-datepicker>
-        <label>Data de Nascimento</label>
-      </p-floatlabel>
-
-      <!-- Estado, Nacionalidade e LinkedIn -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div>
         <p-floatlabel>
-          <p-select
-            formControlName="state"
-            [options]="states"
-            optionLabel="name"
-            class="w-full"
-          ></p-select>
-          <label>Estado</label>
+          <p-datepicker
+            formControlName="birthDate"
+            [showIcon]="true"
+            dateFormat="dd/mm/yy"
+            [maxDate]="maxDate"
+            styleClass="w-full"
+          ></p-datepicker>
+          <label>Data de Nascimento</label>
         </p-floatlabel>
+        <div
+          *ngIf="f['birthDate'].touched && f['birthDate'].invalid"
+          class="text-red-500 text-sm mt-1"
+        >
+          Data de nascimento é obrigatória.
+        </div>
+      </div>
 
-        <p-floatlabel>
-          <p-select
-            formControlName="nationality"
-            [options]="nationalities"
-            optionLabel="name"
-            class="w-full"
-          ></p-select>
-          <label>Nacionalidade</label>
-        </p-floatlabel>
-
+      <!-- LinkedIn -->
+      <div>
         <p-floatlabel>
           <input pInputText formControlName="socialMedias" maxlength="100" class="w-full" />
           <label>LinkedIn</label>
@@ -77,7 +84,7 @@
       </div>
 
       <!-- Descrição -->
-      <div class="flex flex-col">
+      <div>
         <label class="text-gray-500 text-sm font-medium mb-1 ml-3">Descrição</label>
         <textarea
           pInputTextarea
@@ -85,28 +92,68 @@
           rows="4"
           maxlength="1000"
           [autoResize]="true"
-          class="w-full border border-gray-300 rounded-md p-3 whitespace-pre-line break-words focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition"
+          class="w-full border border-gray-300 rounded-md p-3 whitespace-pre-line focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 transition"
         ></textarea>
+        <div
+          *ngIf="f['description'].touched && f['description'].errors?.['required']"
+          class="text-red-500 text-sm mt-1"
+        >
+          Descrição é obrigatória.
+        </div>
+        <div *ngIf="f['description'].errors?.['minlength']" class="text-red-500 text-sm mt-1">
+          Descrição deve ter no mínimo 100 caracteres.
+        </div>
+        <div *ngIf="f['description'].errors?.['maxlength']" class="text-red-500 text-sm mt-1">
+          Descrição deve ter no máximo 1000 caracteres.
+        </div>
       </div>
 
-      <!-- Botões -->
-      <div class="flex flex-col sm:flex-row gap-4 mt-6">
-        <button
-          type="submit"
-          class="flex-1 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700"
-          [disabled]="loading"
-        >
-          {{ loading ? 'Salvando...' : 'Salvar Alterações' }}
-        </button>
+      <!-- Estado e Nacionalidade -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <!-- Estado -->
+        <div>
+          <p-floatlabel>
+            <p-select
+              formControlName="state"
+              [options]="states"
+              optionLabel="name"
+              class="w-full"
+            ></p-select>
+            <label>Estado</label>
+          </p-floatlabel>
+          <div *ngIf="f['state'].touched && f['state'].invalid" class="text-red-500 text-sm mt-1">
+            Estado é obrigatório.
+          </div>
+        </div>
 
-        <button
-          type="button"
-          (click)="cancelEdit()"
-          class="flex-1 py-3 bg-gray-300 text-gray-800 rounded-xl hover:bg-gray-400"
-        >
-          Cancelar
-        </button>
+        <!-- Nacionalidade -->
+        <div>
+          <p-floatlabel>
+            <p-select
+              formControlName="nationality"
+              [options]="nationalities"
+              optionLabel="name"
+              class="w-full"
+            ></p-select>
+            <label>Nacionalidade</label>
+          </p-floatlabel>
+          <div
+            *ngIf="f['nationality'].touched && f['nationality'].invalid"
+            class="text-red-500 text-sm mt-1"
+          >
+            Nacionalidade é obrigatória.
+          </div>
+        </div>
       </div>
+
+      <!-- Botão de Salvar -->
+      <button
+        type="submit"
+        class="w-full py-3 bg-yellow-500 text-white rounded-xl hover:bg-yellow-600"
+        [disabled]="loading"
+      >
+        {{ loading ? 'Salvando...' : 'Salvar Alterações' }}
+      </button>
     </form>
 
     <!-- ======================== -->

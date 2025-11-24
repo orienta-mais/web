@@ -1,7 +1,8 @@
 <div class="flex justify-center min-h-[calc(100vh-4rem)] bg-gray-50 p-6">
-  <div class="w-full p-8 bg-red rounded-2xl shadow-lg bg-white">
+  <div class="w-full p-8 rounded-2xl shadow-lg bg-white">
     <div class="flex justify-between items-center mb-4">
       <h2 class="text-2xl font-bold">Minhas Aulas</h2>
+
       <p-button
         label="Criar Aula"
         icon="pi pi-plus"
@@ -10,11 +11,39 @@
       ></p-button>
     </div>
 
+    <!-- 🔵 FILTRO DE STATUS -->
+    <div class="flex gap-4 mb-4">
+      <button
+        class="px-3 py-2 rounded-md border"
+        [ngClass]="filterStatus === 'all' ? 'bg-blue-600 text-white' : ''"
+        (click)="filterStatus = 'all'"
+      >
+        Todos
+      </button>
+
+      <button
+        class="px-3 py-2 rounded-md border"
+        [ngClass]="filterStatus === 'pending' ? 'bg-yellow-500 text-white' : ''"
+        (click)="filterStatus = 'pending'"
+      >
+        Pendentes
+      </button>
+
+      <button
+        class="px-3 py-2 rounded-md border"
+        [ngClass]="filterStatus === 'finished' ? 'bg-green-600 text-white' : ''"
+        (click)="filterStatus = 'finished'"
+      >
+        Finalizadas
+      </button>
+    </div>
+
     <p-table
-      [value]="lessons"
+      [value]="filteredLessons"
       [loading]="loading"
       [paginator]="true"
-      [rows]="7"
+      [rows]="rows"
+      [rowsPerPageOptions]="[5, 10, 15, 20, 50]"
       paginatorPosition="bottom"
     >
       <ng-template pTemplate="header">
@@ -23,9 +52,11 @@
           <th>Data</th>
           <th>Hora Início</th>
           <th>Hora Fim</th>
+          <th>Status</th>
           <th>Ações</th>
         </tr>
       </ng-template>
+
       <ng-template pTemplate="body" let-lesson>
         <tr>
           <td>
@@ -35,9 +66,24 @@
                 : lesson?.title
             }}
           </td>
+
           <td>{{ lesson.date | date: 'dd/MM/yyyy' }}</td>
           <td>{{ lesson.startTime?.slice(0, 5) }}</td>
           <td>{{ lesson.endTime?.slice(0, 5) }}</td>
+
+          <td>
+            <span
+              class="px-2 py-1 rounded text-xs font-semibold"
+              [ngClass]="
+                lesson.status === 'Finalizada'
+                  ? 'bg-green-100 text-green-700'
+                  : 'bg-yellow-100 text-yellow-700'
+              "
+            >
+              {{ lesson.status }}
+            </span>
+          </td>
+
           <td>
             <p-button
               label="Detalhes"

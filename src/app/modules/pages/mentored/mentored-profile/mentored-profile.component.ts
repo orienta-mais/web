@@ -17,6 +17,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 
+// ... (imports iguais)
+
 @Component({
   selector: 'app-mentored-profile',
   standalone: true,
@@ -141,9 +143,30 @@ export class MentoredProfileComponent implements OnInit {
     this.passwordForm.reset();
   }
 
+  /** PEGAR APENAS CAMPOS COM ERRO */
+  private getInvalidFields(form: FormGroup) {
+    const errors: any[] = [];
+
+    Object.keys(form.controls).forEach((key) => {
+      const control = form.get(key);
+      if (control?.invalid) {
+        errors.push({
+          campo: key,
+          erros: control.errors,
+        });
+      }
+    });
+
+    return errors;
+  }
+
   handleUpdate() {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+
+      const invalid = this.getInvalidFields(this.form);
+      console.log('Campos inválidos:', invalid);
+
       return;
     }
 
@@ -176,6 +199,10 @@ export class MentoredProfileComponent implements OnInit {
   handlePasswordUpdate() {
     if (this.passwordForm.invalid) {
       this.passwordForm.markAllAsTouched();
+
+      const invalid = this.getInvalidFields(this.passwordForm);
+      console.log('Campos inválidos (senha):', invalid);
+
       return;
     }
 
