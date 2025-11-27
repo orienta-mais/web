@@ -90,15 +90,37 @@ export class CreateLeasonComponent {
     const { title, description, date, startTime, endTime, maxGuest, additionalLinks } =
       this.form.value;
 
+    // --------------------------
     const [hInit, mInit] = startTime.split(':').map(Number);
     const [hEnd, mEnd] = endTime.split(':').map(Number);
 
-    const diffHours = hEnd + mEnd / 60 - (hInit + mInit / 60);
+    const startDateTime = new Date(date);
+    startDateTime.setHours(hInit, mInit, 0, 0);
 
-    if (diffHours <= 0) {
+    const endDateTime = new Date(date);
+    endDateTime.setHours(hEnd, mEnd, 0, 0);
+    const now = new Date();
+
+    // --------------------------
+    // ❌ Aula não pode começar no passado
+    // --------------------------
+    if (startDateTime <= now) {
+      this.toast.error('A data e hora de início não podem estar no passado.');
+      return;
+    }
+
+    // --------------------------
+    // ❌ Término não pode ser antes do início
+    // --------------------------
+    if (endDateTime <= startDateTime) {
       this.toast.error('A hora de término deve ser posterior à de início.');
       return;
     }
+
+    // --------------------------
+    // 🔵 Verifica duração (máx. 6h)
+    // --------------------------
+    const diffHours = (endDateTime.getTime() - startDateTime.getTime()) / (1000 * 60 * 60);
 
     if (diffHours > 6) {
       this.toast.error('A aula não pode ter mais de 6 horas de duração.');

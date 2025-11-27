@@ -45,6 +45,7 @@ export class LeasonDetailsComponent implements OnInit {
   loading = false;
   editMode = false;
   lessonId: string | null = null;
+  lessonFinalized = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -74,7 +75,7 @@ export class LeasonDetailsComponent implements OnInit {
           this.form = this.fb.group({
             title: [data.title, [Validators.required, Validators.maxLength(200)]],
             description: [data.description, [Validators.required, Validators.maxLength(1000)]],
-            presentCode: [data.presentCode, [Validators.required, Validators.maxLength(5)]],
+            presentCode: [data.presentCode, [Validators.required, Validators.maxLength(6)]],
             date: [this.parseDate(data.date), Validators.required],
             initialTime: [data.startTime?.slice(0, 5) || '', Validators.required],
             finalTime: [data.endTime?.slice(0, 5) || '', Validators.required],
@@ -84,9 +85,21 @@ export class LeasonDetailsComponent implements OnInit {
           });
 
           this.cdr.detectChanges();
+
+          this.validateLessonFinalized();
         },
         error: () => this.toast.error('Erro ao carregar aula.'),
       });
+  }
+
+  validateLessonFinalized() {
+    if (this.leason?.date && this.leason?.startTime) {
+      const dateTimeString = `${this.leason.date}T${this.leason.startTime}`;
+      const lessonStart = new Date(dateTimeString);
+      const now = new Date();
+
+      this.lessonFinalized = lessonStart <= now;
+    }
   }
 
   get additionalLinks(): FormArray {
@@ -139,6 +152,41 @@ export class LeasonDetailsComponent implements OnInit {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       this.toast.error('Preencha todos os campos obrigatórios.');
+      return;
+    }
+
+    const selectedDate = this.form.value.date; // já é Date
+    const startTime = this.form.value.initialTime;
+    const endTime = this.form.value.finalTime;
+
+    const [hStart, mStart] = startTime.split(':').map(Number);
+    const [hEnd, mEnd] = endTime.split(':').map(Number);
+
+    // Monta o datetime exato respeitando o fuso
+    const startDateTime = new Date(selectedDate);
+    startDateTime.setHours(hStart, mStart, 0, 0);
+
+    const endDateTime = new Date(selectedDate);
+    endDateTime.setHours(hEnd, mEnd, 0, 0);
+
+    const now = new Date();
+
+    // 1️⃣ Início no passado
+    if (startDateTime < now) {
+      this.toast.error('A data e hora de início não podem estar no passado.');
+      return;
+    }
+
+    // 2️⃣ Fim antes do início
+    if (endDateTime <= startDateTime) {
+      this.toast.error('A hora de término deve ser posterior à de início.');
+      return;
+    }
+
+    // 3️⃣ Mais de 6h de duração
+    const hoursDiff = (endDateTime.getTime() - startDateTime.getTime()) / (1000 * 60 * 60);
+    if (hoursDiff > 6) {
+      this.toast.error('A aula não pode ter mais de 6 horas de duração.');
       return;
     }
 

@@ -27,8 +27,6 @@ export const routes: Routes = [
 
   { path: 'register/email/send-validation', component: SendValidateEmailComponent },
 
-  { path: 'admin/dashboard', component: DashboardComponent },
-
   {
     path: '',
     component: MainComponent,
@@ -43,7 +41,7 @@ export const routes: Routes = [
         path: 'home',
         component: HomeComponent,
         canActivate: [AuthGuard],
-        data: { roles: [ROLE.MENTOR, ROLE.MENTORED] },
+        data: { roles: [ROLE.MENTOR, ROLE.MENTORED, ROLE.ADMIN] },
       },
       {
         path: 'mentor/lesson',
@@ -92,6 +90,12 @@ export const routes: Routes = [
         component: MentoredLessonRegisteredComponent,
         canActivate: [AuthGuard],
         data: { roles: [ROLE.MENTORED] },
+      },
+      {
+        path: 'admin/dashboard',
+        component: DashboardComponent,
+        canActivate: [AuthGuard],
+        data: { roles: [ROLE.ADMIN] },
       },
     ],
   },

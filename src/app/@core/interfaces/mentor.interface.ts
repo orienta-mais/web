@@ -60,4 +60,5 @@ export interface LeasonDetailsResponse {
   additionalLinks?: string[];
   maxGuest: number;
   link: string;
+  presentCodeFilled: boolean;
 }

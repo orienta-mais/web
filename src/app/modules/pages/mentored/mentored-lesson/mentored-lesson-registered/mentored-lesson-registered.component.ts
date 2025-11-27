@@ -6,7 +6,6 @@ import { take } from 'rxjs';
 import { Router } from '@angular/router';
 import { LessonService } from '../../../../../@core/services/lesson/lesson.service';
 import { ToastService } from '../../../../../shared/components/toast/toast.service';
-import { LeasonListResponse as LessonListResponse } from '../../../../../@core/interfaces/mentor.interface';
 import { UserService } from '../../../../../@core/services/user/user.service';
 
 @Component({
@@ -17,8 +16,12 @@ import { UserService } from '../../../../../@core/services/user/user.service';
   styleUrls: ['./mentored-lesson-registered.component.css'],
 })
 export class MentoredLessonRegisteredComponent implements OnInit {
-  lessons: LessonListResponse[] = [];
+  lessons: any[] = [];
+  filteredLessons: any[] = [];
   loading = false;
+
+  // Filtro de Categoria
+  filterCategory: 'all' | 'available' | 'finished' = 'all';
 
   constructor(
     private lessonService: LessonService,
@@ -31,25 +34,37 @@ export class MentoredLessonRegisteredComponent implements OnInit {
     this.loadRegisteredLessons();
   }
 
+  // Carrega as aulas registradas
   loadRegisteredLessons() {
     this.loading = true;
+
     this.lessonService
       .findAllRegisteredLessonsByMentored(this.userService.getId())
       .pipe(take(1))
       .subscribe({
         next: (data) => {
-          this.lessons = data.sort((a, b) => {
-            const dateA = new Date(a.date).getTime();
-            const dateB = new Date(b.date).getTime();
-            if (dateA !== dateB) {
-              return dateA - dateB;
-            }
-            const startA = a.startTime.localeCompare(b.startTime);
-            if (startA !== 0) {
-              return startA;
-            }
-            return a.endTime.localeCompare(b.endTime);
+          const now = new Date();
+
+          const availableLessons = data.filter((lesson) => {
+            const lessonEndTime = new Date(`${lesson.date}T${lesson.endTime}`);
+            return lessonEndTime >= now;
           });
+
+          const finishedLessons = data.filter((lesson) => {
+            const lessonEndTime = new Date(`${lesson.date}T${lesson.endTime}`);
+            return lessonEndTime < now;
+          });
+
+          this.lessons = [
+            ...availableLessons.sort(
+              (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+            ),
+            ...finishedLessons.sort(
+              (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+            ),
+          ];
+
+          this.applyFilter();
           this.loading = false;
         },
         error: () => {
@@ -57,6 +72,28 @@ export class MentoredLessonRegisteredComponent implements OnInit {
           this.loading = false;
         },
       });
+  }
+
+  // Aplica filtro de categoria
+  applyFilter() {
+    if (this.filterCategory === 'available') {
+      this.filteredLessons = this.lessons.filter((l) => !this.isLessonFinished(l));
+    } else if (this.filterCategory === 'finished') {
+      this.filteredLessons = this.lessons.filter((l) => this.isLessonFinished(l));
+    } else {
+      this.filteredLessons = [...this.lessons];
+    }
+  }
+
+  isLessonFinished(lesson: any): boolean {
+    const now = new Date();
+    const end = new Date(`${lesson.date}T${lesson.endTime}`);
+    return end < now;
+  }
+
+  changeCategory(category: 'all' | 'available' | 'finished') {
+    this.filterCategory = category;
+    this.applyFilter(); // Atualiza lista imediatamente
   }
 
   openLessonDetails(id: string) {

@@ -17,7 +17,9 @@ export class AuthGuard implements CanActivate {
       const token = this.authService.getAccessToken();
       const isAuthenticated = !!token;
       const allowedRoles = route.data['roles'] || [];
+      console.log('Allowed Roles:', allowedRoles);
       const userRole = this.userService.getRole();
+      console.log('User Role from Service:', userRole);
 
       if (!isAuthenticated) {
         this.router.navigate(['/login']);
@@ -55,6 +57,8 @@ export class AuthGuard implements CanActivate {
       this.router.navigate(['/mentor/lesson']);
     } else if (role === ROLE.MENTORED) {
       this.router.navigate(['/mentored/lesson']);
+    } else if (role === ROLE.ADMIN) {
+      this.router.navigate(['/admin/dashboard']);
     } else {
       this.router.navigate(['/login']);
     }

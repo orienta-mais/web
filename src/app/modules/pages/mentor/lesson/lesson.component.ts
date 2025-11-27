@@ -16,8 +16,11 @@ import { LeasonListResponse as LessonListResponse } from '../../../../@core/inte
   styleUrls: ['./lesson.component.css'],
 })
 export class LessonListComponent implements OnInit {
-  lessons: LessonListResponse[] = [];
+  lessons: (LessonListResponse & { status: string })[] = [];
   loading = false;
+  rows = 10;
+
+  filterStatus: 'all' | 'finished' | 'pending' = 'all';
 
   constructor(
     private leasonService: LessonService,
@@ -36,24 +39,38 @@ export class LessonListComponent implements OnInit {
       .pipe(take(1))
       .subscribe({
         next: (data) => {
-          this.lessons = data.sort((a, b) => {
-            const dateA = new Date(a.date).getTime();
-            const dateB = new Date(b.date).getTime();
-            if (dateA !== dateB) {
-              return dateA - dateB;
-            }
-            const startA = a.startTime.localeCompare(b.startTime);
-            if (startA !== 0) {
-              return startA;
-            }
-            return a.endTime.localeCompare(b.endTime);
-          });
+          const now = new Date();
+
+          this.lessons = data
+            .map((lesson) => {
+              const lessonEnd = new Date(`${lesson.date}T${lesson.endTime}`);
+
+              const status = lessonEnd < now ? 'Finalizada' : 'Pendente';
+
+              return { ...lesson, status };
+            })
+            .sort((a, b) => {
+              const dateA = new Date(a.date).getTime();
+              const dateB = new Date(b.date).getTime();
+              if (dateA !== dateB) return dateA - dateB;
+
+              return a.startTime.localeCompare(b.startTime);
+            });
+
           this.loading = false;
         },
-        error: () => {
-          this.loading = false;
-        },
+        error: () => (this.loading = false),
       });
+  }
+
+  get filteredLessons() {
+    if (this.filterStatus === 'finished') {
+      return this.lessons.filter((l) => l.status === 'Finalizada');
+    }
+    if (this.filterStatus === 'pending') {
+      return this.lessons.filter((l) => l.status === 'Pendente');
+    }
+    return this.lessons;
   }
 
   goToCreate() {

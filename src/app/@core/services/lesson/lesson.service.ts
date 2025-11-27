@@ -72,4 +72,14 @@ export class LessonService {
   findAllRegisteredLessonsByMentored(mentoredId: string): Observable<LeasonListResponse[]> {
     return this.http.get<LeasonListResponse[]>(`${this._baseApi}/mentored/${mentoredId}/lessons`);
   }
+
+  sendPresenceCode(lessonId: string, presenceCode: string): Observable<void> {
+    return this.http.post<void>(`${this._baseApi}/${lessonId}/certificate/validate`, {
+      code: presenceCode,
+    });
+  }
+
+  downloadCertificate(lessonId: string): Observable<void> {
+    return this.http.post<void>(`${this._baseApi}/${lessonId}/certificate/regenerate`, {});
+  }
 }
