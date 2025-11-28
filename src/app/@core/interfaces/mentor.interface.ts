@@ -61,6 +61,7 @@ export interface LeasonDetailsResponse {
   maxGuest: number;
   link: string;
   presentCodeFilled: boolean;
+  mentorId: string;
 }
 
 export interface MentorFeedback {
@@ -81,5 +82,4 @@ export interface MentorProfile {
   nationality: string;
   linkedin: string;
   description: string;
-  feedbacks: MentorFeedback[];
 }

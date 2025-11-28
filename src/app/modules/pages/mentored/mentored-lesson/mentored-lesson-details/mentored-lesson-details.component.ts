@@ -144,7 +144,7 @@ export class MentoredLessonDetailsComponent implements OnInit {
   }
 
   sendFeedback() {
-    this.router.navigate([`/mentored/review/mentor/13131`]);
+    this.router.navigate([`/mentored/review/mentor/${this.lesson?.mentorId}`]);
   }
 
   returnBack() {

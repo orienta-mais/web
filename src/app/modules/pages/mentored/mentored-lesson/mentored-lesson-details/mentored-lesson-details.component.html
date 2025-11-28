@@ -115,13 +115,14 @@
               [(ngModel)]="presenceCode"
               class="w-full border rounded-lg px-3 py-2 mt-2 mb-2 focus:ring-2 focus:ring-blue-300 focus:outline-none"
             />
-
-            <p-button
-              label="Confirmar Presença"
-              icon="pi pi-check"
-              class="w-full p-button-sm"
-              (click)="submitPresence()"
-            ></p-button>
+            <div class="mt-4 text-center">
+              <p-button
+                label="Confirmar Presença"
+                icon="pi pi-check"
+                class="p-button-sm"
+                (click)="submitPresence()"
+              ></p-button>
+            </div>
           </div>
         </div>
 
@@ -139,8 +140,12 @@
           ></p-button>
         </div>
 
-        <div *ngIf="lesson && hasStarted">
-          <p-button (click)="sendFeedback()">Realizar feedback</p-button>
+        <div *ngIf="lesson && hasStarted" class="mt-4 text-center">
+          <p-button
+            (click)="sendFeedback()"
+            label="Realizar feedback"
+            styleClass="p-button-text text-blue-600 hover:text-blue-800"
+          ></p-button>
         </div>
 
         <!-- TEXTO FINAL -->
