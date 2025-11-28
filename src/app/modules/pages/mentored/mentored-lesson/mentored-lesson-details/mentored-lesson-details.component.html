@@ -139,6 +139,10 @@
           ></p-button>
         </div>
 
+        <div *ngIf="lesson && hasStarted">
+          <p-button (click)="sendFeedback()">Realizar feedback</p-button>
+        </div>
+
         <!-- TEXTO FINAL -->
         <div class="mt-8 text-center">
           <p *ngIf="!isRegistered" class="text-gray-600 mb-6 text-sm">

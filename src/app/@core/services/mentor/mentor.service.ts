@@ -38,4 +38,14 @@ export class MentorService {
   updatePassword(body: UpdatePasswordRequest): Observable<void> {
     return this.authService.updatePassword(body);
   }
+
+  getMentorDetails(mentorId: string): Observable<any> {
+    return this.http.get<any>(`${this._baseApi}/details/${mentorId}`);
+  }
+  getFeedbacks(mentorId: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this._baseApi}/${mentorId}/feedbacks`);
+  }
+  sendFeedback(mentorId: string, body: any): Observable<void> {
+    return this.http.post<void>(`${this._baseApi}/${mentorId}/feedback`, body);
+  }
 }

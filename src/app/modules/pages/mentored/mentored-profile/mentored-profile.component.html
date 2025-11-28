@@ -1,12 +1,14 @@
 <div class="flex justify-center min-h-[calc(100vh-4rem)] bg-gray-100 py-8 px-4">
   <div class="w-full max-w-3xl bg-white rounded-2xl shadow-lg p-8">
     <div>
-      <p-button
-        icon="pi pi-arrow-left"
-        label="Voltar"
-        styleClass="p-button-text text-gray-700 hover:text-yellow-600"
-        (click)="goBack()"
-      ></p-button>
+      <ng-container *ngIf="editMode || editPassword">
+        <p-button
+          icon="pi pi-arrow-left"
+          label="Voltar"
+          styleClass="p-button-text text-gray-700 hover:text-blue-600"
+          (click)="goBack()"
+        ></p-button>
+      </ng-container>
 
       <h2 class="text-3xl font-bold text-gray-800 text-center flex-1 mb-6">
         {{ editPassword ? 'Alterar Senha' : editMode ? 'Editar Perfil' : 'Meu Perfil' }}

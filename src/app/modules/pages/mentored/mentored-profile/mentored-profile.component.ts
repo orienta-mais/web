@@ -270,7 +270,8 @@ export class MentoredProfileComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['/']);
+    this.editMode = false;
+    this.editPassword = false;
   }
 
   get f() {

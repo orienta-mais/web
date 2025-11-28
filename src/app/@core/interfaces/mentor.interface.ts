@@ -62,3 +62,24 @@ export interface LeasonDetailsResponse {
   link: string;
   presentCodeFilled: boolean;
 }
+
+export interface MentorFeedback {
+  id?: string;
+  mentoredId: string;
+  didactics: number;
+  subjectMastery: number;
+  punctuality: number;
+  communication: number;
+  engagement: number;
+  feedback: string;
+}
+
+export interface MentorProfile {
+  id: string;
+  name: string;
+  state: string;
+  nationality: string;
+  linkedin: string;
+  description: string;
+  feedbacks: MentorFeedback[];
+}

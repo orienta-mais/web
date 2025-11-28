@@ -243,7 +243,8 @@ export class MentorProfileDetailsComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['/']);
+    this.editMode = false;
+    this.editPassword = false;
   }
 
   get f() {

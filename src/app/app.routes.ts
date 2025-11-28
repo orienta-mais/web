@@ -18,6 +18,8 @@ import { HomeComponent } from './modules/main/home/home.component';
 import { MentoredProfileComponent } from './modules/pages/mentored/mentored-profile/mentored-profile.component';
 import { MentoredLessonRegisteredComponent } from './modules/pages/mentored/mentored-lesson/mentored-lesson-registered/mentored-lesson-registered.component';
 import { DashboardComponent } from './modules/pages/admin/dashboard/dashboard.component';
+import { MentoredReviewOfMentorComponent } from './modules/pages/mentored/mentored-review-of-mentor/mentored-review-of-mentor.component';
+import { MentorReviewComponent } from './modules/pages/mentor/mentor-review/mentor-review.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -72,6 +74,18 @@ export const routes: Routes = [
         component: MentoredLessonDetailsComponent,
         canActivate: [AuthGuard],
         data: { roles: [ROLE.MENTORED] },
+      },
+      {
+        path: 'mentored/review/mentor/:mentorId',
+        component: MentoredReviewOfMentorComponent,
+        canActivate: [AuthGuard],
+        data: { roles: [ROLE.MENTORED] },
+      },
+      {
+        path: 'mentor/review',
+        component: MentorReviewComponent,
+        canActivate: [AuthGuard],
+        data: { roles: [ROLE.MENTOR] },
       },
       {
         path: 'mentor/profile',

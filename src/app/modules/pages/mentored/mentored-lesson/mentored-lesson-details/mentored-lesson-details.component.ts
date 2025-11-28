@@ -80,7 +80,6 @@ export class MentoredLessonDetailsComponent implements OnInit {
     }
   }
 
-  // 🔵 CONFIRMAR INSCRIÇÃO
   confirmRegister() {
     this.confirmService.confirm({
       header: 'Confirmar inscrição',
@@ -142,6 +141,10 @@ export class MentoredLessonDetailsComponent implements OnInit {
         },
         error: () => this.toast.error('Erro ao baixar certificado.'),
       });
+  }
+
+  sendFeedback() {
+    this.router.navigate([`/mentored/review/mentor/13131`]);
   }
 
   returnBack() {

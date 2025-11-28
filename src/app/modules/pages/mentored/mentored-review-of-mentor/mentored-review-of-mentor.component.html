@@ -1,0 +1,177 @@
+<div class="flex justify-center min-h-[calc(100vh-4rem)] bg-gray-100 py-8 px-4">
+  <div class="w-full max-w-3xl bg-white rounded-2xl shadow-lg p-8">
+    <p-button
+      icon="pi pi-arrow-left"
+      label="Voltar"
+      styleClass="p-button-text text-gray-700 hover:text-blue-600"
+      (click)="returnBack()"
+    ></p-button>
+
+    <h2 class="text-3xl font-bold text-gray-800 text-center mb-6">Perfil do Mentor</h2>
+
+    <!-- DADOS DO MENTOR -->
+    <div class="bg-gray-50 rounded-xl p-6 border border-gray-200 shadow-sm">
+      <h3 class="text-xl font-semibold text-gray-800 mb-5 text-center">Informações</h3>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-base">
+        <div>
+          <span class="text-gray-600 text-sm">Nome</span>
+          <p class="font-medium text-gray-900">{{ mentor?.name }}</p>
+        </div>
+
+        <div>
+          <span class="text-gray-600 text-sm">Localização</span>
+          <p class="font-medium text-gray-900">{{ mentor?.state }} - {{ mentor?.nationality }}</p>
+        </div>
+
+        <div class="sm:col-span-2">
+          <span class="text-gray-600 text-sm">LinkedIn</span>
+          <p class="font-medium text-blue-600 break-all">
+            <a [href]="mentor?.linkedin" target="_blank">
+              {{ mentor?.linkedin || '—' }}
+            </a>
+          </p>
+        </div>
+      </div>
+
+      <div class="mt-5">
+        <span class="text-gray-600 text-sm block mb-1">Descrição</span>
+        <p class="text-base text-gray-800 whitespace-pre-line break-words">
+          {{ mentor?.description || 'Nenhuma descrição adicionada.' }}
+        </p>
+      </div>
+    </div>
+
+    <!-- MÉDIA DOS FEEDBACKS -->
+    <div class="text-center mt-8">
+      <h3 class="text-xl font-semibold text-gray-800">Média Geral</h3>
+      <p class="text-4xl font-bold text-yellow-600 mt-2">
+        {{ getAverage() }}
+      </p>
+    </div>
+
+    <!-- LISTA DE FEEDBACKS -->
+    <div class="mt-8">
+      <h3 class="text-xl font-semibold text-gray-800 mb-4 text-center">Feedbacks</h3>
+
+      <div *ngIf="feedbacks.length === 0" class="text-center text-gray-500">
+        Nenhum feedback ainda.
+      </div>
+
+      <div *ngFor="let fb of feedbacks" class="bg-gray-50 border rounded-xl p-4 mt-3 shadow-sm">
+        <p class="text-gray-700 mb-2">{{ fb.feedback }}</p>
+
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-sm mt-3">
+          <p>
+            Didática: <b>{{ fb.didactics }}</b>
+          </p>
+          <p>
+            Domínio: <b>{{ fb.subjectMastery }}</b>
+          </p>
+          <p>
+            Pontualidade: <b>{{ fb.punctuality }}</b>
+          </p>
+          <p>
+            Comunicação: <b>{{ fb.communication }}</b>
+          </p>
+          <p>
+            Engajamento: <b>{{ fb.engagement }}</b>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTÃO DE ENVIAR FEEDBACK -->
+    <div class="flex justify-center mt-8">
+      <button
+        (click)="toggleReviewForm()"
+        class="w-full py-3 bg-yellow-500 text-white rounded-xl hover:bg-yellow-600"
+      >
+        {{ showReviewForm ? 'Cancelar' : 'Enviar Feedback' }}
+      </button>
+    </div>
+
+    <!-- FORM DE FEEDBACK -->
+    <form
+      *ngIf="showReviewForm"
+      [formGroup]="reviewForm"
+      (ngSubmit)="submitReview()"
+      class="mt-8 space-y-5"
+    >
+      <div class="grid grid-cols-1 sm:grid-cols-5 gap-3">
+        <div>
+          <label class="text-sm text-gray-600">Didática</label>
+          <input
+            type="number"
+            min="0"
+            max="5"
+            class="w-full border p-2 rounded-md"
+            formControlName="didactics"
+            (input)="limitValue($event, 'didactics')"
+          />
+        </div>
+
+        <div>
+          <label class="text-sm text-gray-600">Domínio</label>
+          <input
+            type="number"
+            min="0"
+            max="5"
+            class="w-full border p-2 rounded-md"
+            formControlName="subjectMastery"
+            (input)="limitValue($event, 'subjectMastery')"
+          />
+        </div>
+
+        <div>
+          <label class="text-sm text-gray-600">Pontualidade</label>
+          <input
+            type="number"
+            min="0"
+            max="5"
+            class="w-full border p-2 rounded-md"
+            formControlName="punctuality"
+            (input)="limitValue($event, 'punctuality')"
+          />
+        </div>
+
+        <div>
+          <label class="text-sm text-gray-600">Comunicação</label>
+          <input
+            type="number"
+            min="0"
+            max="5"
+            class="w-full border p-2 rounded-md"
+            formControlName="communication"
+            (input)="limitValue($event, 'communication')"
+          />
+        </div>
+
+        <div>
+          <label class="text-sm text-gray-600">Engajamento</label>
+          <input
+            type="number"
+            min="0"
+            max="5"
+            class="w-full border p-2 rounded-md"
+            formControlName="engagement"
+            (input)="limitValue($event, 'engagement')"
+          />
+        </div>
+      </div>
+
+      <div>
+        <label class="text-sm text-gray-600">Feedback</label>
+        <textarea
+          rows="4"
+          class="w-full border rounded-md p-3"
+          formControlName="feedback"
+        ></textarea>
+      </div>
+
+      <button type="submit" class="w-full py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700">
+        Enviar
+      </button>
+    </form>
+  </div>
+</div>
