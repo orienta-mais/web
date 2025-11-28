@@ -117,7 +117,7 @@ export class MentoredProfileComponent implements OnInit {
             });
           },
           error: () => {
-            this.toast.error('Erro ao carregar dados do mentoreado.');
+            this.toast.error('Erro ao carregar dados do mentorado.');
           },
         });
     }
