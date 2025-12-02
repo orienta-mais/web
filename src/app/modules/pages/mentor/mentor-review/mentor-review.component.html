@@ -6,9 +6,13 @@
     <!-- MÉDIA DOS FEEDBACKS -->
     <div class="text-center mt-8">
       <h3 class="text-xl font-semibold text-gray-800">Média Geral</h3>
-      <p class="text-4xl font-bold text-yellow-600 mt-2">
+      <p class="text-4xl font-bold text-gray-800 mt-2">
         {{ getAverage() }}
       </p>
+
+      <div class="stars mx-auto mt-2">
+        <div class="stars-fill" [style.width.%]="(getAverage() / 5) * 100"></div>
+      </div>
     </div>
 
     <!-- LISTA DE FEEDBACKS -->
@@ -19,11 +23,25 @@
         Você ainda não recebeu nenhum feedback.
       </div>
 
-      <div *ngFor="let fb of feedbacks" class="bg-gray-50 border rounded-xl p-4 mt-3 shadow-sm">
+      <div *ngFor="let fb of feedbacks" class="bg-gray-50 border rounded-xl p-4 mt-4 shadow-sm">
         <!-- Texto -->
-        <p class="text-gray-700 mb-3 leading-relaxed">
-          {{ fb.feedback }}
-        </p>
+        <div class="flex items-start justify-between gap-4">
+          <p class="text-gray-700 leading-relaxed flex-1">
+            {{ fb.feedback }}
+          </p>
+
+          <div class="stars-review shrink-0">
+            <div class="stars-review-fill" [style.width.%]="
+                ((fb.didactics +
+                  fb.subjectMastery +
+                  fb.punctuality +
+                  fb.communication +
+                  fb.engagement) /
+                  25) *
+                100
+              "></div>
+          </div>
+        </div>
 
         <!-- Notas -->
         <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-sm mt-2">

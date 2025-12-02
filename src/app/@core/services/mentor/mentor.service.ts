@@ -43,7 +43,7 @@ export class MentorService {
     return this.http.get<any>(`${this._baseApi}/details/${mentorId}`);
   }
   getFeedbacks(mentorId: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this._baseApi}/${mentorId}/feedbacks`);
+    return this.http.get<any[]>(`${this._baseApi}/${mentorId}/reviews`);
   }
   sendFeedback(mentorId: string, body: any): Observable<void> {
     return this.http.post<void>(`${this._baseApi}/${mentorId}/feedback`, body);

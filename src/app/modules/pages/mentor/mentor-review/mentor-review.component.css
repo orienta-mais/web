@@ -1,0 +1,35 @@
+.stars {
+  position: relative;
+  display: inline-block;
+  font-size: 28px;
+  line-height: 1;
+  color: #ddd;
+}
+
+.stars-review {
+  position: relative;
+  display: inline-block;
+  font-size: 20px;
+  line-height: 1;
+  color: #ddd;
+}
+
+.stars::before,
+.stars-review::before {
+  content: '★★★★★';
+}
+
+.stars-fill,
+.stars-review-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  color: #facc15;
+}
+
+.stars-fill::before,
+.stars-review-fill::before {
+  content: '★★★★★';
+}
