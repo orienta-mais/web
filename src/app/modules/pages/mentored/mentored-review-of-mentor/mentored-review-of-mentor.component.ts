@@ -7,10 +7,10 @@ import { InputTextModule } from 'primeng/inputtext';
 import { TextareaModule } from 'primeng/textarea';
 import { ButtonModule } from 'primeng/button';
 import { SelectModule } from 'primeng/select';
-import { MentorService } from '../../../../@core/services/mentor/mentor.service';
 import { ToastService } from '../../../../shared/components/toast/toast.service';
 import { take } from 'rxjs';
 import { Location } from '@angular/common';
+import { MentoredService } from '../../../../@core/services/mentored/mentored.service';
 
 @Component({
   selector: 'app-mentored-review-of-mentor',
@@ -31,12 +31,13 @@ export class MentoredReviewOfMentorComponent {
   mentor: any = null;
   feedbacks: any[] = [];
   showReviewForm = false;
+  canAddReview = false;
 
   reviewForm!: FormGroup;
 
   constructor(
     private route: ActivatedRoute,
-    private mentorService: MentorService,
+    private mentoredService: MentoredService,
     private fb: FormBuilder,
     private toast: ToastService,
     private location: Location,
@@ -60,52 +61,17 @@ export class MentoredReviewOfMentorComponent {
   }
 
   loadMentorData() {
-    this.mentorService
+    this.mentoredService
       .getMentorDetails(this.mentorId)
       .pipe(take(1))
       .subscribe({
         next: (data) => {
           this.mentor = data;
-          this.feedbacks = data.feedbacks || [];
+          this.feedbacks = data.reviews || [];
+          this.canAddReview = data.canAddReview || false;
         },
         error: () => {
-          this.toast.error('Erro ao carregar dados do mentor. Carregando dados mockados.');
-
-          this.mentor = {
-            id: '123e4567-e89b-12d3-a456-426614174000',
-            name: 'João Mentor',
-            state: 'São Paulo',
-            nationality: 'Brasil',
-            linkedin: 'https://linkedin.com/in/joaomentor',
-            description:
-              'Mentor experiente em tecnologia, com foco em desenvolvimento e arquitetura.',
-            feedbacks: [],
-          };
-
-          this.feedbacks = [
-            {
-              id: 'a1',
-              mentoredId: 'm1',
-              didactics: 5,
-              subjectMastery: 5,
-              punctuality: 5,
-              communication: 5,
-              engagement: 5,
-              feedback: 'Excelente mentor! Muito didático e sempre pontual.',
-            },
-            {
-              id: 'a2',
-              mentoredId: 'm2',
-              didactics: 5,
-              subjectMastery: 5,
-              punctuality: 5,
-              communication: 5,
-              engagement: 1,
-              feedback: 'Ótima experiência, ajudou muito na minha evolução profissional.',
-            },
-          ];
-
-          this.mentor.feedbacks = this.feedbacks;
+          this.toast.error('Erro ao carregar dados do mentor.');
         },
       });
   }
@@ -125,7 +91,7 @@ export class MentoredReviewOfMentorComponent {
       mentoredId: this.mentorId,
     };
 
-    this.mentorService
+    this.mentoredService
       .sendFeedback(this.mentorId, payload)
       .pipe(take(1))
       .subscribe({
@@ -144,15 +110,18 @@ export class MentoredReviewOfMentorComponent {
   getAverage() {
     if (!this.feedbacks.length) return 0;
 
-    const total =
-      this.feedbacks.reduce(
-        (acc, f) =>
-          acc + f.didactics + f.subjectMastery + f.punctuality + f.communication + f.engagement,
-        0,
-      ) /
-      (2.5 * this.feedbacks.length);
+    const total = this.feedbacks.reduce(
+      (acc, f) =>
+        acc + f.didactics + f.subjectMastery + f.punctuality + f.communication + f.engagement,
+      0,
+    );
 
-    return total.toFixed(1);
+    const maxPerFeedback = 25;
+    const maxScale = 5;
+
+    const average = (total / (this.feedbacks.length * maxPerFeedback)) * maxScale;
+
+    return Number(average.toFixed(1));
   }
 
   returnBack() {

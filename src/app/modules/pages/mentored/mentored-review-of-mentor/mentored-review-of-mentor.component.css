@@ -1,0 +1,286 @@
+/* Estilos principais para estrelas */
+.stars {
+  position: relative;
+  display: inline-block;
+  font-size: 32px;
+  line-height: 1;
+  color: #e5e7eb;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.stars-review {
+  position: relative;
+  display: inline-block;
+  font-size: 18px;
+  line-height: 1;
+  color: #e5e7eb;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+.stars::before,
+.stars-review::before {
+  content: '★★★★★';
+  letter-spacing: 2px;
+}
+
+.stars-fill,
+.stars-review-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  color: #fbbf24;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  text-shadow: 0 2px 4px rgba(251, 191, 36, 0.3);
+}
+
+.stars-fill::before,
+.stars-review-fill::before {
+  content: '★★★★★';
+  letter-spacing: 2px;
+}
+
+/* Animações e efeitos visuais */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.stars-fill::after,
+.stars-review-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  animation: shimmer 2s infinite;
+}
+
+/* Cards com hover elegante */
+.mentor-card {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(10px);
+}
+
+.mentor-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+/* Gradientes animados */
+@keyframes gradient-shift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.animated-gradient {
+  background-size: 200% 200%;
+  animation: gradient-shift 8s ease infinite;
+}
+
+/* Inputs de avaliação elegantes */
+input[type="number"] {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+input[type="number"]:focus {
+  transform: scale(1.1);
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Botões com animações suaves */
+.btn-primary {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s;
+}
+
+.btn-primary:hover::before {
+  left: 100%;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+}
+
+/* Ícones animados */
+.icon-animated {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.icon-animated:hover {
+  transform: scale(1.2) rotate(5deg);
+}
+
+/* Animações de entrada */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.slide-in-right {
+  animation: slideInFromRight 0.8s ease-out;
+}
+
+/* Stagger animation para cards */
+.stagger-animation:nth-child(1) { animation-delay: 0.1s; }
+.stagger-animation:nth-child(2) { animation-delay: 0.2s; }
+.stagger-animation:nth-child(3) { animation-delay: 0.3s; }
+.stagger-animation:nth-child(4) { animation-delay: 0.4s; }
+.stagger-animation:nth-child(5) { animation-delay: 0.5s; }
+
+/* Scrollbar customizada */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f8fafc;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 10px;
+  transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+}
+
+/* Responsividade aprimorada */
+@media (max-width: 1024px) {
+  .stars {
+    font-size: 28px;
+  }
+  
+  .stars-review {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .stars {
+    font-size: 24px;
+  }
+  
+  .stars-review {
+    font-size: 14px;
+  }
+  
+  .mentor-card:hover {
+    transform: translateY(-4px);
+  }
+}
+
+@media (max-width: 640px) {
+  .stars {
+    font-size: 20px;
+  }
+  
+  .stars::before,
+  .stars-fill::before {
+    letter-spacing: 1px;
+  }
+  
+  .stars-review::before,
+  .stars-review-fill::before {
+    letter-spacing: 1px;
+  }
+}
+
+/* Estados de loading */
+.loading-shimmer {
+  background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Efeitos de foco acessíveis */
+.focus-visible:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+/* Badges elegantes */
+.badge-elegant {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.badge-elegant:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}

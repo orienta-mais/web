@@ -34,4 +34,12 @@ export class MentoredService {
   updatePassword(body: UpdatePasswordRequest): Observable<void> {
     return this.authService.updatePassword(body);
   }
+
+  getMentorDetails(mentorId: string): Observable<any> {
+    return this.http.get<any>(`${this._baseApi}/mentor-info/${mentorId}`);
+  }
+
+  sendFeedback(mentorId: string, body: any): Observable<void> {
+    return this.http.post<void>(`${this._baseApi}/add-mentor-review/${mentorId}`, body);
+  }
 }
