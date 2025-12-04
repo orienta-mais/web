@@ -4,6 +4,7 @@ import { MentorService } from '../../../../@core/services/mentor/mentor.service'
 import { ToastService } from '../../../../shared/components/toast/toast.service';
 import { MentorFeedback } from '../../../../@core/interfaces/mentor.interface';
 import { CommonModule } from '@angular/common';
+import { UserService } from '../../../../@core/services/user/user.service';
 
 @Component({
   selector: 'app-mentor-review',
@@ -20,9 +21,11 @@ export class MentorReviewComponent implements OnInit {
   constructor(
     private mentorService: MentorService,
     private toast: ToastService,
+    private userService: UserService,
   ) {}
 
   ngOnInit(): void {
+    this.mentorId = this.userService.getId();
     this.loadMentorInfo();
   }
 
@@ -32,31 +35,7 @@ export class MentorReviewComponent implements OnInit {
         this.feedbacks = data;
       },
       error: () => {
-        this.toast.error('Erro ao carregar informações. Usando mock.');
-        this.feedbacks = [
-          {
-            id: 'a1',
-            mentoredId: 'm1',
-            didactics: 5,
-            subjectMastery: 4,
-            punctuality: 5,
-            communication: 4,
-            engagement: 5,
-            feedback: 'Excelente mentor! Explicações claras e objetivas.',
-          },
-          {
-            id: 'a2',
-            mentoredId: 'm2',
-            didactics: 4,
-            subjectMastery: 5,
-            punctuality: 4,
-            communication: 5,
-            engagement: 4,
-            feedback: 'Muito bom! Ajudou bastante na minha evolução técnica.',
-          },
-        ];
-
-        console.log(this.feedbacks);
+        this.toast.error('Erro ao carregar informações.');
       },
     });
   }
@@ -64,14 +43,17 @@ export class MentorReviewComponent implements OnInit {
   getAverage() {
     if (!this.feedbacks.length) return 0;
 
-    const total =
-      this.feedbacks.reduce(
-        (acc, f) =>
-          acc + f.didactics + f.subjectMastery + f.punctuality + f.communication + f.engagement,
-        0,
-      ) /
-      (2.5 * this.feedbacks.length);
+    const total = this.feedbacks.reduce(
+      (acc, f) =>
+        acc + f.didactics + f.subjectMastery + f.punctuality + f.communication + f.engagement,
+      0,
+    );
 
-    return total.toFixed(1);
+    const maxPerFeedback = 25;
+    const maxScale = 5;
+
+    const average = (total / (this.feedbacks.length * maxPerFeedback)) * maxScale;
+
+    return Number(average.toFixed(1));
   }
 }
