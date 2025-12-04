@@ -1,22 +1,25 @@
 .stars {
   position: relative;
   display: inline-block;
-  font-size: 28px;
+  font-size: 32px;
   line-height: 1;
-  color: #ddd;
+  color: #e5e7eb;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 }
 
 .stars-review {
   position: relative;
   display: inline-block;
-  font-size: 20px;
+  font-size: 18px;
   line-height: 1;
-  color: #ddd;
+  color: #e5e7eb;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
 }
 
 .stars::before,
 .stars-review::before {
   content: '★★★★★';
+  letter-spacing: 2px;
 }
 
 .stars-fill,
@@ -26,10 +29,13 @@
   left: 0;
   white-space: nowrap;
   overflow: hidden;
-  color: #facc15;
+  color: #fbbf24;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  text-shadow: 0 2px 4px rgba(251, 191, 36, 0.3);
 }
 
 .stars-fill::before,
 .stars-review-fill::before {
   content: '★★★★★';
+  letter-spacing: 2px;
 }
