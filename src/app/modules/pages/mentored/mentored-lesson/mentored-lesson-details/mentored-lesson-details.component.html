@@ -43,7 +43,9 @@
 
           <div>
             <p class="text-sm text-gray-500 font-medium">Mentor</p>
-            <p class="text-base text-gray-800">{{ lesson?.mentorName }}</p>
+            <a class="text-base text-blue-500 cursor-pointer" (click)="viewDetailsMentor()">{{
+              lesson?.mentorName
+            }}</a>
           </div>
 
           <div>

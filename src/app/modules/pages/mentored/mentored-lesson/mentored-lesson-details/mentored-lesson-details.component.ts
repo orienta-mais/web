@@ -150,4 +150,8 @@ export class MentoredLessonDetailsComponent implements OnInit {
   returnBack() {
     this.location.back();
   }
+
+  viewDetailsMentor() {
+    this.router.navigate([`/mentored/review/mentor/${this.lesson?.mentorId}`]);
+  }
 }
