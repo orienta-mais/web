@@ -12,11 +12,12 @@ import { LeasonDetailsResponse } from '../../../../../@core/interfaces/mentor.in
 import { HttpErrorResponse } from '@angular/common/http';
 import { UserService } from '../../../../../@core/services/user/user.service';
 import { Location } from '@angular/common';
+import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
   selector: 'app-mentored-lesson-details',
   standalone: true,
-  imports: [CommonModule, ButtonModule, ConfirmDialogModule, FormsModule],
+  imports: [CommonModule, ButtonModule, ConfirmDialogModule, FormsModule, TooltipModule],
   providers: [ConfirmationService],
   templateUrl: './mentored-lesson-details.component.html',
 })
@@ -30,6 +31,7 @@ export class MentoredLessonDetailsComponent implements OnInit {
   presenceCode = '';
   feedbackText = '';
   hasStarted = false;
+  hasEnd = false;
 
   registerLoading = false;
 
@@ -61,6 +63,7 @@ export class MentoredLessonDetailsComponent implements OnInit {
             this.isRegistered = registered.some((r) => r.id === lessonId);
             this.loading = false;
             this.showBoxLessonStarted();
+            this.showBoxLessonFinalized();
           },
           error: () => {
             this.toast.error('Erro ao carregar detalhes da aula.');
@@ -77,6 +80,16 @@ export class MentoredLessonDetailsComponent implements OnInit {
       const now = new Date();
 
       this.hasStarted = lessonStart <= now;
+    }
+  }
+
+  showBoxLessonFinalized() {
+    if (this.lesson?.date && this.lesson?.endTime) {
+      const dateTimeString = `${this.lesson.date}T${this.lesson.endTime}`;
+      const lessonEnd = new Date(dateTimeString);
+      const now = new Date();
+
+      this.hasEnd = lessonEnd <= now;
     }
   }
 
@@ -152,6 +165,8 @@ export class MentoredLessonDetailsComponent implements OnInit {
   }
 
   viewDetailsMentor() {
-    this.router.navigate([`/mentored/review/mentor/${this.lesson?.mentorId}`]);
+    if (this.lesson?.mentorId != null) {
+      this.router.navigate([`/mentored/review/mentor/${this.lesson?.mentorId}`]);
+    }
   }
 }

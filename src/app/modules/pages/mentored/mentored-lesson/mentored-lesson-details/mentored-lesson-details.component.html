@@ -49,23 +49,25 @@
           </div>
 
           <div>
-            <p class="text-sm text-gray-500 font-medium">Vagas</p>
+            <p class="text-sm text-gray-500 font-medium">Máximo de convidados</p>
             <p class="text-base text-gray-800">{{ lesson?.maxGuest }}</p>
           </div>
         </div>
 
         <ng-container *ngIf="lesson?.additionalLinks?.length && isRegistered">
-          <h4 class="text-sm font-semibold text-gray-700 mt-2">Links adicionais</h4>
+          <h4 class="text-sm font-semibold text-gray-700 mt-2">Conteúdos adicionais</h4>
 
-          <div class="flex flex-col gap-2 items-start">
+          <div class="flex gap-2 items-start">
             <a
-              *ngFor="let link of lesson?.additionalLinks"
+              *ngFor="let link of lesson?.additionalLinks; let i = index"
               [href]="link"
               target="_blank"
               rel="noopener noreferrer"
               class="text-blue-600 hover:underline bg-blue-100 px-3 py-1 rounded-lg text-sm"
+              pTooltip="{{ link }}"
+              tooltipPosition="bottom"
             >
-              {{ link | slice: 0 : 50 }}{{ link.length > 50 ? '...' : '' }}
+              Link {{ i + 1 }}
             </a>
           </div>
         </ng-container>
@@ -73,7 +75,7 @@
         <!-- LINKS -->
         <div
           class="flex flex-col justify-center items-center mt-4 mb-2 gap-2"
-          *ngIf="isRegistered && lesson && !lesson.presentCodeFilled"
+          *ngIf="isRegistered && lesson && !lesson.presentCodeFilled && !hasEnd"
         >
           <ng-container *ngIf="lesson.link; else noLink">
             <a
@@ -167,7 +169,7 @@
           ></p-button>
 
           <div
-            *ngIf="isRegistered"
+            *ngIf="isRegistered && !hasStarted"
             class="flex items-center justify-center gap-2 mt-4 text-green-600 font-semibold"
           >
             <i class="pi pi-check-circle text-lg"></i>
