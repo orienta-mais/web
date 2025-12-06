@@ -22,6 +22,7 @@ import { TextareaModule } from 'primeng/textarea';
 import { DatePickerModule } from 'primeng/datepicker';
 import { UserService } from '../../../../../@core/services/user/user.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { noWhitespaceValidator } from '../../../../../@core/validators';
 
 @Component({
   selector: 'app-lesson-details',
@@ -73,9 +74,9 @@ export class LeasonDetailsComponent implements OnInit {
           this.leason = { ...data, additionalLinks: links };
 
           this.form = this.fb.group({
-            title: [data.title, [Validators.required, Validators.maxLength(200)]],
-            description: [data.description, [Validators.required, Validators.maxLength(1000)]],
-            presentCode: [data.presentCode, [Validators.required, Validators.maxLength(6)]],
+            title: [data.title, [Validators.required, noWhitespaceValidator, Validators.maxLength(200)]],
+            description: [data.description, [Validators.required, noWhitespaceValidator, Validators.maxLength(1000)]],
+            presentCode: [data.presentCode, [Validators.required, noWhitespaceValidator, Validators.maxLength(6)]],
             date: [this.parseDate(data.date), Validators.required],
             initialTime: [data.startTime?.slice(0, 5) || '', Validators.required],
             finalTime: [data.endTime?.slice(0, 5) || '', Validators.required],
