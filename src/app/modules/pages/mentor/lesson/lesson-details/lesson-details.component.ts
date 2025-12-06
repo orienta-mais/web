@@ -74,9 +74,18 @@ export class LeasonDetailsComponent implements OnInit {
           this.leason = { ...data, additionalLinks: links };
 
           this.form = this.fb.group({
-            title: [data.title, [Validators.required, noWhitespaceValidator, Validators.maxLength(200)]],
-            description: [data.description, [Validators.required, noWhitespaceValidator, Validators.maxLength(1000)]],
-            presentCode: [data.presentCode, [Validators.required, noWhitespaceValidator, Validators.maxLength(6)]],
+            title: [
+              data.title,
+              [Validators.required, noWhitespaceValidator, Validators.maxLength(200)],
+            ],
+            description: [
+              data.description,
+              [Validators.required, noWhitespaceValidator, Validators.maxLength(1000)],
+            ],
+            presentCode: [
+              data.presentCode,
+              [Validators.required, noWhitespaceValidator, Validators.maxLength(6)],
+            ],
             date: [this.parseDate(data.date), Validators.required],
             initialTime: [data.startTime?.slice(0, 5) || '', Validators.required],
             finalTime: [data.endTime?.slice(0, 5) || '', Validators.required],

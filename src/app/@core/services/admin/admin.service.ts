@@ -10,7 +10,7 @@ import {
 } from '../../interfaces/dashboard.interface';
 
 @Injectable({ providedIn: 'root' })
-export class DashboardService {
+export class AdminService {
   private readonly _baseApi = `${environment.BASE_API}/stats`;
 
   constructor(private http: HttpClient) {}
@@ -29,5 +29,9 @@ export class DashboardService {
 
   countState(): Observable<CountStateList> {
     return this.http.get<CountStateList>(`${this._baseApi}/count-by-state`);
+  }
+
+  savePolicy(payload: { type: string; content: string }): Observable<any> {
+    return this.http.post<any>(`${this._baseApi}/admin/policy`, payload);
   }
 }

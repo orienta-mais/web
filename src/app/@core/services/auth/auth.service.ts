@@ -21,11 +21,26 @@ export class AuthService {
 
   private ACCESS_TOKEN_KEY = 'access_token';
   private REFRESH_TOKEN_KEY = 'refresh_token';
+  private TERMS_KEY = 'terms_accepted';
+  private termsAccepted: boolean | null = null;
 
   constructor(
     private http: HttpClient,
     private router: Router,
   ) {}
+
+  setTermsAccepted(value: boolean) {
+    this.termsAccepted = value;
+    localStorage.setItem(this.TERMS_KEY, JSON.stringify(value));
+  }
+
+  getTermsAccepted(): boolean | null {
+    if (this.termsAccepted === null) {
+      const stored = localStorage.getItem(this.TERMS_KEY);
+      this.termsAccepted = stored ? JSON.parse(stored) : null;
+    }
+    return this.termsAccepted;
+  }
 
   login(body: LoginRequest): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this._baseApi}/auth/login`, body);
@@ -87,6 +102,7 @@ export class AuthService {
   logout() {
     localStorage.removeItem(this.ACCESS_TOKEN_KEY);
     localStorage.removeItem(this.REFRESH_TOKEN_KEY);
+    localStorage.removeItem(this.TERMS_KEY);
     this.router.navigate(['/login']);
   }
 }

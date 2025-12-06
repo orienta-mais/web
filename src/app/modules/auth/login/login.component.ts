@@ -66,7 +66,12 @@ export class LoginComponent {
         next: (res: LoginResponse) => {
           this.verificationService.clear();
           this.service.saveTokens(res);
-          this.router.navigate(['home']);
+          this.service.setTermsAccepted(res.termsAccepted);
+          if (res.termsAccepted == undefined || res.termsAccepted == false) {
+            this.router.navigate(['/accept-terms-of-use']);
+          } else {
+            this.router.navigate(['/home']);
+          }
           this.toast.success('Login realizado com sucesso');
         },
         error: (e: HttpErrorResponse) => {
@@ -91,10 +96,10 @@ export class LoginComponent {
   }
 
   openPrivacy() {
-    window.open('/politica-de-privacidade.html', '_blank');
+    window.open('/view/politica-de-privacidade', '_blank');
   }
 
   openTerms() {
-    window.open('/termos-de-uso.html', '_blank');
+    window.open('/view/termos-de-uso', '_blank');
   }
 }

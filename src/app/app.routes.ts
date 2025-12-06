@@ -20,6 +20,10 @@ import { MentoredLessonRegisteredComponent } from './modules/pages/mentored/ment
 import { DashboardComponent } from './modules/pages/admin/dashboard/dashboard.component';
 import { MentoredReviewOfMentorComponent } from './modules/pages/mentored/mentored-review-of-mentor/mentored-review-of-mentor.component';
 import { MentorReviewComponent } from './modules/pages/mentor/mentor-review/mentor-review.component';
+import { PolicysComponent } from './modules/policys/policys.component';
+import { AdminPolicysComponent } from './modules/pages/admin/admin-policys/admin-policys.component';
+import { AcceptOfTermsComponent } from './modules/pages/accept-of-terms/accept-of-terms.component';
+import { TermsGuard } from './@core/guards/auth/terms.guard';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -28,11 +32,14 @@ export const routes: Routes = [
   { path: 'forgot-password', component: ForgotPasswordComponent },
 
   { path: 'register/email/send-validation', component: SendValidateEmailComponent },
-
+  {
+    path: 'accept-terms-of-use',
+    component: AcceptOfTermsComponent,
+  },
   {
     path: '',
     component: MainComponent,
-    canActivate: [AuthGuard],
+    canActivate: [AuthGuard, TermsGuard],
     children: [
       {
         path: '',
@@ -111,21 +118,20 @@ export const routes: Routes = [
         canActivate: [AuthGuard],
         data: { roles: [ROLE.ADMIN] },
       },
+      {
+        path: 'admin/politicas',
+        component: AdminPolicysComponent,
+        canActivate: [AuthGuard],
+        data: { roles: [ROLE.ADMIN] },
+      },
     ],
   },
 
   { path: 'register/mentor', component: RegisterMentorComponent },
   { path: 'register/mentored', component: RegisterMentoredComponent },
-
+  {
+    path: 'view/:type',
+    component: PolicysComponent,
+  },
   { path: '**', redirectTo: 'login' },
-  {
-    path: 'termos-de-uso',
-    redirectTo: '/termos-de-uso.html',
-    pathMatch: 'full',
-  },
-  {
-    path: 'politica-de-privacidade',
-    redirectTo: '/politica-de-privacidade.html',
-    pathMatch: 'full',
-  },
 ];

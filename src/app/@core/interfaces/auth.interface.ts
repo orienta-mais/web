@@ -8,6 +8,7 @@ export interface LoginRequest {
 export interface LoginResponse {
   accessToken: string;
   refreshToken: string;
+  termsAccepted: boolean;
 }
 
 export interface SendValidateEmailRequest {

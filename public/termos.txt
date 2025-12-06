@@ -1,0 +1,169 @@
+<div class="max-w-[900px] mx-auto bg-white p-6 md:p-8 rounded-xl shadow-lg text-slate-900">
+
+  <header class="flex items-center gap-4 mb-4">
+    <div class="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 flex items-center justify-center text-white font-bold text-lg">
+      OM
+    </div>
+
+    <div>
+      <h1 class="text-xl font-semibold">Termos de Uso — OrientaMais</h1>
+      <div class="text-sm text-slate-500">Última atualização: 17/10/2025</div>
+    </div>
+  </header>
+
+  <!-- SEÇÃO 1 -->
+  <section class="mt-6">
+    <h2 class="text-lg font-semibold text-slate-800 mb-2">1. Aceitação dos Termos</h2>
+    <p class="text-slate-600 leading-relaxed">
+      Ao utilizar o OrientaMais, você declara que leu, entendeu e concorda integralmente com estes Termos de Uso.
+      Caso não concorde, não deverá utilizar a plataforma.
+    </p>
+  </section>
+
+  <!-- SEÇÃO 2 -->
+  <section class="mt-6">
+    <h2 class="text-lg font-semibold text-slate-800 mb-2">2. Sobre a Plataforma</h2>
+    <p class="text-slate-600 leading-relaxed">
+      O OrientaMais é uma plataforma online que conecta mentores e mentorados para realização de mentorias
+      gratuitas. O objetivo é oferecer apoio educacional e profissional principalmente a pessoas de baixa renda.
+    </p>
+    <p class="text-slate-600 leading-relaxed mt-2">
+      O OrientaMais atua exclusivamente como intermediador: não monitoramos, controlamos, gravamos ou garantimos
+      a qualidade das reuniões realizadas entre usuários via Zoom.
+    </p>
+  </section>
+
+  <!-- SEÇÃO 3 -->
+  <section class="mt-6">
+    <h2 class="text-lg font-semibold mb-2 text-slate-800">3. Requisitos de Idade</h2>
+    <ul class="list-disc ml-5 text-slate-600 leading-relaxed">
+      <li><strong>Mentores:</strong> mínimo de 18 anos.</li>
+      <li><strong>Mentorados:</strong> mínimo de 16 anos.</li>
+    </ul>
+  </section>
+
+  <!-- SEÇÃO 4 -->
+  <section class="mt-6">
+    <h2 class="text-lg font-semibold mb-2 text-slate-800">4. Conta de Usuário</h2>
+    <ol class="list-decimal ml-5 text-slate-600 leading-relaxed">
+      <li>Você deve fornecer informações verdadeiras e atualizadas.</li>
+      <li>É responsável por manter a confidencialidade da sua senha e credenciais.</li>
+      <li>A senha é armazenada criptografada utilizando <strong>bcrypt</strong>.</li>
+      <li>Podemos suspender contas que violem estes termos ou que apresentem comportamento abusivo.</li>
+    </ol>
+  </section>
+
+  <!-- SEÇÃO 5 -->
+  <section class="mt-6">
+    <h2 class="text-lg font-semibold mb-2 text-slate-800">5. Funcionamento das Aulas</h2>
+    <ul class="list-disc ml-5 text-slate-600 leading-relaxed">
+      <li>As aulas são cadastradas pelos mentores, contendo data, horário, título, tema e descrição.</li>
+      <li>O link da reunião no Zoom é criado pela plataforma e disponibilizado via plataforma e e-mail.</li>
+      <li>O OrientaMais não gerencia, fiscaliza ou grava reuniões realizadas via Zoom.</li>
+      <li>Cada usuário é responsável por sua conduta durante a reunião.</li>
+      <li>O mentor pode cancelar a aula desde que ela ainda não tenha sido iniciada.</li>
+      <li>O código de presença é criado pelo mentor. Sem ele, não há certificado.</li>
+    </ul>
+  </section>
+
+  <!-- SEÇÃO 6 -->
+  <section class="mt-6">
+    <h2 class="text-lg font-semibold mb-2 text-slate-800">6. Certificados</h2>
+    <p class="text-slate-600 leading-relaxed">
+      O mentorado poderá gerar certificados apenas após inserir corretamente o código de presença fornecido pelo mentor.
+    </p>
+  </section>
+
+  <!-- SEÇÃO 7 -->
+  <section class="mt-6">
+    <h2 class="text-lg font-semibold mb-2 text-slate-800">7. Conduta dos Usuários</h2>
+    <p class="text-slate-600 leading-relaxed">É proibido:</p>
+    <ul class="list-disc ml-5 text-slate-600 leading-relaxed">
+      <li>Compartilhar links de reuniões sem autorização.</li>
+      <li>Participar de aulas para fins ilícitos, ofensivos ou impróprios.</li>
+      <li>Gravar, divulgar ou expor conteúdos das reuniões sem consentimento.</li>
+    </ul>
+    <p class="text-slate-600 leading-relaxed mt-2">
+      O OrientaMais não se responsabiliza por condutas de terceiros, conteúdos apresentados ou falhas no Zoom.
+    </p>
+  </section>
+
+  <!-- SEÇÃO 8 -->
+  <section class="mt-6">
+    <h2 class="text-lg font-semibold mb-2 text-slate-800">8. Segurança e Tecnologias Utilizadas</h2>
+    <ul class="list-disc ml-5 text-slate-600 leading-relaxed">
+      <li>Utilizamos HTTPS em toda a comunicação.</li>
+      <li>Armazenamos senhas utilizando <strong>bcrypt</strong>.</li>
+      <li>Utilizamos cookies apenas para sessão (com JWT).</li>
+      <li>Não utilizamos Google Analytics.</li>
+      <li>Front-end e back-end possuem controle de acesso com papéis distintos.</li>
+    </ul>
+  </section>
+
+  <!-- SEÇÃO 9 -->
+  <section class="mt-6">
+    <h2 class="text-lg font-semibold mb-2 text-slate-800">9. Logs e Auditoria</h2>
+    <p class="text-slate-600 leading-relaxed">
+      Registramos somente: ID do usuário, horário e ação realizada.  
+      Não armazenamos IP nem mensagens entre usuários.
+    </p>
+  </section>
+
+  <!-- SEÇÃO 10 -->
+  <section class="mt-6">
+    <h2 class="text-lg font-semibold mb-2 text-slate-800">10. Exclusão de Conta</h2>
+    <p class="text-slate-600 leading-relaxed">
+      O usuário pode excluir sua conta a qualquer momento. Quando isso ocorre:
+    </p>
+    <ul class="list-disc ml-5 text-slate-600 leading-relaxed">
+      <li>Mentorado: todos os dados são excluídos permanentemente.</li>
+      <li>Mentor: nome e sobrenome são preservados para histórico e certificados.</li>
+    </ul>
+    <p class="text-slate-600 leading-relaxed mt-2">
+      Outros dados são excluídos permanentemente.
+    </p>
+  </section>
+
+  <!-- SEÇÃO 11 -->
+  <section class="mt-6">
+    <h2 class="text-lg font-semibold mb-2 text-slate-800">11. Limitação de Responsabilidade</h2>
+    <p class="text-slate-600 leading-relaxed">
+      O OrientaMais não se responsabiliza por:
+    </p>
+    <ul class="list-disc ml-5 text-slate-600 leading-relaxed">
+      <li>Falhas ou indisponibilidade do Zoom;</li>
+      <li>Condutas de mentores ou mentorados;</li>
+      <li>Compartilhamento indevido de links;</li>
+      <li>Informações falsas de usuários;</li>
+      <li>Conteúdos apresentados nas aulas.</li>
+    </ul>
+  </section>
+
+  <!-- SEÇÃO 12 -->
+  <section class="mt-6">
+    <h2 class="text-lg font-semibold mb-2 text-slate-800">12. Alterações nos Termos</h2>
+    <p class="text-slate-600 leading-relaxed">
+      Podemos atualizar estes Termos a qualquer momento. Mudanças relevantes serão informadas aos usuários.
+    </p>
+  </section>
+
+  <!-- SEÇÃO 13 -->
+  <section class="mt-6">
+    <h2 class="text-lg font-semibold mb-2 text-slate-800">13. Contato</h2>
+    <p class="text-slate-600 leading-relaxed">
+      Para dúvidas ou solicitações, entre em contato via:  
+      <strong>orienta-mais.web@gmail.com</strong>
+    </p>
+  </section>
+
+  <footer class="mt-6 pt-4 border-t border-slate-200 text-slate-500 text-sm">
+    <div>Recomendamos revisão jurídica para uso institucional.</div>
+
+    <div class="mt-3">
+      <a class="inline-block bg-amber-500 text-white px-4 py-2 rounded-lg hover:bg-amber-600 transition">
+        Voltar ao site
+      </a>
+    </div>
+  </footer>
+
+</div>

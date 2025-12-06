@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { DashboardService } from '../../../../@core/services/admin/dashboard.service';
+import { AdminService } from '../../../../@core/services/admin/admin.service';
 import {
   CountLessons,
   CountMentoreds,
@@ -43,7 +43,7 @@ export class DashboardComponent implements OnInit {
   barData: any;
   barOptions: any;
 
-  constructor(private dashboardService: DashboardService) {}
+  constructor(private dashboardService: AdminService) {}
 
   ngOnInit(): void {
     this.load();
