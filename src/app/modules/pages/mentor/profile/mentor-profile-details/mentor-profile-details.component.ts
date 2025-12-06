@@ -16,6 +16,7 @@ import { take } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
+import { YEAR_USER } from '../../../../../@core/enums/year-user.enum';
 
 @Component({
   selector: 'app-mentor-profile-details',
@@ -60,7 +61,11 @@ export class MentorProfileDetailsComponent implements OnInit {
   ngOnInit() {
     this.mentorId = this.userService.getId();
     const today = new Date();
-    this.maxDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+    this.maxDate = new Date(
+      today.getFullYear() - YEAR_USER.MENTOR,
+      today.getMonth(),
+      today.getDate(),
+    );
     this.initializeForm();
     this.initializePasswordForm();
     this.loadMentorData();
@@ -72,7 +77,7 @@ export class MentorProfileDetailsComponent implements OnInit {
       name: ['', [Validators.required, Validators.maxLength(70)]],
       lastName: ['', [Validators.required, Validators.maxLength(70)]],
       birthDate: ['', Validators.required],
-      socialMedias: ['', Validators.maxLength(100)],
+      socialMedias: ['', Validators.maxLength(255)],
       description: [
         '',
         [Validators.required, Validators.minLength(100), Validators.maxLength(1000)],

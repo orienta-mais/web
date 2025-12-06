@@ -10,7 +10,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ResetPasswordRequest } from '../../../@core/interfaces/auth.interface';
 import { take } from 'rxjs/operators';
-import { uuidValidator } from '../../../@core/validators';
+import { noWhitespaceValidator, uuidValidator } from '../../../@core/validators';
 import { isValidEmail } from '../../../@core/validators/email/email.validator';
 import { HttpErrorResponse } from '@angular/common/http';
 
@@ -48,6 +48,7 @@ export class ResetPasswordComponent implements OnInit {
         '',
         [
           Validators.required,
+          noWhitespaceValidator,
           Validators.minLength(8),
           Validators.pattern(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&^()\-_=+{}[\]|;:'",.<>]).+$/),
         ],

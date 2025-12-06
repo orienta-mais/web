@@ -9,7 +9,7 @@ import { AuthService } from '../../../@core/services/auth/auth.service';
 import { Router } from '@angular/router';
 import { SendEmailForgotPasswordRequest } from '../../../@core/interfaces/auth.interface';
 import { take } from 'rxjs/operators';
-import { emailValidator } from '../../../@core/validators';
+import { emailValidator, noWhitespaceValidator } from '../../../@core/validators';
 import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
@@ -30,7 +30,7 @@ export class ForgotPasswordComponent {
     private fb: FormBuilder,
   ) {
     this.form = this.fb.group({
-      email: ['', [Validators.required, emailValidator]],
+      email: ['', [Validators.required, noWhitespaceValidator, emailValidator]],
     });
   }
 

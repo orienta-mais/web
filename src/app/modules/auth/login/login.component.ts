@@ -4,7 +4,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { InputTextModule } from 'primeng/inputtext';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { ButtonModule } from 'primeng/button';
-import { emailValidator } from '../../../@core/validators';
+import { emailValidator, noWhitespaceValidator } from '../../../@core/validators';
 import { ToastService } from '../../../shared/components/toast/toast.service';
 import { AuthService } from '../../../@core/services/auth/auth.service';
 import { LoginRequest, LoginResponse } from '../../../@core/interfaces/auth.interface';
@@ -36,7 +36,7 @@ export class LoginComponent {
     private verificationService: VerificationService,
   ) {
     this.loginForm = this.fb.group({
-      email: ['', [Validators.required, emailValidator]],
+      email: ['', [Validators.required, noWhitespaceValidator, emailValidator]],
       password: ['', Validators.required],
     });
   }

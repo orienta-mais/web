@@ -4,7 +4,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { InputTextModule } from 'primeng/inputtext';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { ButtonModule } from 'primeng/button';
-import { emailValidator } from '../../../@core/validators';
+import { emailValidator, noWhitespaceValidator } from '../../../@core/validators';
 import { ToastService } from '../../../shared/components/toast/toast.service';
 import { AuthService } from '../../../@core/services/auth/auth.service';
 import { Router } from '@angular/router';
@@ -36,7 +36,7 @@ export class SendValidateEmailComponent implements OnInit {
 
   ngOnInit(): void {
     this.form = this.fb.group({
-      email: ['', [Validators.required, emailValidator]],
+      email: ['', [Validators.required, noWhitespaceValidator, emailValidator]],
     });
     this.verificationService.clear();
   }

@@ -11,7 +11,7 @@ import { STATES, COUNTRIES } from '../../../../shared/constants';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MentorService } from '../../../../@core/services/mentor/mentor.service';
 import { ToastService } from '../../../../shared/components/toast/toast.service';
-import { uuidValidator } from '../../../../@core/validators';
+import { noWhitespaceValidator, uuidValidator } from '../../../../@core/validators';
 import { VerificationService } from '../../../../@core/services/auth/verification.service';
 import { take } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -19,6 +19,7 @@ import { RegisterMentor } from '../../../../@core/interfaces/mentor.interface';
 import { isValidEmail } from '../../../../@core/validators/email/email.validator';
 import { TermsCheckboxComponent } from '../../../../shared/terms-checkbox/terms-checkbox.component';
 import { InputMaskModule } from 'primeng/inputmask';
+import { YEAR_USER } from '../../../../@core/enums/year-user.enum';
 
 @Component({
   selector: 'app-register-mentor',
@@ -69,13 +70,18 @@ export class RegisterMentorComponent implements OnInit {
           Validators.pattern(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&^()\-_=+{}[\]|;:'",.<>]).+$/),
         ],
       ],
-      name: ['', [Validators.required, Validators.maxLength(50)]],
-      lastName: ['', [Validators.required, Validators.maxLength(50)]],
+      name: ['', [Validators.required, noWhitespaceValidator, Validators.maxLength(70)]],
+      lastName: ['', [Validators.required, noWhitespaceValidator, Validators.maxLength(70)]],
       birthDate: ['', Validators.required],
-      socialMedias: ['', Validators.maxLength(100)],
+      socialMedias: ['', [noWhitespaceValidator, Validators.maxLength(100)]],
       description: [
         '',
-        [Validators.required, Validators.minLength(100), Validators.maxLength(1000)],
+        [
+          Validators.required,
+          noWhitespaceValidator,
+          Validators.minLength(100),
+          Validators.maxLength(1000),
+        ],
       ],
       state: ['', Validators.required],
       nationality: ['', Validators.required],
@@ -84,7 +90,11 @@ export class RegisterMentorComponent implements OnInit {
 
   ngOnInit() {
     const today = new Date();
-    this.maxDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+    this.maxDate = new Date(
+      today.getFullYear() - YEAR_USER.MENTOR,
+      today.getMonth(),
+      today.getDate(),
+    );
 
     this.routeUrl.queryParamMap.subscribe((pm) => {
       const token = pm.get('token');

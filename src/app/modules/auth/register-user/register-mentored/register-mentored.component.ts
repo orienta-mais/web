@@ -19,6 +19,7 @@ import { MentoredService } from '../../../../@core/services/mentored/mentored.se
 import { isValidEmail } from '../../../../@core/validators/email/email.validator';
 import { TermsCheckboxComponent } from '../../../../shared/terms-checkbox/terms-checkbox.component';
 import { InputMaskModule } from 'primeng/inputmask';
+import { YEAR_USER } from '../../../../@core/enums/year-user.enum';
 
 @Component({
   selector: 'app-register-mentored',
@@ -84,7 +85,11 @@ export class RegisterMentoredComponent implements OnInit {
 
   ngOnInit() {
     const today = new Date();
-    this.maxDate = new Date(today.getFullYear() - 16, today.getMonth(), today.getDate());
+    this.maxDate = new Date(
+      today.getFullYear() - YEAR_USER.MENTORED,
+      today.getMonth(),
+      today.getDate(),
+    );
 
     this.routeUrl.queryParamMap.subscribe((pm) => {
       const token = pm.get('token');
