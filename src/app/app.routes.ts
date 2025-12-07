@@ -35,6 +35,7 @@ export const routes: Routes = [
   {
     path: 'accept-terms-of-use',
     component: AcceptOfTermsComponent,
+    canActivate: [AuthGuard],
   },
   {
     path: '',

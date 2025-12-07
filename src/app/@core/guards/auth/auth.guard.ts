@@ -17,9 +17,9 @@ export class AuthGuard implements CanActivate {
       const token = this.authService.getAccessToken();
       const isAuthenticated = !!token;
       const allowedRoles = route.data['roles'] || [];
-      console.log('Allowed Roles:', allowedRoles);
       const userRole = this.userService.getRole();
-      console.log('User Role from Service:', userRole);
+      const termsAccepted = this.authService.getTermsAccepted();
+      const currentRoute = route.routeConfig?.path;
 
       if (!isAuthenticated) {
         this.router.navigate(['/login']);
@@ -40,6 +40,18 @@ export class AuthGuard implements CanActivate {
 
       if (allowedRoles.length && !allowedRoles.includes(role)) {
         this.redirectToRoleHome(role);
+        return false;
+      }
+
+      if (!termsAccepted) {
+        if (currentRoute !== 'accept-terms-of-use') {
+          this.router.navigate(['/accept-terms-of-use']);
+          return false;
+        }
+      }
+
+      if (termsAccepted && currentRoute === 'accept-terms-of-use') {
+        this.router.navigate(['/home']);
         return false;
       }
 

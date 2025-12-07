@@ -170,7 +170,6 @@ export class MentoredProfileComponent implements OnInit {
       this.form.markAllAsTouched();
 
       const invalid = this.getInvalidFields(this.form);
-      console.log('Campos inválidos:', invalid);
 
       return;
     }
@@ -204,10 +203,6 @@ export class MentoredProfileComponent implements OnInit {
   handlePasswordUpdate() {
     if (this.passwordForm.invalid) {
       this.passwordForm.markAllAsTouched();
-
-      const invalid = this.getInvalidFields(this.passwordForm);
-      console.log('Campos inválidos (senha):', invalid);
-
       return;
     }
 
@@ -246,7 +241,8 @@ export class MentoredProfileComponent implements OnInit {
 
   confirmDelete() {
     this.confirmService.confirm({
-      message: 'Ao excluir sua conta de mentorado, todos os seus dados serão apagados permanentemente, incluindo histórico de aulas e todos os certificados já emitidos.</br> Após a exclusão, nenhum certificado poderá ser recuperado ou gerado novamente. </br>Esta ação é irreversível. Deseja realmente excluir sua conta?',
+      message:
+        'Ao excluir sua conta de mentorado, todos os seus dados serão apagados permanentemente, incluindo histórico de aulas e todos os certificados já emitidos.</br> Após a exclusão, nenhum certificado poderá ser recuperado ou gerado novamente. </br>Esta ação é irreversível. Deseja realmente excluir sua conta?',
       header: 'Confirmação',
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Sim, excluir',

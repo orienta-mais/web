@@ -11,7 +11,6 @@ export class TermsGuard implements CanActivate {
 
   canActivate(): boolean {
     const accepted = this.auth.getTermsAccepted();
-    console.log('Terms accepted:', accepted);
 
     if (accepted === null || accepted === false) {
       this.router.navigate(['/accept-terms-of-use']);

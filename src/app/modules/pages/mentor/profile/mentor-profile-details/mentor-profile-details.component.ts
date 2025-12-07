@@ -211,7 +211,8 @@ export class MentorProfileDetailsComponent implements OnInit {
 
   confirmDelete() {
     this.confirmService.confirm({
-      message: 'Ao excluir sua conta de mentor, todas as suas informações pessoais serão removidas permanentemente. </br> As informações das aulas criadas serão mantidas e seu nome completo continuará registrado somente para fins de certificados dos alunos.</br>Esta ação é irreversível. Deseja realmente excluir sua conta?',
+      message:
+        'Ao excluir sua conta de mentor, todas as suas informações pessoais serão removidas permanentemente. </br> As informações das aulas criadas serão mantidas e seu nome completo continuará registrado somente para fins de certificados dos alunos.</br>Esta ação é irreversível. Deseja realmente excluir sua conta?',
       header: 'Confirmação',
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Sim, excluir',
