@@ -20,6 +20,7 @@ import { isValidEmail } from '../../../../@core/validators/email/email.validator
 import { TermsCheckboxComponent } from '../../../../shared/terms-checkbox/terms-checkbox.component';
 import { InputMaskModule } from 'primeng/inputmask';
 import { YEAR_USER } from '../../../../@core/enums/year-user.enum';
+import { linkedinValidator } from '../../../../@core/validators/urls/linkedin.validator';
 
 @Component({
   selector: 'app-register-mentor',
@@ -73,7 +74,7 @@ export class RegisterMentorComponent implements OnInit {
       name: ['', [Validators.required, noWhitespaceValidator, Validators.maxLength(70)]],
       lastName: ['', [Validators.required, noWhitespaceValidator, Validators.maxLength(70)]],
       birthDate: ['', Validators.required],
-      socialMedias: ['', [noWhitespaceValidator, Validators.maxLength(100)]],
+      socialMedias: ['', [noWhitespaceValidator, linkedinValidator, Validators.maxLength(150)]],
       description: [
         '',
         [

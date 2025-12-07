@@ -10,7 +10,11 @@ import { SelectModule } from 'primeng/select';
 import { STATES, COUNTRIES } from '../../../../shared/constants';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ToastService } from '../../../../shared/components/toast/toast.service';
-import { uuidValidator } from '../../../../@core/validators';
+import {
+  linkedinValidator,
+  noWhitespaceValidator,
+  uuidValidator,
+} from '../../../../@core/validators';
 import { VerificationService } from '../../../../@core/services/auth/verification.service';
 import { take } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -70,14 +74,19 @@ export class RegisterMentoredComponent implements OnInit {
           Validators.pattern(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&^()\-_=+{}[\]|;:'",.<>]).+$/),
         ],
       ],
-      name: ['', [Validators.required, Validators.maxLength(70)]],
-      lastName: ['', [Validators.required, Validators.maxLength(70)]],
+      name: ['', [Validators.required, noWhitespaceValidator, Validators.maxLength(70)]],
+      lastName: ['', [Validators.required, noWhitespaceValidator, Validators.maxLength(70)]],
       birthDate: ['', Validators.required],
       description: [
         '',
-        [Validators.required, Validators.minLength(100), Validators.maxLength(1000)],
+        [
+          Validators.required,
+          noWhitespaceValidator,
+          Validators.minLength(100),
+          Validators.maxLength(1000),
+        ],
       ],
-      socialMedias: ['', Validators.maxLength(100)],
+      socialMedias: ['', noWhitespaceValidator, linkedinValidator, Validators.maxLength(150)],
       state: ['', Validators.required],
       nationality: ['', Validators.required],
     });

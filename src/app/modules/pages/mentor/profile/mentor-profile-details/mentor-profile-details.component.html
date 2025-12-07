@@ -329,6 +329,7 @@
       <button
         (click)="enableEdit()"
         class="flex-1 py-3 bg-gray-400 text-white rounded-xl hover:bg-gray-500"
+        *ngIf="!editMode && !editPassword"
       >
         Editar Perfil
       </button>
@@ -336,6 +337,7 @@
       <button
         (click)="enablePasswordEdit()"
         class="flex-1 py-3 bg-amber-500 text-white rounded-xl hover:bg-amber-600"
+        *ngIf="!editMode && !editPassword"
       >
         Editar Senha
       </button>
@@ -343,6 +345,7 @@
       <button
         (click)="confirmDelete()"
         class="flex-1 py-3 bg-red-600 text-white rounded-xl hover:bg-red-700"
+        *ngIf="!editMode && !editPassword"
       >
         Excluir Conta
       </button>

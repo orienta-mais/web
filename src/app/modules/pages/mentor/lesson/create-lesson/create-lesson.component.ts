@@ -13,7 +13,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { UserService } from '../../../../../@core/services/user/user.service';
 import { LessonService } from '../../../../../@core/services/lesson/lesson.service';
 import { CreateLesson } from '../../../../../@core/interfaces/mentor.interface';
-import { noWhitespaceValidator } from '../../../../../@core/validators';
+import { noWhitespaceValidator, safeUrlValidator } from '../../../../../@core/validators';
 
 @Component({
   selector: 'app-create-lesson',
@@ -47,7 +47,7 @@ export class CreateLeasonComponent {
     this.form = this.fb.group({
       title: ['', [Validators.required, noWhitespaceValidator, Validators.maxLength(200)]],
       description: ['', [noWhitespaceValidator, Validators.maxLength(1000)]],
-      presentCode: [null, Validators.required, noWhitespaceValidator],
+      presentCode: [null, [Validators.required, noWhitespaceValidator]],
       maxGuest: [null, [Validators.required, Validators.min(1)]],
       date: [null, Validators.required],
       startTime: ['', Validators.required],
@@ -61,8 +61,7 @@ export class CreateLeasonComponent {
   }
 
   addLink() {
-    this.additionalLinks.push(this.fb.control(''));
-
+    this.additionalLinks.push(this.fb.control('', [safeUrlValidator]));
     setTimeout(() => {
       const last = this.linkInputs.last;
       if (last) last.nativeElement.focus();

@@ -124,6 +124,7 @@
                 label="Confirmar Presença"
                 icon="pi pi-check"
                 class="p-button-sm"
+                [loading]="presenceLoading"
                 (click)="submitPresence()"
               ></p-button>
             </div>
@@ -136,8 +137,6 @@
         >
           <p-button
             label="Gerar certificado novamente"
-            icon="pi pi-download
-"
             class="w-full p-button-sm"
             (click)="downloadCertificate()"
             class="flex"

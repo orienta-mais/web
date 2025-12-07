@@ -122,6 +122,13 @@
               (click)="removeLink(i)"
             ></button>
           </div>
+
+          <div
+            *ngIf="additionalLinks.invalid && additionalLinks.touched"
+            class="text-red-500 text-sm ml-1"
+          >
+            Insira um link válido utilizando http:// ou https://
+          </div>
         </div>
 
         <button

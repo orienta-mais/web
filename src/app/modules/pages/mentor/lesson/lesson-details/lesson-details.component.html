@@ -16,7 +16,14 @@
     <!-- ===================== EDIT MODE ===================== -->
     <form *ngIf="editMode" [formGroup]="form" (ngSubmit)="handleUpdate()" class="space-y-5">
       <p-floatlabel>
-        <input pInputText formControlName="title" id="title" class="w-full" maxlength="200" />
+        <input
+          pInputText
+          formControlName="title"
+          id="title"
+          class="w-full"
+          minlength="10"
+          maxlength="200"
+        />
         <label for="title">Título</label>
       </p-floatlabel>
 
@@ -26,6 +33,7 @@
           pInputTextarea
           formControlName="description"
           rows="4"
+          minlength="10"
           maxlength="1000"
           class="w-full whitespace-pre-line"
         ></textarea>
@@ -37,6 +45,7 @@
           id="presentCode"
           formControlName="presentCode"
           maxlength="6"
+          minlength="4"
           class="w-full"
         />
         <label for="presentCode">Código de presença</label>
@@ -49,18 +58,20 @@
           pInputText
           id="maxGuest"
           formControlName="maxGuest"
-          min="0"
+          min="1"
+          max="1000"
           class="w-full"
         />
         <label for="maxGuest">Máximo de convidados</label>
       </p-floatlabel>
 
       <div>
-        <label class="block text-gray-700 font-medium mb-2">Data</label>
+        <label class="block text-gray-700 font-medium mb-2">Data da aula</label>
         <p-datepicker
           formControlName="date"
           [showIcon]="true"
           dateFormat="dd/mm/yy"
+          [minDate]="today"
           styleClass="w-full"
         ></p-datepicker>
       </div>
@@ -97,7 +108,7 @@
               pInputText
               class="flex-1"
               [formControl]="ctrl"
-              placeholder="https://..."
+              id="additionalLink"
               (blur)="removeLinkIfEmpty(i)"
             />
 
@@ -108,6 +119,12 @@
               severity="danger"
               (click)="removeLink(i)"
             ></button>
+          </div>
+          <div
+            *ngIf="additionalLinks.invalid && additionalLinks.touched"
+            class="text-red-500 text-sm ml-1"
+          >
+            Insira um link válido utilizando http:// ou https://
           </div>
         </div>
 
@@ -126,6 +143,7 @@
         severity="success"
         styleClass="w-full mt-4"
         [loading]="loading"
+        [disabled]="form.invalid"
       ></p-button>
       <p-button
         type="button"
@@ -226,9 +244,12 @@
 
       <div
         *ngIf="lessonFinalized"
-        class="with-full bg-green-100 border border-green-300 rounded-lg p-4 text-center"
+        class="w-full bg-gradient-to-r from-green-50 to-green-100 border border-green-300 rounded-xl p-5 text-center shadow-sm"
       >
-        <p class="text-2xl text-bold text-green-600">Aula finalizada!</p>
+        <p class="text-2xl font-semibold text-green-700">Aula em andamento ou já finalizada</p>
+        <p class="text-green-600 mt-1">
+          As edições foram bloqueadas para garantir a integridade das informações.
+        </p>
       </div>
 
       <!-- BOTÕES -->

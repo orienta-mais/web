@@ -22,7 +22,7 @@ import { TextareaModule } from 'primeng/textarea';
 import { DatePickerModule } from 'primeng/datepicker';
 import { UserService } from '../../../../../@core/services/user/user.service';
 import { HttpErrorResponse } from '@angular/common/http';
-import { noWhitespaceValidator } from '../../../../../@core/validators';
+import { noWhitespaceValidator, safeUrlValidator } from '../../../../../@core/validators';
 
 @Component({
   selector: 'app-lesson-details',
@@ -47,6 +47,7 @@ export class LeasonDetailsComponent implements OnInit {
   editMode = false;
   lessonId: string | null = null;
   lessonFinalized = false;
+  today = new Date();
 
   constructor(
     private route: ActivatedRoute,
@@ -90,7 +91,9 @@ export class LeasonDetailsComponent implements OnInit {
             initialTime: [data.startTime?.slice(0, 5) || '', Validators.required],
             finalTime: [data.endTime?.slice(0, 5) || '', Validators.required],
             mentorId: [this.userService.getId()],
-            additionalLinks: this.fb.array(links.map((l) => this.fb.control(l))),
+            additionalLinks: this.fb.array(
+              links.map((l) => this.fb.control(l, [safeUrlValidator])),
+            ),
             maxGuest: [data.maxGuest ?? 1, [Validators.required, Validators.min(1)]],
           });
 
@@ -121,11 +124,11 @@ export class LeasonDetailsComponent implements OnInit {
   }
 
   addLink() {
-    const ctrl = new FormControl('');
+    const ctrl = new FormControl('', [safeUrlValidator]);
     this.additionalLinks.push(ctrl);
 
     setTimeout(() => {
-      const inputs = document.querySelectorAll('input[placeholder="https://..."]');
+      const inputs = document.querySelectorAll('#additionalLink');
       const last = inputs[inputs.length - 1] as HTMLInputElement | undefined;
       last?.focus();
     }, 0);
@@ -165,7 +168,7 @@ export class LeasonDetailsComponent implements OnInit {
       return;
     }
 
-    const selectedDate = this.form.value.date; // já é Date
+    const selectedDate = this.form.value.date;
     const startTime = this.form.value.initialTime;
     const endTime = this.form.value.finalTime;
 

@@ -32,7 +32,7 @@ export class MentoredLessonDetailsComponent implements OnInit {
   feedbackText = '';
   hasStarted = false;
   hasEnd = false;
-
+  presenceLoading = false;
   registerLoading = false;
 
   constructor(
@@ -131,6 +131,7 @@ export class MentoredLessonDetailsComponent implements OnInit {
       this.toast.error('Por favor, insira o código de presença.');
       return;
     }
+    this.presenceLoading = true;
 
     this.lessonService
       .sendPresenceCode(this.lesson!.id, this.presenceCode)
@@ -139,8 +140,12 @@ export class MentoredLessonDetailsComponent implements OnInit {
         next: () => {
           this.toast.success('Presença confirmada!');
           this.lesson!.presentCodeFilled = true;
+          this.presenceLoading = false;
         },
-        error: (e: HttpErrorResponse) => this.toast.error(e.error?.message),
+        error: (e: HttpErrorResponse) => {
+          this.toast.error(e.error?.message);
+          this.presenceLoading = false;
+        },
       });
   }
 
