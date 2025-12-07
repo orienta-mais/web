@@ -246,7 +246,7 @@ export class MentoredProfileComponent implements OnInit {
 
   confirmDelete() {
     this.confirmService.confirm({
-      message: 'Tem certeza que deseja excluir sua conta?',
+      message: 'Ao excluir sua conta de mentorado, todos os seus dados serão apagados permanentemente, incluindo histórico de aulas e todos os certificados já emitidos.</br> Após a exclusão, nenhum certificado poderá ser recuperado ou gerado novamente. </br>Esta ação é irreversível. Deseja realmente excluir sua conta?',
       header: 'Confirmação',
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Sim, excluir',
