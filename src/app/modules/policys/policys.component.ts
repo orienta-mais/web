@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { PolicyService } from '../../@core/services/policy/policy.service';
 import { PolicyType } from '../../@core/enums/policy.enum';
+import { take } from 'rxjs';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-policys',
@@ -9,11 +11,12 @@ import { PolicyType } from '../../@core/enums/policy.enum';
   styleUrls: ['./policys.component.css'],
 })
 export class PolicysComponent implements OnInit {
-  content: string = '';
+  content!: SafeHtml;
 
   constructor(
     private route: ActivatedRoute,
     private policyService: PolicyService,
+    private sanitizer: DomSanitizer,
   ) {}
 
   ngOnInit() {
@@ -38,8 +41,17 @@ export class PolicysComponent implements OnInit {
   }
 
   loadContent(type: PolicyType) {
-    this.policyService.getContent(type).subscribe((html) => {
-      this.content = html;
-    });
+    this.policyService
+      .getContent(type)
+      .pipe(take(1))
+      .subscribe({
+        next: (data: any) => {
+          const rawHtml = data?.content || '';
+          this.content = this.sanitizer.bypassSecurityTrustHtml(rawHtml);
+        },
+        error: () => {
+          console.error('Erro ao carregar o conteúdo da política.');
+        },
+      });
   }
 }

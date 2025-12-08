@@ -6,11 +6,11 @@ import { PolicyType } from '../../enums/policy.enum';
 
 @Injectable({ providedIn: 'root' })
 export class PolicyService {
-  private readonly _baseApi = `${environment.BASE_API}/policy`;
+  private readonly _baseApi = `${environment.BASE_API}/terms`;
 
   constructor(private http: HttpClient) {}
 
-  getContent(type: PolicyType): Observable<string> {
-    return this.http.get(`${this._baseApi}/${type}`, { responseType: 'text' });
+  getContent(type: PolicyType): Observable<any[]> {
+    return this.http.get<any[]>(`${this._baseApi}/active/${type}`);
   }
 }

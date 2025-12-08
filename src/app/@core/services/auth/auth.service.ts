@@ -14,6 +14,9 @@ import {
 import { Observable } from 'rxjs';
 import { ROLE } from '../../enums/role.enum';
 import { Router } from '@angular/router';
+import { UserService } from '../user/user.service';
+import { MentorService } from '../mentor/mentor.service';
+import { MentoredService } from '../mentored/mentored.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -40,6 +43,10 @@ export class AuthService {
       this.termsAccepted = stored ? JSON.parse(stored) : null;
     }
     return this.termsAccepted;
+  }
+
+  confirmTerms(): Observable<void> {
+    return this.http.post<void>(`${this._baseApi}/auth/terms/policy/confirm`, {});
   }
 
   login(body: LoginRequest): Observable<LoginResponse> {
