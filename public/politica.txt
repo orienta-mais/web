@@ -35,10 +35,6 @@
       <li><strong>Descrição pessoal</strong> e <strong>link para rede social</strong>.</li>
       <li><strong>Dados técnicos de sessão</strong> (JWT/session token).</li>
     </ul>
-
-    <p class="text-sm text-gray-500 mt-1">
-      <strong>O que NÃO coletamos:</strong> CPF, fotos de perfil, mensagens de chat, nem dados sensíveis.
-    </p>
   </section>
 
   <!-- 3 -->
