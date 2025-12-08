@@ -33,6 +33,7 @@ export class ResetPasswordComponent implements OnInit {
   tokenUrl!: string;
   screenValidated = true;
   showPassword = false;
+  showConfirmPassword = false;
   loading = false;
   success = false;
 
@@ -43,19 +44,23 @@ export class ResetPasswordComponent implements OnInit {
     private routeUrl: ActivatedRoute,
     private router: Router,
   ) {
-    this.form = this.fb.group({
-      newPassword: [
-        '',
-        [
-          Validators.required,
-          noWhitespaceValidator,
-          Validators.minLength(8),
-          Validators.pattern(
-            /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*#?&^()\-_=+{}\[\]|;:'",.<>]).+$/,
-          ),
+    this.form = this.fb.group(
+      {
+        newPassword: [
+          '',
+          [
+            Validators.required,
+            noWhitespaceValidator,
+            Validators.minLength(8),
+            Validators.pattern(
+              /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*#?&^()\-_=+{}\[\]|;:'",.<>]).+$/,
+            ),
+          ],
         ],
-      ],
-    });
+        confirmPassword: ['', [Validators.required]],
+      },
+      { validators: this.passwordMatchValidator },
+    );
   }
 
   ngOnInit() {
@@ -111,7 +116,24 @@ export class ResetPasswordComponent implements OnInit {
     this.showPassword = !this.showPassword;
   }
 
+  toggleConfirmPasswordVisibility() {
+    this.showConfirmPassword = !this.showConfirmPassword;
+  }
+
+  passwordMatchValidator(form: FormGroup) {
+    const password = form.get('newPassword');
+    const confirmPassword = form.get('confirmPassword');
+    if (password && confirmPassword && password.value !== confirmPassword.value) {
+      return { passwordMismatch: true };
+    }
+    return null;
+  }
+
   get passwordCtrl() {
     return this.form.get('newPassword');
+  }
+
+  get confirmPasswordCtrl() {
+    return this.form.get('confirmPassword');
   }
 }

@@ -48,6 +48,7 @@ export class MentorProfileDetailsComponent implements OnInit {
 
   showCurrentPassword = false;
   showNewPassword = false;
+  showConfirmPassword = false;
 
   constructor(
     private fb: FormBuilder,
@@ -100,6 +101,7 @@ export class MentorProfileDetailsComponent implements OnInit {
           ),
         ],
       ],
+      confirmPassword: ['', [Validators.required]],
     });
   }
 
@@ -186,6 +188,14 @@ export class MentorProfileDetailsComponent implements OnInit {
       return;
     }
 
+    const newPassword = this.passwordForm.get('newPassword')?.value;
+    const confirmPassword = this.passwordForm.get('confirmPassword')?.value;
+
+    if (newPassword !== confirmPassword) {
+      this.toast.error('As senhas não coincidem.');
+      return;
+    }
+
     const payload = {
       email: this.form.getRawValue().email,
       currentPassword: this.passwordForm.get('currentPassword')?.value,
@@ -248,6 +258,10 @@ export class MentorProfileDetailsComponent implements OnInit {
 
   toggleNewPasswordVisibility() {
     this.showNewPassword = !this.showNewPassword;
+  }
+
+  toggleConfirmPasswordVisibility() {
+    this.showConfirmPassword = !this.showConfirmPassword;
   }
 
   goBack() {

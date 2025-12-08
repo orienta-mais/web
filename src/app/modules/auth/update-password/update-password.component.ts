@@ -21,6 +21,8 @@ export class UpdatePasswordComponent implements OnInit {
   form: FormGroup;
   uuidUrl!: string;
   screenValidated = false;
+  showPassword = false;
+  showConfirmPassword = false;
 
   constructor(
     private toast: ToastService,
@@ -29,7 +31,18 @@ export class UpdatePasswordComponent implements OnInit {
     private routeUrl: ActivatedRoute,
   ) {
     this.form = this.fb.group({
-      newPassword: ['', [Validators.required, noWhitespaceValidator, Validators.minLength(4)]],
+      newPassword: [
+        '',
+        [
+          Validators.required,
+          noWhitespaceValidator,
+          Validators.minLength(8),
+          Validators.pattern(
+            /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*#?&^()\-_=+{}\[\]|;:'",.<>]).+$/,
+          ),
+        ],
+      ],
+      confirmPassword: ['', [Validators.required]],
     });
   }
 
@@ -88,5 +101,17 @@ export class UpdatePasswordComponent implements OnInit {
 
   get newPassword() {
     return this.form.get('newPassword');
+  }
+
+  get confirmPassword() {
+    return this.form.get('confirmPassword');
+  }
+
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
+  }
+
+  toggleConfirmPasswordVisibility() {
+    this.showConfirmPassword = !this.showConfirmPassword;
   }
 }

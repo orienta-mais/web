@@ -30,15 +30,15 @@
           [type]="showPassword ? 'text' : 'password'"
           formControlName="password"
           autocomplete="off"
-          class="w-full pr-20"
+          class="w-full pr-12"
         />
         <label for="password">Senha</label>
         <button
           type="button"
-          class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-blue-600 hover:underline"
+          class="absolute right-3 top-1/2 -translate-y-1/2 text-yellow-600 hover:text-yellow-800"
           (click)="togglePasswordVisibility()"
         >
-          {{ showPassword ? 'Ocultar' : 'Mostrar' }}
+          <i [class]="showPassword ? 'pi pi-eye' : 'pi pi-eye-slash'"></i>
         </button>
       </p-floatlabel>
 

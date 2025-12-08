@@ -32,21 +32,21 @@
               [type]="showPassword ? 'text' : 'password'"
               formControlName="password"
               autocomplete="off"
-              class="w-full pr-20"
+              class="w-full pr-12"
             />
             <label>Senha</label>
             <button
               type="button"
-              class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-blue-600 hover:underline"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-yellow-600 hover:text-yellow-800"
               (click)="togglePasswordVisibility()"
             >
-              {{ showPassword ? 'Ocultar' : 'Mostrar' }}
+              <i [class]="showPassword ? 'pi pi-eye' : 'pi pi-eye-slash'"></i>
             </button>
           </p-floatlabel>
 
           <div
             *ngIf="f['password'].touched && f['password'].errors?.['required']"
-            class="text-red-500 text-sm"
+            class="text-red-500 text-sm mt-1"
           >
             Campo obrigatório
           </div>
@@ -54,15 +54,53 @@
             *ngIf="
               (f['password'].touched || f['password'].dirty) && f['password'].errors?.['minlength']
             "
-            class="text-red-500 text-sm"
+            class="text-red-500 text-sm mt-1"
           >
             Senha deve ter no mínimo 8 caracteres.
           </div>
           <div
             *ngIf="f['password'].touched && f['password'].errors?.['pattern']"
-            class="text-red-500 text-sm"
+            class="text-red-500 text-sm mt-1"
           >
-            A senha deve conter letra maiúscula, minúscula, número e caractere especialere especial
+            A senha deve conter letra maiúscula, minúscula, número e caractere especial
+          </div>
+        </div>
+
+        <!-- Confirmar Senha -->
+        <div class="relative w-full">
+          <p-floatlabel class="w-full">
+            <input
+              pInputText
+              [type]="showConfirmPassword ? 'text' : 'password'"
+              formControlName="confirmPassword"
+              autocomplete="off"
+              class="w-full pr-12"
+            />
+            <label>Confirmar Senha</label>
+            <button
+              type="button"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-yellow-600 hover:text-yellow-800"
+              (click)="toggleConfirmPasswordVisibility()"
+            >
+              <i [class]="showConfirmPassword ? 'pi pi-eye' : 'pi pi-eye-slash'"></i>
+            </button>
+          </p-floatlabel>
+
+          <div
+            *ngIf="confirmPasswordCtrl?.touched && confirmPasswordCtrl?.errors?.['required']"
+            class="text-red-500 text-sm mt-1"
+          >
+            Campo obrigatório
+          </div>
+          <div
+            *ngIf="
+              confirmPasswordCtrl?.touched &&
+              confirmPasswordCtrl?.value !== passwordCtrl?.value &&
+              confirmPasswordCtrl?.value
+            "
+            class="text-red-500 text-sm mt-1"
+          >
+            As senhas não coincidem
           </div>
         </div>
 

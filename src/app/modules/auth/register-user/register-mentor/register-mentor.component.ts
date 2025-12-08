@@ -12,7 +12,6 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { MentorService } from '../../../../@core/services/mentor/mentor.service';
 import { ToastService } from '../../../../shared/components/toast/toast.service';
 import { noWhitespaceValidator, uuidValidator } from '../../../../@core/validators';
-import { VerificationService } from '../../../../@core/services/auth/verification.service';
 import { take } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { RegisterMentor } from '../../../../@core/interfaces/mentor.interface';
@@ -47,6 +46,7 @@ export class RegisterMentorComponent implements OnInit {
   maxDate!: Date;
   step = 1;
   showPassword = false;
+  showConfirmPassword = false;
   tokenUrl!: string;
   screenValidated = false;
   acceptedTerms = false;
@@ -56,7 +56,6 @@ export class RegisterMentorComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private verificationService: VerificationService,
     private mentorService: MentorService,
     private toast: ToastService,
     private routeUrl: ActivatedRoute,
@@ -73,6 +72,7 @@ export class RegisterMentorComponent implements OnInit {
           ),
         ],
       ],
+      confirmPassword: ['', [Validators.required]],
       name: ['', [Validators.required, noWhitespaceValidator, Validators.maxLength(70)]],
       lastName: ['', [Validators.required, noWhitespaceValidator, Validators.maxLength(70)]],
       birthDate: ['', Validators.required],
@@ -141,7 +141,6 @@ export class RegisterMentorComponent implements OnInit {
 
       const mentorData: RegisterMentor = {
         ...this.mentorForm.getRawValue(),
-        role: this.verificationService.getRole(),
         token: this.tokenUrl,
         state: this.mentorForm.get('state')?.value?.name,
         nationality: this.mentorForm.get('nationality')?.value?.name,
@@ -173,11 +172,19 @@ export class RegisterMentorComponent implements OnInit {
     this.showPassword = !this.showPassword;
   }
 
+  toggleConfirmPasswordVisibility() {
+    this.showConfirmPassword = !this.showConfirmPassword;
+  }
+
   get f() {
     return this.mentorForm.controls;
   }
 
   get passwordCtrl() {
     return this.mentorForm.get('password');
+  }
+
+  get confirmPasswordCtrl() {
+    return this.mentorForm.get('confirmPassword');
   }
 }

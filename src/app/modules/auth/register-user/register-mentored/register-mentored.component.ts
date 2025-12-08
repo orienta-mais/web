@@ -15,7 +15,6 @@ import {
   noWhitespaceValidator,
   uuidValidator,
 } from '../../../../@core/validators';
-import { VerificationService } from '../../../../@core/services/auth/verification.service';
 import { take } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { RegisterMentored } from '../../../../@core/interfaces/mentored.interface';
@@ -50,6 +49,7 @@ export class RegisterMentoredComponent implements OnInit {
   maxDate!: Date;
   step = 1;
   showPassword = false;
+  showConfirmPassword = false;
   tokenUrl!: string;
   screenValidated = false;
   acceptedTerms = false;
@@ -59,7 +59,6 @@ export class RegisterMentoredComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private verificationService: VerificationService,
     private mentoredService: MentoredService,
     private toast: ToastService,
     private routeUrl: ActivatedRoute,
@@ -76,6 +75,7 @@ export class RegisterMentoredComponent implements OnInit {
           ),
         ],
       ],
+      confirmPassword: ['', [Validators.required]],
       name: ['', [Validators.required, noWhitespaceValidator, Validators.maxLength(70)]],
       lastName: ['', [Validators.required, noWhitespaceValidator, Validators.maxLength(70)]],
       birthDate: ['', Validators.required],
@@ -143,7 +143,6 @@ export class RegisterMentoredComponent implements OnInit {
       }
       const mentoredData: RegisterMentored = {
         ...this.mentoredForm.getRawValue(),
-        role: this.verificationService.getRole(),
         token: this.tokenUrl,
         state: this.mentoredForm.get('state')?.value?.name,
         nationality: this.mentoredForm.get('nationality')?.value?.name,
@@ -176,11 +175,19 @@ export class RegisterMentoredComponent implements OnInit {
     this.showPassword = !this.showPassword;
   }
 
+  toggleConfirmPasswordVisibility() {
+    this.showConfirmPassword = !this.showConfirmPassword;
+  }
+
   get f() {
     return this.mentoredForm.controls;
   }
 
   get passwordCtrl() {
     return this.mentoredForm.get('password');
+  }
+
+  get confirmPasswordCtrl() {
+    return this.mentoredForm.get('confirmPassword');
   }
 }
