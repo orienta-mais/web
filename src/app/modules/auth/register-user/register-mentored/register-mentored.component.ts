@@ -102,21 +102,34 @@ export class RegisterMentoredComponent implements OnInit {
 
     this.routeUrl.queryParamMap.subscribe((pm) => {
       const token = pm.get('token');
-      const email = pm.get('email');
+      const emailEncoded = pm.get('email');
+
       if (!token || !uuidValidator(token)) {
         this.screenValidated = false;
         return;
       }
 
-      if (!email || !isValidEmail(email)) {
+      if (!emailEncoded) {
+        this.screenValidated = false;
+        return;
+      }
+
+      let decodedEmail: string;
+      try {
+        decodedEmail = decodeURIComponent(emailEncoded);
+      } catch {
+        decodedEmail = emailEncoded;
+      }
+
+      if (!isValidEmail(decodedEmail)) {
         this.screenValidated = false;
         return;
       }
 
       this.screenValidated = true;
       this.tokenUrl = token;
-      this.email = email;
-      this.mentoredForm.get('email')?.setValue(email);
+      this.email = decodedEmail;
+      this.mentoredForm.get('email')?.setValue(decodedEmail);
     });
   }
 
