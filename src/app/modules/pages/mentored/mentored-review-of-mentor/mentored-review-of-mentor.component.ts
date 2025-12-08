@@ -99,7 +99,6 @@ export class MentoredReviewOfMentorComponent {
 
     const payload = {
       ...this.reviewForm.value,
-      mentoredId: this.mentorId,
     };
 
     this.mentoredService
