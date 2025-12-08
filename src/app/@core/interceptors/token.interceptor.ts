@@ -3,7 +3,6 @@ import { Observable, catchError, switchMap, throwError, of } from 'rxjs';
 import { inject } from '@angular/core';
 import { AuthService } from '../services/auth/auth.service';
 import { Router } from '@angular/router';
-
 export const tokenInterceptor: HttpInterceptorFn = (
   req: HttpRequest<any>,
   next: HttpHandlerFn,
@@ -11,8 +10,15 @@ export const tokenInterceptor: HttpInterceptorFn = (
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  const accessToken = authService.getAccessToken();
+  const PUBLIC_API_URLS = ['/terms/active'];
+
+  const isPublic = PUBLIC_API_URLS.some((url) => req.url.includes(url));
   const isRefreshRequest = req.url.includes('/auth/refresh');
+  if (isPublic) {
+    return next(req);
+  }
+
+  const accessToken = authService.getAccessToken();
 
   let authReq = req;
   if (accessToken && !isRefreshRequest) {
@@ -42,7 +48,6 @@ export const tokenInterceptor: HttpInterceptorFn = (
         );
       }
 
-      // Para qualquer outro erro, propaga normalmente
       return throwError(() => error);
     }),
   );

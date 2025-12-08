@@ -50,7 +50,9 @@ export class ResetPasswordComponent implements OnInit {
           Validators.required,
           noWhitespaceValidator,
           Validators.minLength(8),
-          Validators.pattern(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&^()\-_=+{}[\]|;:'",.<>]).+$/),
+          Validators.pattern(
+            /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*#?&^()\-_=+{}\[\]|;:'",.<>]).+$/,
+          ),
         ],
       ],
     });

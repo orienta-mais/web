@@ -11,15 +11,6 @@
     </div>
   </div>
 
-  <!-- Callout -->
-  <div class="bg-gray-50 border-l-4 border-cyan-500 p-4 rounded-lg mb-6 text-gray-600">
-    <strong>Resumo rápido:</strong> coletamos apenas os dados estritamente necessários
-    (nome, sobrenome, e-mail, localização básica, data de nascimento, descrição e link para rede
-    social). Não coletamos CPF nem fotos de perfil. Usamos bcrypt para senhas, HTTPS, JWT para
-    sessão e envio de e-mail via API Gmail. Os links de reunião Zoom são gerados pelo sistema e
-    enviados por e-mail; não monitoramos reuniões.
-  </div>
-
   <!-- 1 -->
   <section class="mt-6">
     <h2 class="text-lg font-semibold text-cyan-700 mb-2">Política de Privacidade</h2>
