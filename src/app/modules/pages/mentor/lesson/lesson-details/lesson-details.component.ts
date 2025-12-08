@@ -48,7 +48,7 @@ export class LeasonDetailsComponent implements OnInit {
   editMode = false;
   lessonId: string | null = null;
   lessonFinalized = false;
-  today = new Date();
+  today!: Date;
 
   constructor(
     private route: ActivatedRoute,
@@ -63,6 +63,9 @@ export class LeasonDetailsComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.today = new Date();
+    this.today.setHours(0, 0, 0, 0);
+
     this.lessonId = this.route.snapshot.paramMap.get('id');
     if (this.lessonId) this.loadLeason(this.lessonId);
   }
@@ -76,7 +79,14 @@ export class LeasonDetailsComponent implements OnInit {
           const links = data.additionalLinks ?? [];
           this.leason = { ...data, additionalLinks: links };
 
-          const localDate = this.dateTimeService.utcDateToLocalDate(data.date);
+          const rawDate = data.date;
+          const utcDate = new Date(rawDate);
+
+          const localDate = new Date(
+            utcDate.getUTCFullYear(),
+            utcDate.getUTCMonth(),
+            utcDate.getUTCDate(),
+          );
           const localStartTime = this.dateTimeService.utcTimeToLocalTime(
             data.date,
             data.startTime || '00:00:00',
@@ -108,6 +118,12 @@ export class LeasonDetailsComponent implements OnInit {
             ),
             maxGuest: [data.maxGuest ?? 1, [Validators.required, Validators.min(1)]],
           });
+          const formatTime = (date: Date) => {
+            const h = date.getHours().toString().padStart(2, '0');
+            const m = date.getMinutes().toString().padStart(2, '0');
+            const s = date.getSeconds().toString().padStart(2, '0');
+            return `${h}:${m}:${s}`;
+          };
 
           this.cdr.detectChanges();
 

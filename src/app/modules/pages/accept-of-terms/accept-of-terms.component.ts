@@ -61,6 +61,11 @@ export class AcceptOfTermsComponent {
     let role = this.userService.getRole();
     let userId = this.userService.getId();
 
+    if (!role || !userId) {
+      this.toastService.error('Erro ao identificar o usuário. Tente novamente.');
+      return;
+    }
+
     console.log(role, userId);
     if (role === ROLE.MENTOR) {
       this.mentorService

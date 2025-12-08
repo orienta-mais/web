@@ -26,10 +26,6 @@ export class AuthGuard implements CanActivate {
         return false;
       }
 
-      if (!userRole) {
-        this.userService.loadUserFromToken();
-      }
-
       const role = this.userService.getRole();
 
       if (!role) {

@@ -23,7 +23,6 @@ export class HeaderComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.userService.loadUserFromToken();
     this.role = this.userService.getRole();
     this.name = this.userService.getName();
     this.email = this.userService.getEmail();
