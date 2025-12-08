@@ -64,7 +64,7 @@ export class DashboardComponent implements OnInit {
         this.upcomingLessons = lessons?.countUpcomingLessons ?? 0;
         this.unavailableLessons = lessons?.countUnavailableLessons ?? 0;
 
-        this.states = states?.total ?? [];
+        this.states = (states?.total ?? []).filter(s => s.state != null);
 
         this.loadStateBarChart();
       },

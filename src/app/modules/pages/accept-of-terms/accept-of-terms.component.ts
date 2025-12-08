@@ -65,8 +65,6 @@ export class AcceptOfTermsComponent {
       this.toastService.error('Erro ao identificar o usuário. Tente novamente.');
       return;
     }
-
-    console.log(role, userId);
     if (role === ROLE.MENTOR) {
       this.mentorService
         .deleteAccount(userId)
