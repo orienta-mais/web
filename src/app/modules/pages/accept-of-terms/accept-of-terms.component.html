@@ -1,0 +1,114 @@
+<div
+  class="min-h-screen w-full bg-gradient-to-b from-sky-50 to-white flex justify-center px-4 py-10"
+>
+  <div
+    class="max-w-2xl w-full bg-white rounded-2xl shadow-xl p-10 space-y-8 border border-gray-100"
+  >
+    <!-- HEADER -->
+    <div *ngIf="!showRefuseBox" class="space-y-4">
+      <div class="flex items-center gap-3">
+        <div
+          class="w-12 h-12 bg-blue-600 text-white rounded-xl flex items-center justify-center text-2xl font-bold shadow-md"
+        >
+          OM
+        </div>
+        <h1 class="text-3xl font-extrabold text-gray-800">Termos Atualizados</h1>
+      </div>
+
+      <p class="text-gray-600 leading-relaxed text-lg">
+        Os termos de uso e a política de privacidade foram atualizados. Para continuar usando a
+        plataforma, é necessário aceitar as novas condições.
+      </p>
+    </div>
+
+    <!-- LINKS -->
+    <div *ngIf="!showRefuseBox" class="space-y-4 bg-sky-50 p-5 rounded-xl border border-sky-100">
+      <p class="text-gray-700 font-semibold">Documentos atualizados:</p>
+
+      <a
+        routerLink="/view/politica-de-privacidade"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="flex items-center gap-2 text-blue-600 hover:text-blue-700 underline font-medium"
+      >
+        <span>📄</span> Política de Privacidade
+      </a>
+
+      <a
+        routerLink="/view/termos-de-uso"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="flex items-center gap-2 text-blue-600 hover:text-blue-700 underline font-medium"
+      >
+        <span>📄</span> Termos de Uso
+      </a>
+    </div>
+
+    <!-- CHECKBOX + BUTTONS -->
+    <form *ngIf="!showRefuseBox" [formGroup]="form" class="space-y-6">
+      <label class="flex items-start gap-3 cursor-pointer select-none">
+        <input
+          type="checkbox"
+          formControlName="accepted"
+          class="mt-1 w-5 h-5 border-2 rounded-md text-blue-600 focus:ring-blue-500"
+        />
+        <span class="text-gray-700 text-lg">Eu li e aceito os documentos acima</span>
+      </label>
+
+      <div class="flex gap-4 pt-2">
+        <button
+          type="button"
+          class="px-6 py-3 rounded-lg bg-blue-600 text-white text-lg font-semibold hover:bg-blue-700 transition disabled:opacity-40 shadow-sm"
+          [disabled]="!form.value.accepted"
+          (click)="continue()"
+        >
+          Continuar
+        </button>
+
+        <button
+          type="button"
+          class="px-6 py-3 rounded-lg bg-red-600 text-white text-lg font-semibold hover:bg-red-700 transition shadow-sm"
+          (click)="refuse()"
+        >
+          Recusar
+        </button>
+      </div>
+    </form>
+
+    <!-- REFUSE BOX -->
+    <div
+      *ngIf="showRefuseBox"
+      class="bg-red-50 border border-red-200 p-6 rounded-xl space-y-5 shadow-inner"
+    >
+      <div class="flex items-center gap-3">
+        <span class="text-red-600 text-2xl">⚠️</span>
+        <h2 class="text-xl font-bold text-red-700">Atenção!</h2>
+      </div>
+
+      <p class="text-red-700 leading-relaxed">
+        Para continuar utilizando a OrientaMais, é obrigatório aceitar os Termos de Uso e a Política
+        de Privacidade. Caso você recuse, sua conta não poderá permanecer ativa.
+      </p>
+
+      <p class="text-red-700 font-semibold">
+        Ao confirmar, sua conta será excluída permanentemente e todo o progresso será perdido.
+      </p>
+
+      <div class="flex gap-4 pt-3">
+        <button
+          class="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-300 transition"
+          (click)="cancelRefusal()"
+        >
+          Voltar
+        </button>
+
+        <button
+          class="px-6 py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition"
+          (click)="deleteAccount()"
+        >
+          Sim, desejo excluir minha conta
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

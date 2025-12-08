@@ -8,6 +8,7 @@ export interface LoginRequest {
 export interface LoginResponse {
   accessToken: string;
   refreshToken: string;
+  termsAccepted: boolean;
 }
 
 export interface SendValidateEmailRequest {
@@ -22,9 +23,16 @@ export interface ConfirmEmailRequest {
   code: string;
 }
 
+export interface ResetPasswordRequest {
+  email: string;
+  token: string;
+  newPassword: string;
+}
+
 export interface UpdatePasswordRequest {
-  uuid: string;
-  password: string;
+  email: string;
+  currentPassword: string;
+  newPassword: string;
 }
 
 export interface UuidOfUpdatePasswordRequest {

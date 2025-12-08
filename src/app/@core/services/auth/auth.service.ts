@@ -5,11 +5,18 @@ import {
   ConfirmEmailRequest,
   LoginRequest,
   LoginResponse,
+  SendEmailForgotPasswordRequest,
   SendValidateEmailRequest,
-  UpdatePasswordRequest,
+  ResetPasswordRequest,
   UuidOfUpdatePasswordRequest,
+  UpdatePasswordRequest,
 } from '../../interfaces/auth.interface';
 import { Observable } from 'rxjs';
+import { ROLE } from '../../enums/role.enum';
+import { Router } from '@angular/router';
+import { UserService } from '../user/user.service';
+import { MentorService } from '../mentor/mentor.service';
+import { MentoredService } from '../mentored/mentored.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -17,23 +24,56 @@ export class AuthService {
 
   private ACCESS_TOKEN_KEY = 'access_token';
   private REFRESH_TOKEN_KEY = 'refresh_token';
+  private TERMS_KEY = 'terms_accepted';
+  private termsAccepted: boolean | null = null;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+  ) {}
+
+  setTermsAccepted(value: boolean) {
+    this.termsAccepted = value;
+    localStorage.setItem(this.TERMS_KEY, JSON.stringify(value));
+  }
+
+  getTermsAccepted(): boolean | null {
+    if (this.termsAccepted === null) {
+      const stored = localStorage.getItem(this.TERMS_KEY);
+      this.termsAccepted = stored ? JSON.parse(stored) : null;
+    }
+    return this.termsAccepted;
+  }
+
+  confirmTerms(): Observable<void> {
+    return this.http.post<void>(`${this._baseApi}/auth/terms/policy/confirm`, {});
+  }
 
   login(body: LoginRequest): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this._baseApi}/auth/login`, body);
   }
 
-  sendValidateEmail(body: SendValidateEmailRequest): Observable<void> {
-    return this.http.post<void>(`${this._baseApi}/mentor/validate-email`, body);
+  sendValidateEmail(body: SendValidateEmailRequest, role: ROLE): Observable<void> {
+    return this.http.post<void>(
+      `${this._baseApi}/${role.toLocaleLowerCase()}/validate-email`,
+      body,
+    );
   }
 
   confirmEmail(body: ConfirmEmailRequest): Observable<void> {
     return this.http.post<void>(`${this._baseApi}/confirm-email`, body);
   }
 
+  validateUpdatePassword(body: SendEmailForgotPasswordRequest): Observable<void> {
+    return this.http.post<void>(`${this._baseApi}/auth/forget-password`, body);
+  }
+
+  resetPassword(body: ResetPasswordRequest): Observable<void> {
+    return this.http.post<void>(`${this._baseApi}/auth/reset-password`, body);
+  }
+
   updatePassword(body: UpdatePasswordRequest): Observable<void> {
-    return this.http.post<void>(`${this._baseApi}/update-password`, body);
+    return this.http.post<void>(`${this._baseApi}/auth/change-password`, body);
   }
 
   validateUUIDPasswordReset(body: UuidOfUpdatePasswordRequest): Observable<void> {
@@ -55,11 +95,21 @@ export class AuthService {
 
   refreshToken() {
     const refresh = localStorage.getItem(this.REFRESH_TOKEN_KEY);
-    return this.http.post<{ accessToken: string; refreshToken: string }>('/auth/refresh', refresh);
+    return this.http.post<LoginResponse>(
+      `${this._baseApi}/auth/refresh-token`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${refresh}`,
+        },
+      },
+    );
   }
 
   logout() {
     localStorage.removeItem(this.ACCESS_TOKEN_KEY);
     localStorage.removeItem(this.REFRESH_TOKEN_KEY);
+    localStorage.removeItem(this.TERMS_KEY);
+    this.router.navigate(['/login']);
   }
 }

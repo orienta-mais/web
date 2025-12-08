@@ -8,14 +8,25 @@ import { ButtonModule } from 'primeng/button';
 import { DatePickerModule } from 'primeng/datepicker';
 import { SelectModule } from 'primeng/select';
 import { STATES, COUNTRIES } from '../../../../shared/constants';
-import { RegisterService } from '../../../../@core/services/auth/register.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { ToastService } from '../../../../shared/components/toast/toast.service';
+import {
+  linkedinValidator,
+  noWhitespaceValidator,
+  uuidValidator,
+} from '../../../../@core/validators';
 import { take } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
 import { RegisterMentored } from '../../../../@core/interfaces/mentored.interface';
 import { MentoredService } from '../../../../@core/services/mentored/mentored.service';
+import { isValidEmail } from '../../../../@core/validators/email/email.validator';
+import { TermsCheckboxComponent } from '../../../../shared/terms-checkbox/terms-checkbox.component';
+import { InputMaskModule } from 'primeng/inputmask';
+import { YEAR_USER } from '../../../../@core/enums/year-user.enum';
+
 @Component({
   selector: 'app-register-mentored',
+  standalone: true,
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -25,9 +36,11 @@ import { MentoredService } from '../../../../@core/services/mentored/mentored.se
     FloatLabelModule,
     DatePickerModule,
     SelectModule,
+    TermsCheckboxComponent,
+    InputMaskModule,
   ],
   templateUrl: './register-mentored.component.html',
-  styleUrl: './register-mentored.component.css',
+  styleUrls: ['./register-mentored.component.css'],
 })
 export class RegisterMentoredComponent implements OnInit {
   mentoredForm: FormGroup;
@@ -37,20 +50,45 @@ export class RegisterMentoredComponent implements OnInit {
   step = 1;
   showPassword = false;
   showConfirmPassword = false;
+  tokenUrl!: string;
+  screenValidated = false;
+  acceptedTerms = false;
+
+  email: string | null = null;
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private registerService: RegisterService,
     private mentoredService: MentoredService,
     private toast: ToastService,
+    private routeUrl: ActivatedRoute,
   ) {
     this.mentoredForm = this.fb.group({
-      name: ['', Validators.required],
-      lastName: ['', Validators.required],
+      email: [this.email, [Validators.required, Validators.email]],
+      password: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(8),
+          Validators.pattern(
+            /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*#?&^()\-_=+{}\[\]|;:'",.<>]).+$/,
+          ),
+        ],
+      ],
+      confirmPassword: ['', [Validators.required]],
+      name: ['', [Validators.required, noWhitespaceValidator, Validators.maxLength(70)]],
+      lastName: ['', [Validators.required, noWhitespaceValidator, Validators.maxLength(70)]],
       birthDate: ['', Validators.required],
-      codeBolsaFamilia: ['', Validators.required],
-      description: ['', [Validators.required, Validators.minLength(100)]],
+      description: [
+        '',
+        [
+          Validators.required,
+          noWhitespaceValidator,
+          Validators.minLength(100),
+          Validators.maxLength(1000),
+        ],
+      ],
+      socialMedias: ['', [noWhitespaceValidator, linkedinValidator, Validators.maxLength(150)]],
       state: ['', Validators.required],
       nationality: ['', Validators.required],
     });
@@ -58,31 +96,74 @@ export class RegisterMentoredComponent implements OnInit {
 
   ngOnInit() {
     const today = new Date();
-    this.maxDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
-  }
+    this.maxDate = new Date(
+      today.getFullYear() - YEAR_USER.MENTORED,
+      today.getMonth(),
+      today.getDate(),
+    );
 
-  returnStep() {
-    this.router.navigate(['/register']);
+    this.routeUrl.queryParamMap.subscribe((pm) => {
+      const token = pm.get('token');
+      const emailEncoded = pm.get('email');
+
+      if (!token || !uuidValidator(token)) {
+        this.screenValidated = false;
+        return;
+      }
+
+      if (!emailEncoded) {
+        this.screenValidated = false;
+        return;
+      }
+
+      let decodedEmail: string;
+      try {
+        decodedEmail = decodeURIComponent(emailEncoded);
+      } catch {
+        decodedEmail = emailEncoded;
+      }
+
+      if (!isValidEmail(decodedEmail)) {
+        this.screenValidated = false;
+        return;
+      }
+
+      this.screenValidated = true;
+      this.tokenUrl = token;
+      this.email = decodedEmail;
+      this.mentoredForm.get('email')?.setValue(decodedEmail);
+    });
   }
 
   handleSubmit() {
     if (this.mentoredForm.valid) {
+      if (!this.acceptedTerms) {
+        this.toast.error('Você deve aceitar os termos para continuar.');
+        return;
+      }
       const mentoredData: RegisterMentored = {
-        email: this.registerService.getEmail()!,
-        password: this.registerService.getPassword()!,
         ...this.mentoredForm.getRawValue(),
+        token: this.tokenUrl,
+        state: this.mentoredForm.get('state')?.value?.name,
+        nationality: this.mentoredForm.get('nationality')?.value?.name,
       };
+
       this.mentoredService
         .register(mentoredData)
         .pipe(take(1))
         .subscribe({
           next: () => {
-            this.toast.success('E-mail de validação reenviado com sucesso');
+            this.toast.success('Cadastro realizado com sucesso!', 5000);
+            setTimeout(() => {
+              this.router.navigate(['/login']);
+            }, 2000);
           },
-          error: () => {
-            this.toast.error(
-              'Erro ao enviar email de validação. Verifique se o e-mail está correto.',
-            );
+          error: (e: HttpErrorResponse) => {
+            if (e.status === 400) {
+              this.toast.error(e.error?.message);
+            } else {
+              this.toast.error('Ocorreu um erro inesperado.');
+            }
           },
         });
     } else {
@@ -100,5 +181,13 @@ export class RegisterMentoredComponent implements OnInit {
 
   get f() {
     return this.mentoredForm.controls;
+  }
+
+  get passwordCtrl() {
+    return this.mentoredForm.get('password');
+  }
+
+  get confirmPasswordCtrl() {
+    return this.mentoredForm.get('confirmPassword');
   }
 }

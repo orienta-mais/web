@@ -1,0 +1,160 @@
+import { Component, ViewChildren, QueryList, ElementRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormArray } from '@angular/forms';
+import { InputTextModule } from 'primeng/inputtext';
+import { Router } from '@angular/router';
+import { TextareaModule } from 'primeng/textarea';
+import { ButtonModule } from 'primeng/button';
+import { DatePickerModule } from 'primeng/datepicker';
+import { FloatLabelModule } from 'primeng/floatlabel';
+import { ToastService } from '../../../../../shared/components/toast/toast.service';
+import { take } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
+import { UserService } from '../../../../../@core/services/user/user.service';
+import { LessonService } from '../../../../../@core/services/lesson/lesson.service';
+import { CreateLesson } from '../../../../../@core/interfaces/mentor.interface';
+import { noWhitespaceValidator, safeUrlValidator } from '../../../../../@core/validators';
+import { DateTimeService } from '../../../../../@core/services/datetime/datetime.service';
+
+@Component({
+  selector: 'app-create-lesson',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    InputTextModule,
+    TextareaModule,
+    ButtonModule,
+    DatePickerModule,
+    FloatLabelModule,
+  ],
+  templateUrl: './create-lesson.component.html',
+  styleUrls: ['./create-lesson.component.css'],
+})
+export class CreateLeasonComponent {
+  form: FormGroup;
+  loading = false;
+  today = new Date();
+
+  @ViewChildren('linkInput') linkInputs!: QueryList<ElementRef>;
+
+  constructor(
+    private fb: FormBuilder,
+    private toast: ToastService,
+    private userService: UserService,
+    private lessonService: LessonService,
+    private router: Router,
+    private dateTimeService: DateTimeService,
+  ) {
+    this.form = this.fb.group({
+      title: ['', [Validators.required, noWhitespaceValidator, Validators.maxLength(200)]],
+      description: ['', [noWhitespaceValidator, Validators.maxLength(1000)]],
+      presentCode: [null, [Validators.required, noWhitespaceValidator]],
+      maxGuest: [null, [Validators.required, Validators.min(1)]],
+      date: [null, Validators.required],
+      startTime: ['', Validators.required],
+      endTime: ['', Validators.required],
+      additionalLinks: this.fb.array([]),
+    });
+  }
+
+  get additionalLinks(): FormArray {
+    return this.form.get('additionalLinks') as FormArray;
+  }
+
+  addLink() {
+    this.additionalLinks.push(this.fb.control('', [safeUrlValidator]));
+    setTimeout(() => {
+      const last = this.linkInputs.last;
+      if (last) last.nativeElement.focus();
+    }, 50);
+  }
+
+  removeLink(index: number) {
+    this.additionalLinks.removeAt(index);
+  }
+
+  onLinkBlur(index: number) {
+    const value = this.additionalLinks.at(index).value?.trim();
+
+    if (!value) {
+      this.removeLink(index);
+    }
+  }
+
+  handleSubmit() {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      this.toast.error('Preencha todos os campos obrigatórios.');
+      return;
+    }
+
+    const { title, description, date, startTime, endTime, maxGuest, additionalLinks } =
+      this.form.value;
+
+    const startDateTime = this.dateTimeService.createLocalDateTime(date, startTime);
+    const endDateTime = this.dateTimeService.createLocalDateTime(date, endTime);
+    const now = this.dateTimeService.now();
+
+    if (startDateTime.getTime() <= now.getTime()) {
+      this.toast.error('A data e hora de início não podem estar no passado.');
+      return;
+    }
+
+    if (endDateTime.getTime() <= startDateTime.getTime()) {
+      this.toast.error('A hora de término deve ser posterior à de início.');
+      return;
+    }
+
+    const diffHours = this.dateTimeService.diffInHours(startDateTime, endDateTime);
+
+    if (diffHours > 6) {
+      this.toast.error('A aula não pode ter mais de 6 horas de duração.');
+      return;
+    }
+
+    const mentorId = this.userService.getId();
+
+    const filteredLinks = (additionalLinks || [])
+      .map((l: string) => l?.trim())
+      .filter((l: string) => l);
+
+    const startUTC = this.dateTimeService.localToUTC(date, startTime);
+    const endUTC = this.dateTimeService.localToUTC(date, endTime);
+
+    const payload: CreateLesson = {
+      title: title.trim(),
+      description: description?.trim(),
+      presentCode: this.form.value.presentCode,
+      maxGuest: Number(maxGuest),
+      date: startUTC.date,
+      startTime: startUTC.time,
+      endTime: endUTC.time,
+      mentorId,
+      additionalLinks: filteredLinks,
+    };
+
+    this.loading = true;
+
+    this.lessonService
+      .createLeason(payload)
+      .pipe(take(1))
+      .subscribe({
+        next: () => {
+          this.toast.success('Aula cadastrada com sucesso!');
+          this.form.reset();
+          this.loading = false;
+          this.router.navigate(['/mentor/lesson']);
+        },
+        error: (e: HttpErrorResponse) => {
+          this.loading = false;
+          const msg = e.error?.message || 'Erro ao cadastrar aula.';
+          this.toast.error(msg);
+        },
+      });
+  }
+
+  goBack() {
+    this.router.navigate(['/mentor/lesson']);
+  }
+}

@@ -8,15 +8,18 @@ import { ButtonModule } from 'primeng/button';
 import { DatePickerModule } from 'primeng/datepicker';
 import { SelectModule } from 'primeng/select';
 import { STATES, COUNTRIES } from '../../../../shared/constants';
-import { RegisterService } from '../../../../@core/services/auth/register.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MentorService } from '../../../../@core/services/mentor/mentor.service';
 import { ToastService } from '../../../../shared/components/toast/toast.service';
-import { uuidValidator } from '../../../../@core/validators';
-import { VerificationService } from '../../../../@core/services/auth/verification.service';
+import { noWhitespaceValidator, uuidValidator } from '../../../../@core/validators';
 import { take } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { RegisterMentor } from '../../../../@core/interfaces/mentor.interface';
+import { isValidEmail } from '../../../../@core/validators/email/email.validator';
+import { TermsCheckboxComponent } from '../../../../shared/terms-checkbox/terms-checkbox.component';
+import { InputMaskModule } from 'primeng/inputmask';
+import { YEAR_USER } from '../../../../@core/enums/year-user.enum';
+import { linkedinValidator } from '../../../../@core/validators/urls/linkedin.validator';
 
 @Component({
   selector: 'app-register-mentor',
@@ -30,6 +33,8 @@ import { RegisterMentor } from '../../../../@core/interfaces/mentor.interface';
     FloatLabelModule,
     DatePickerModule,
     SelectModule,
+    TermsCheckboxComponent,
+    InputMaskModule,
   ],
   templateUrl: './register-mentor.component.html',
   styleUrls: ['./register-mentor.component.css'],
@@ -41,62 +46,101 @@ export class RegisterMentorComponent implements OnInit {
   maxDate!: Date;
   step = 1;
   showPassword = false;
+  showConfirmPassword = false;
   tokenUrl!: string;
   screenValidated = false;
+  acceptedTerms = false;
+
+  email: string | null = null;
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private registerService: RegisterService,
-    private verificationService: VerificationService,
     private mentorService: MentorService,
     private toast: ToastService,
     private routeUrl: ActivatedRoute,
   ) {
     this.mentorForm = this.fb.group({
-      email: [verificationService.getEmail(), [Validators.required, Validators.email]],
+      email: [this.email, [Validators.required, Validators.email]],
       password: [
         '',
         [
           Validators.required,
           Validators.minLength(8),
-          Validators.pattern(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&^()\-_=+{}[\]|;:'",.<>]).+$/),
+          Validators.pattern(
+            /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*#?&^()\-_=+{}\[\]|;:'",.<>]).+$/,
+          ),
         ],
       ],
-      name: ['', [Validators.required, Validators.maxLength(50)]],
-      lastName: ['', [Validators.required, Validators.maxLength(50)]],
+      confirmPassword: ['', [Validators.required]],
+      name: ['', [Validators.required, noWhitespaceValidator, Validators.maxLength(70)]],
+      lastName: ['', [Validators.required, noWhitespaceValidator, Validators.maxLength(70)]],
       birthDate: ['', Validators.required],
-      socialMedias: ['', Validators.maxLength(100)],
+      socialMedias: ['', [noWhitespaceValidator, linkedinValidator, Validators.maxLength(150)]],
       description: [
         '',
-        [Validators.required, Validators.minLength(100), Validators.maxLength(500)],
+        [
+          Validators.required,
+          noWhitespaceValidator,
+          Validators.minLength(100),
+          Validators.maxLength(1000),
+        ],
       ],
       state: ['', Validators.required],
       nationality: ['', Validators.required],
-      phone: ['', [Validators.required, Validators.pattern(/^\d+$/), Validators.maxLength(15)]],
     });
   }
 
   ngOnInit() {
     const today = new Date();
-    this.maxDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+    this.maxDate = new Date(
+      today.getFullYear() - YEAR_USER.MENTOR,
+      today.getMonth(),
+      today.getDate(),
+    );
 
     this.routeUrl.queryParamMap.subscribe((pm) => {
       const token = pm.get('token');
+      const emailEncoded = pm.get('email');
+
       if (!token || !uuidValidator(token)) {
         this.screenValidated = false;
         return;
       }
-      this.tokenUrl = token;
+
+      if (!emailEncoded) {
+        this.screenValidated = false;
+        return;
+      }
+
+      let decodedEmail: string;
+      try {
+        decodedEmail = decodeURIComponent(emailEncoded);
+      } catch {
+        decodedEmail = emailEncoded;
+      }
+
+      if (!isValidEmail(decodedEmail)) {
+        this.screenValidated = false;
+        return;
+      }
+
       this.screenValidated = true;
+      this.tokenUrl = token;
+      this.email = decodedEmail;
+      this.mentorForm.get('email')?.setValue(decodedEmail);
     });
   }
 
   handleSubmit() {
     if (this.mentorForm.valid) {
+      if (!this.acceptedTerms) {
+        this.toast.error('Você deve aceitar os termos para continuar.');
+        return;
+      }
+
       const mentorData: RegisterMentor = {
         ...this.mentorForm.getRawValue(),
-        role: this.verificationService.getRole(),
         token: this.tokenUrl,
         state: this.mentorForm.get('state')?.value?.name,
         nationality: this.mentorForm.get('nationality')?.value?.name,
@@ -106,14 +150,14 @@ export class RegisterMentorComponent implements OnInit {
         .pipe(take(1))
         .subscribe({
           next: () => {
-            this.toast.success('Bem vindo a plataforma!', 5000);
+            this.toast.success('Cadastro realizado com sucesso!', 5000);
             setTimeout(() => {
               this.router.navigate(['/login']);
             }, 2000);
           },
           error: (e: HttpErrorResponse) => {
             if (e.status === 400) {
-              this.toast.error(e.error?.error);
+              this.toast.error(e.error?.message);
             } else {
               this.toast.error('Ocorreu um erro inesperado.');
             }
@@ -128,11 +172,19 @@ export class RegisterMentorComponent implements OnInit {
     this.showPassword = !this.showPassword;
   }
 
+  toggleConfirmPasswordVisibility() {
+    this.showConfirmPassword = !this.showConfirmPassword;
+  }
+
   get f() {
     return this.mentorForm.controls;
   }
 
   get passwordCtrl() {
     return this.mentorForm.get('password');
+  }
+
+  get confirmPasswordCtrl() {
+    return this.mentorForm.get('confirmPassword');
   }
 }

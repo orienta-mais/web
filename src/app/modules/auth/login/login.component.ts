@@ -4,7 +4,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { InputTextModule } from 'primeng/inputtext';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { ButtonModule } from 'primeng/button';
-import { emailValidator } from '../../../@core/validators';
+import { emailValidator, noWhitespaceValidator } from '../../../@core/validators';
 import { ToastService } from '../../../shared/components/toast/toast.service';
 import { AuthService } from '../../../@core/services/auth/auth.service';
 import { LoginRequest, LoginResponse } from '../../../@core/interfaces/auth.interface';
@@ -25,7 +25,7 @@ export class LoginComponent {
   showPassword = false;
 
   ngOnInit() {
-    this.service.logout();
+    this.verificationService.clear();
   }
 
   constructor(
@@ -36,10 +36,9 @@ export class LoginComponent {
     private verificationService: VerificationService,
   ) {
     this.loginForm = this.fb.group({
-      email: ['', [Validators.required, emailValidator]],
+      email: ['', [Validators.required, noWhitespaceValidator, emailValidator]],
       password: ['', Validators.required],
     });
-    verificationService.clear();
   }
 
   handleLogin() {
@@ -65,18 +64,24 @@ export class LoginComponent {
       .pipe(take(1))
       .subscribe({
         next: (res: LoginResponse) => {
+          this.verificationService.clear();
           this.service.saveTokens(res);
-          this.router.navigate(['/home']);
+          this.service.setTermsAccepted(res.termsAccepted);
+          if (res.termsAccepted == undefined || res.termsAccepted == false) {
+            this.router.navigate(['/accept-terms-of-use']);
+          } else {
+            this.router.navigate(['/home']);
+          }
           this.toast.success('Login realizado com sucesso');
         },
         error: (e: HttpErrorResponse) => {
-          this.toast.error(e.error?.error);
+          this.toast.error(e.error?.message);
         },
       });
   }
 
   forgotPassword() {
-    this.router.navigate(['/password/forgot']);
+    this.router.navigate(['/forgot-password']);
   }
 
   register() {
@@ -88,5 +93,13 @@ export class LoginComponent {
   }
   get password() {
     return this.loginForm.get('password');
+  }
+
+  openPrivacy() {
+    window.open('/view/politica-de-privacidade', '_blank');
+  }
+
+  openTerms() {
+    window.open('/view/termos-de-uso', '_blank');
   }
 }

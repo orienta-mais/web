@@ -1,0 +1,137 @@
+<div class="flex justify-center min-h-[calc(100vh-4rem)] bg-gray-50 p-6">
+  <div class="w-full max-w-6xl p-8 bg-white rounded-2xl shadow-lg">
+    <!-- Cabeçalho -->
+    <div class="relative mb-6">
+      <!-- Botão à esquerda -->
+      <button
+        class="absolute left-0 top-1/2 -translate-y-1/2 p-button p-button-text text-gray-700 hover:text-blue-600"
+        (click)="goBack()"
+      >
+        <i class="pi pi-arrow-left mr-2"></i>
+        Voltar
+      </button>
+
+      <!-- Título centralizado -->
+      <h2 class="text-2xl font-bold text-gray-800 text-center">Aulas Cadastradas</h2>
+    </div>
+
+    <!-- Filtro de Categoria -->
+    <div class="flex gap-4 mb-6">
+      <button
+        class="px-4 py-2 rounded-lg"
+        [ngClass]="{
+          'bg-blue-500 text-white': filterCategory === 'all',
+          'bg-gray-200 text-gray-700': filterCategory !== 'all',
+        }"
+        (click)="changeCategory('all')"
+      >
+        Todas
+      </button>
+
+      <button
+        class="px-4 py-2 rounded-lg"
+        [ngClass]="{
+          'bg-green-500 text-white': filterCategory === 'available',
+          'bg-gray-200 text-gray-700': filterCategory !== 'available',
+        }"
+        (click)="changeCategory('available')"
+      >
+        Disponíveis
+      </button>
+
+      <button
+        class="px-4 py-2 rounded-lg"
+        [ngClass]="{
+          'bg-red-500 text-white': filterCategory === 'finished',
+          'bg-gray-200 text-gray-700': filterCategory !== 'finished',
+        }"
+        (click)="changeCategory('finished')"
+      >
+        Finalizadas
+      </button>
+    </div>
+
+    <!-- Lista de Aulas -->
+    <div *ngIf="!loading; else loadingTpl">
+      <div
+        *ngIf="filteredLessons.length > 0; else emptyTpl"
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+      >
+        <div
+          *ngFor="let lesson of filteredLessons"
+          class="bg-gray-50 hover:bg-gray-100 transition rounded-2xl p-6 border border-gray-200 shadow-sm flex flex-col justify-between"
+          [ngClass]="{
+            'bg-green-100 border-green-300': !isLessonFinished(lesson),
+            'bg-gray-200 border-gray-400': isLessonFinished(lesson),
+          }"
+        >
+          <div>
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">
+              {{
+                (lesson?.title || '').length > 60
+                  ? (lesson?.title | slice: 0 : 60) + '…'
+                  : lesson?.title
+              }}
+            </h3>
+
+            <p class="text-sm text-gray-600 mb-1 flex items-center">
+              <i class="pi pi-calendar text-blue-600 mr-2"></i>
+              <span class="font-medium text-gray-700">Data:</span>
+              <span class="ml-1">{{ formatDate(lesson) }}</span>
+            </p>
+
+            <p class="text-sm text-gray-600 flex items-center">
+              <i class="pi pi-clock text-blue-600 mr-2"></i>
+              <span class="font-medium text-gray-700">Horário:</span>
+              <span class="ml-1">
+                {{ formatStartTime(lesson) }} - {{ formatEndTime(lesson) }}
+              </span>
+            </p>
+
+            <p class="text-sm text-gray-600 mt-1 flex items-center">
+              <i class="pi pi-user text-blue-600 mr-2"></i>
+              <span class="font-medium text-gray-700">Mentor:</span>
+              <span class="ml-1">{{ lesson.mentorName }}</span>
+            </p>
+
+            <p *ngIf="isLessonFinished(lesson)" class="text-sm text-red-500 mt-2 flex items-center">
+              <i class="pi pi-check-circle text-red-500 mr-2"></i>
+              Aula finalizada
+            </p>
+
+            <p
+              *ngIf="!isLessonFinished(lesson)"
+              class="text-sm text-green-600 mt-2 flex items-center"
+            >
+              <i class="pi pi-check-circle text-green-600 mr-2"></i>
+              Aula disponível
+            </p>
+          </div>
+
+          <div class="mt-5 flex flex-col sm:flex-row gap-2 justify-end">
+            <p-button
+              label="Ver Detalhes"
+              icon="pi pi-info-circle"
+              class="p-button-text p-button-sm"
+              (click)="openLessonDetails(lesson.id)"
+            ></p-button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <ng-template #loadingTpl>
+      <div class="flex justify-center items-center py-12">
+        <i class="pi pi-spin pi-spinner text-2xl text-gray-500"></i>
+      </div>
+    </ng-template>
+
+    <!-- Nenhum resultado -->
+    <ng-template #emptyTpl>
+      <div class="text-center text-gray-500 py-12">
+        Você ainda não se cadastrou em nenhuma aula.
+      </div>
+    </ng-template>
+  </div>
+</div>

@@ -1,0 +1,275 @@
+<div class="flex justify-center items-center min-h-[calc(100vh-4rem)] bg-gray-50 py-6">
+  <div class="w-full max-w-2xl p-8 bg-white rounded-2xl shadow-lg">
+    <div>
+      <p-button
+        icon="pi pi-arrow-left"
+        label="Voltar"
+        styleClass="p-button-text text-gray-700 hover:text-blue-600"
+        (click)="returnBack()"
+      ></p-button>
+
+      <h2 class="text-3xl font-bold text-gray-800 text-center flex-1 mb-6">
+        {{ editMode ? 'Editar Aula' : 'Detalhes da Aula' }}
+      </h2>
+    </div>
+
+    <!-- ===================== EDIT MODE ===================== -->
+    <form *ngIf="editMode" [formGroup]="form" (ngSubmit)="handleUpdate()" class="space-y-5">
+      <p-floatlabel>
+        <input
+          pInputText
+          formControlName="title"
+          id="title"
+          class="w-full"
+          minlength="10"
+          maxlength="200"
+        />
+        <label for="title">Título</label>
+      </p-floatlabel>
+
+      <div class="flex flex-col">
+        <label class="text-gray-500 text-sm font-medium mb-1 ml-3">Descrição</label>
+        <textarea
+          pInputTextarea
+          formControlName="description"
+          rows="4"
+          minlength="10"
+          maxlength="1000"
+          class="w-full whitespace-pre-line"
+        ></textarea>
+      </div>
+
+      <p-floatlabel>
+        <input
+          pInputText
+          id="presentCode"
+          formControlName="presentCode"
+          maxlength="6"
+          minlength="4"
+          class="w-full"
+        />
+        <label for="presentCode">Código de presença</label>
+      </p-floatlabel>
+
+      <!-- ===================== MAX GUEST INPUT ===================== -->
+      <p-floatlabel>
+        <input
+          type="number"
+          pInputText
+          id="maxGuest"
+          formControlName="maxGuest"
+          min="1"
+          max="1000"
+          class="w-full"
+        />
+        <label for="maxGuest">Máximo de convidados</label>
+      </p-floatlabel>
+
+      <div>
+        <label class="block text-gray-700 font-medium mb-2">Data da aula</label>
+        <p-datepicker
+          formControlName="date"
+          [showIcon]="true"
+          dateFormat="dd/mm/yy"
+          [minDate]="today"
+          styleClass="w-full"
+        ></p-datepicker>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-gray-700 font-medium mb-2">Hora de início</label>
+          <input
+            type="time"
+            formControlName="initialTime"
+            class="w-full border rounded-md px-3 py-2"
+          />
+        </div>
+        <div>
+          <label class="block text-gray-700 font-medium mb-2">Hora de fim</label>
+          <input
+            type="time"
+            formControlName="finalTime"
+            class="w-full border rounded-md px-3 py-2"
+          />
+        </div>
+      </div>
+
+      <!-- ================== Additional Links ================== -->
+      <div class="mt-6">
+        <label class="text-gray-700 font-medium mb-2 block">Links adicionais</label>
+
+        <div class="space-y-3">
+          <div
+            *ngFor="let ctrl of additionalLinksControls; let i = index"
+            class="flex items-center gap-3"
+          >
+            <input
+              pInputText
+              class="flex-1"
+              [formControl]="ctrl"
+              id="additionalLink"
+              (blur)="removeLinkIfEmpty(i)"
+            />
+
+            <button
+              type="button"
+              pButton
+              icon="pi pi-trash"
+              severity="danger"
+              (click)="removeLink(i)"
+            ></button>
+          </div>
+          <div
+            *ngIf="additionalLinks.invalid && additionalLinks.touched"
+            class="text-red-500 text-sm ml-1"
+          >
+            Insira um link válido utilizando http:// ou https://
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="mt-3 text-blue-600 font-medium hover:underline"
+          (click)="addLink()"
+        >
+          + Adicionar link
+        </button>
+      </div>
+
+      <p-button
+        type="submit"
+        label="Salvar Alterações"
+        severity="success"
+        styleClass="w-full mt-4"
+        [loading]="loading"
+        [disabled]="form.invalid"
+      ></p-button>
+      <p-button
+        type="button"
+        label="Cancelar"
+        severity="secondary"
+        styleClass="w-full mt-2"
+        (click)="cancelEdit()"
+      ></p-button>
+    </form>
+
+    <!-- ===================== VIEW MODE ===================== -->
+    <div *ngIf="!editMode" class="space-y-6">
+      <div class="bg-gray-50 rounded-xl p-6 border border-gray-200 shadow">
+        <div class="grid grid-cols-1 gap-4">
+          <!-- TÍTULO -->
+          <div>
+            <p class="font-semibold text-gray-900 text-2xl">{{ leason?.title }}</p>
+          </div>
+
+          <!-- DESCRIÇÃO -->
+          <div>
+            <span class="text-gray-600 text-sm">Descrição</span>
+            <p class="text-base text-gray-800 whitespace-pre-line break-words">
+              {{ leason?.description || '—' }}
+            </p>
+          </div>
+
+          <!-- CÓDIGO -->
+          <div>
+            <span class="text-gray-600 text-sm">Código de Presença</span>
+            <p class="text-base font-medium text-gray-800">{{ leason?.presentCode }}</p>
+          </div>
+
+          <!-- MAX GUEST -->
+          <div>
+            <span class="text-gray-600 text-sm">Máximo de Convidados</span>
+            <p class="text-base font-medium text-gray-800">{{ leason?.maxGuest }}</p>
+          </div>
+
+          <!-- DATA / HORÁRIOS -->
+          <div class="grid grid-cols-3 gap-4 text-center mt-2">
+            <div>
+              <span class="text-gray-600 text-sm block">Data</span>
+              <p class="text-base font-medium text-gray-900">
+                {{ formatDate() }}
+              </p>
+            </div>
+
+            <div>
+              <span class="text-gray-600 text-sm block">Início</span>
+              <p class="text-base font-medium text-gray-900">
+                {{ formatStartTime() }}
+              </p>
+            </div>
+
+            <div>
+              <span class="text-gray-600 text-sm block">Fim</span>
+              <p class="text-base font-medium text-gray-900">
+                {{ formatEndTime() }}
+              </p>
+            </div>
+
+            <div class="flex items-center justify-center col-span-3 mt-4" *ngIf="!lessonFinalized">
+              <a
+                [href]="leason?.link"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-blue-600 font-medium hover:underline bg-blue-200 py-2 px-3 rounded-2xl"
+              >
+                Acesse a reunião
+              </a>
+            </div>
+          </div>
+
+          <!-- LINKS -->
+          <div class="mt-3">
+            <span class="text-gray-600 text-sm">Links adicionais</span>
+
+            <ng-container *ngIf="leason?.additionalLinks?.length; else noLinks">
+              <ul class="mt-2 space-y-2">
+                <li
+                  *ngFor="let link of leason!.additionalLinks"
+                  class="bg-white border rounded-md px-3 py-2 text-blue-600 hover:underline cursor-pointer break-all text-base text-center"
+                >
+                  <a [href]="link" class="flex" target="_blank"
+                    >{{ link | slice: 0 : 50 }}{{ link.length > 50 ? '...' : '' }}</a
+                  >
+                </li>
+              </ul>
+            </ng-container>
+
+            <ng-template #noLinks>
+              <p class="text-gray-500 italic text-base mt-1 text-center">Nenhum link adicionado.</p>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+
+      <div
+        *ngIf="lessonFinalized"
+        class="w-full bg-gradient-to-r from-green-50 to-green-100 border border-green-300 rounded-xl p-5 text-center shadow-sm"
+      >
+        <p class="text-2xl font-semibold text-green-700">Aula em andamento ou já finalizada</p>
+        <p class="text-green-600 mt-1">
+          As edições foram bloqueadas para garantir a integridade das informações.
+        </p>
+      </div>
+
+      <!-- BOTÕES -->
+      <div class="flex gap-4 mt-6 justify-center" *ngIf="!lessonFinalized">
+        <p-button
+          label="Editar"
+          styleClass="w-36"
+          severity="info"
+          (click)="enableEdit()"
+        ></p-button>
+
+        <p-button
+          label="Excluir"
+          styleClass="w-36"
+          severity="danger"
+          (click)="confirmDelete()"
+        ></p-button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-confirmDialog></p-confirmDialog>

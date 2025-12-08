@@ -1,0 +1,174 @@
+<div class="flex justify-center min-h-[calc(100vh-4rem)] bg-gray-50 p-6">
+  <div class="w-full max-w-6xl p-8 bg-white rounded-2xl shadow-lg">
+    <!-- Cabeçalho -->
+    <div class="flex justify-between items-center mb-8">
+      <h2 class="text-3xl font-bold text-gray-800">Aulas disponíveis</h2>
+      <p-button label="Minhas Reuniões" severity="info" (click)="goToMyMeetings()"></p-button>
+    </div>
+
+    <!-- Filtros -->
+    <form
+      [formGroup]="filterForm"
+      (ngSubmit)="loadLessons()"
+      class="mb-8 grid grid-cols-1 sm:grid-cols-4 gap-4"
+    >
+      <div>
+        <label class="block text-sm font-medium text-gray-600 mb-1">Título</label>
+        <input
+          pInputText
+          formControlName="title"
+          placeholder="Digite o título"
+          class="w-full border border-gray-300 rounded-md px-3 py-2"
+        />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-600 mb-1">Data</label>
+        <p-datepicker
+          formControlName="date"
+          dateFormat="dd/mm/yy"
+          [showIcon]="true"
+          styleClass="w-full"
+        ></p-datepicker>
+      </div>
+
+      <div class="flex items-end gap-2 justify-end sm:justify-start">
+        <p-button label="Buscar" type="submit" class="p-button-sm"></p-button>
+        <p-button
+          label="Limpar"
+          type="button"
+          class="p-button-sm"
+          (click)="clearFilters()"
+        ></p-button>
+      </div>
+    </form>
+
+    <!-- Ordenação -->
+    <div
+      class="flex justify-end items-center gap-2 mb-6 text-gray-700 cursor-pointer hover:text-blue-600"
+      (click)="toggleOrder()"
+    >
+      <span class="font-medium">Ordenar por data</span>
+      <i
+        class="pi text-lg"
+        [ngClass]="{
+          'pi-sort-amount-up-alt rotate-180': order === 'desc',
+          'pi-sort-amount-up': order === 'asc',
+        }"
+      ></i>
+    </div>
+
+    <!-- Cards -->
+    <div *ngIf="!loading; else loadingTpl">
+      <div
+        *ngIf="lessons.length > 0; else emptyTpl"
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+      >
+        <div
+          *ngFor="let lesson of lessons"
+          class="bg-gray-50 hover:bg-gray-100 transition rounded-2xl p-6 border border-gray-200 shadow-sm flex flex-col justify-between"
+        >
+          <div>
+            <h3 class="text-lg font-semibold mb-2">{{ lesson.title }}</h3>
+
+            <p class="text-sm text-gray-600 mb-1">
+              <i class="pi pi-calendar text-blue-600 mr-2"></i>
+              <span class="font-medium">Data:</span>
+              {{ formatDate(lesson) }}
+            </p>
+
+            <p class="text-sm text-gray-600">
+              <i class="pi pi-clock text-blue-600 mr-2"></i>
+              <span class="font-medium">Hora:</span>
+              {{ formatStartTime(lesson) }} - {{ formatEndTime(lesson) }}
+            </p>
+
+            <p class="text-sm text-gray-600 mt-1">
+              <i class="pi pi-user text-blue-600 mr-2"></i>
+              <span class="font-medium">Mentor:</span>
+              {{ lesson.mentorName }}
+            </p>
+          </div>
+
+          <div class="mt-5 flex justify-end">
+            <p-button
+              label="Ver Detalhes"
+              icon="pi pi-info-circle"
+              class="p-button-text p-button-sm"
+              (click)="showDetails(lesson.id)"
+            ></p-button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Paginação + Itens por página -->
+    <div class="flex flex-col items-center gap-4 mt-10" *ngIf="totalItems > 0">
+      <!-- Seletor tamanho de página -->
+      <div class="flex items-center gap-2">
+        <label class="text-sm text-gray-600">Itens por página:</label>
+        <select
+          class="border border-gray-300 rounded-md px-2 py-1"
+          [(ngModel)]="size"
+          (ngModelChange)="changeSize()"
+          name="sizeBottom"
+        >
+          <option [value]="20">20</option>
+          <option [value]="50">50</option>
+          <option [value]="100">100</option>
+        </select>
+      </div>
+
+      <!-- Navegação -->
+      <div class="flex items-center gap-4" *ngIf="totalItems > size">
+        <button
+          pButton
+          [disabled]="page === 1"
+          (click)="goToStart()"
+          class="p-button-rounded p-button-text"
+          icon="pi pi-angle-double-left"
+        ></button>
+        <button
+          pButton
+          [disabled]="page === 1"
+          (click)="prevPage()"
+          class="p-button-rounded p-button-text"
+          icon="pi pi-angle-left"
+        ></button>
+
+        <span
+          class="text-gray-700 font-medium text-sm px-4 py-2 bg-gray-100 rounded-full shadow-sm"
+        >
+          Página {{ page }} de {{ totalPages }}
+        </span>
+
+        <button
+          pButton
+          [disabled]="page === totalPages"
+          (click)="nextPage()"
+          class="p-button-rounded p-button-text"
+          icon="pi pi-angle-right"
+        ></button>
+        <button
+          pButton
+          [disabled]="page === totalPages"
+          (click)="goToEnd()"
+          class="p-button-rounded p-button-text"
+          icon="pi pi-angle-double-right"
+        ></button>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <ng-template #loadingTpl>
+      <div class="flex justify-center items-center py-12">
+        <i class="pi pi-spin pi-spinner text-2xl text-gray-500"></i>
+      </div>
+    </ng-template>
+
+    <!-- Vazio -->
+    <ng-template #emptyTpl>
+      <div class="text-center text-gray-500 py-12">Nenhuma aula encontrada.</div>
+    </ng-template>
+  </div>
+</div>

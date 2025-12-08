@@ -1,4 +1,4 @@
-<div class="flex items-center justify-center min-h-screen bg-gray-100 py-2 px-1">
+<div class="flex items-center justify-center min-h-screen bg-gray-100 py-5">
   <div class="w-full max-w-2xl p-8 bg-white rounded-2xl shadow-lg">
     <!-- Verifica se a tela é válida -->
     <ng-container *ngIf="screenValidated; else invalidScreen">
@@ -32,23 +32,21 @@
               [type]="showPassword ? 'text' : 'password'"
               formControlName="password"
               autocomplete="off"
-              class="w-full pr-20"
+              class="w-full pr-12"
             />
             <label>Senha</label>
             <button
               type="button"
-              class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-blue-600 hover:underline"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-yellow-600 hover:text-yellow-800"
               (click)="togglePasswordVisibility()"
             >
-              {{ showPassword ? 'Ocultar' : 'Mostrar' }}
+              <i [class]="showPassword ? 'pi pi-eye' : 'pi pi-eye-slash'"></i>
             </button>
           </p-floatlabel>
 
-          <!-- Texto pequeno para alternar -->
-
           <div
             *ngIf="passwordCtrl?.touched && passwordCtrl?.errors?.['required']"
-            class="text-red-500 text-sm"
+            class="text-red-500 text-sm mt-1"
           >
             Campo obrigatório
           </div>
@@ -56,22 +54,60 @@
             *ngIf="
               (passwordCtrl?.touched || passwordCtrl?.dirty) && passwordCtrl?.errors?.['minlength']
             "
-            class="text-red-500 text-sm"
+            class="text-red-500 text-sm mt-1"
           >
             Senha deve ter no mínimo 8 caracteres.
           </div>
           <div
             *ngIf="passwordCtrl?.touched && passwordCtrl?.errors?.['pattern']"
-            class="text-red-500 text-sm"
+            class="text-red-500 text-sm mt-1"
           >
-            A senha deve conter letra, número e caractere especial
+            A senha deve conter letra maiúscula, minúscula, número e caractere especial
+          </div>
+        </div>
+
+        <!-- Confirmar Senha -->
+        <div class="relative w-full">
+          <p-floatlabel class="w-full">
+            <input
+              pInputText
+              [type]="showConfirmPassword ? 'text' : 'password'"
+              formControlName="confirmPassword"
+              autocomplete="off"
+              class="w-full pr-12"
+            />
+            <label>Confirmar Senha</label>
+            <button
+              type="button"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-yellow-600 hover:text-yellow-800"
+              (click)="toggleConfirmPasswordVisibility()"
+            >
+              <i [class]="showConfirmPassword ? 'pi pi-eye' : 'pi pi-eye-slash'"></i>
+            </button>
+          </p-floatlabel>
+
+          <div
+            *ngIf="confirmPasswordCtrl?.touched && confirmPasswordCtrl?.errors?.['required']"
+            class="text-red-500 text-sm mt-1"
+          >
+            Campo obrigatório
+          </div>
+          <div
+            *ngIf="
+              confirmPasswordCtrl?.touched &&
+              confirmPasswordCtrl?.value !== passwordCtrl?.value &&
+              confirmPasswordCtrl?.value
+            "
+            class="text-red-500 text-sm mt-1"
+          >
+            As senhas não coincidem
           </div>
         </div>
 
         <!-- Nome -->
         <div>
           <p-floatlabel>
-            <input pInputText formControlName="name" class="w-full" />
+            <input pInputText formControlName="name" maxlength="70" class="w-full" />
             <label>Nome</label>
           </p-floatlabel>
           <div
@@ -80,18 +116,12 @@
           >
             Campo obrigatório
           </div>
-          <div
-            *ngIf="f['name'].touched && f['name'].errors?.['maxlength']"
-            class="text-red-500 text-sm"
-          >
-            Máximo de 50 caracteres
-          </div>
         </div>
 
         <!-- Sobrenome -->
         <div>
           <p-floatlabel>
-            <input pInputText formControlName="lastName" class="w-full" />
+            <input pInputText formControlName="lastName" maxlength="70" class="w-full" />
             <label>Sobrenome</label>
           </p-floatlabel>
           <div
@@ -100,12 +130,6 @@
           >
             Campo obrigatório
           </div>
-          <div
-            *ngIf="f['lastName'].touched && f['lastName'].errors?.['maxlength']"
-            class="text-red-500 text-sm"
-          >
-            Máximo de 50 caracteres
-          </div>
         </div>
 
         <!-- Data de nascimento -->
@@ -113,12 +137,15 @@
           <p-floatlabel>
             <p-datepicker
               formControlName="birthDate"
+              [defaultDate]="maxDate"
               dateFormat="dd/mm/yy"
               [maxDate]="maxDate"
               [showIcon]="true"
               [readonlyInput]="true"
+              inputId="birthDate"
+              styleClass="w-full border border-gray-200 rounded-md"
             ></p-datepicker>
-            <label>Data de Nascimento</label>
+            <label for="birthDate">Data de Nascimento</label>
           </p-floatlabel>
           <div
             *ngIf="f['birthDate'].touched && f['birthDate'].errors?.['required']"
@@ -128,43 +155,23 @@
           </div>
         </div>
 
-        <!-- Telefone -->
-        <div>
-          <p-floatlabel>
-            <input pInputText formControlName="phone" class="w-full" />
-            <label>Telefone</label>
-          </p-floatlabel>
-          <div
-            *ngIf="f['phone'].touched && f['phone'].errors?.['required']"
-            class="text-red-500 text-sm mt-1"
-          >
-            Campo obrigatório
-          </div>
-          <div
-            *ngIf="f['phone'].touched && f['phone'].errors?.['pattern']"
-            class="text-red-500 text-sm mt-1"
-          >
-            Apenas números são permitidos
-          </div>
-          <div
-            *ngIf="f['phone'].touched && f['phone'].errors?.['maxlength']"
-            class="text-red-500 text-sm mt-1"
-          >
-            Máximo de 15 caracteres
-          </div>
-        </div>
-
         <!-- LinkedIn -->
         <div>
           <p-floatlabel>
-            <input pInputText formControlName="socialMedias" class="w-full" />
+            <input pInputText formControlName="socialMedias" maxlength="150" class="w-full" />
             <label>LinkedIn</label>
           </p-floatlabel>
           <div
             *ngIf="f['socialMedias'].touched && f['socialMedias'].errors?.['maxlength']"
             class="text-red-500 text-sm mt-1"
           >
-            Máximo de 100 caracteres
+            Máximo de 150 caracteres
+          </div>
+          <div
+            *ngIf="f['socialMedias'].touched && f['socialMedias'].errors?.['linkedinValidator']"
+            class="text-red-500 text-sm mt-1"
+          >
+            Deve ser um link completo pertencente ao LinkedIn
           </div>
         </div>
 
@@ -175,6 +182,7 @@
               pInputTextarea
               formControlName="description"
               rows="4"
+              maxlength="1000"
               class="w-full"
               placeholder="Fale sobre você"
             ></textarea>
@@ -196,7 +204,7 @@
             *ngIf="f['description'].touched && f['description'].errors?.['maxlength']"
             class="text-red-500 text-sm mt-1"
           >
-            Máximo de 500 caracteres
+            Máximo de 1000 caracteres
           </div>
         </div>
 
@@ -237,6 +245,8 @@
             </div>
           </div>
         </div>
+
+        <app-terms-checkbox [(accepted)]="acceptedTerms"></app-terms-checkbox>
 
         <button
           type="submit"

@@ -1,0 +1,129 @@
+<div class="max-w-3xl mx-auto bg-white p-6 md:p-8 rounded-xl shadow-sm policy-content">
+  
+  <!-- Header -->
+  <div class="flex items-center gap-4 mb-6">
+    <div class="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 flex items-center justify-center text-white font-bold text-lg">
+      OM
+    </div>
+    <div>
+      <h1 class="text-xl font-semibold">OrientaMais — Política de Privacidade</h1>
+      <p class="text-sm text-gray-500">Última atualização: 08/12/2025 </p>
+    </div>
+  </div>
+
+  <!-- 1 -->
+  <section class="mt-6">
+    <h2 class="text-lg font-semibold text-cyan-700 mb-2">Política de Privacidade</h2>
+    <p class="text-gray-600 leading-relaxed">
+      Esta Política de Privacidade descreve como a plataforma <strong>OrientaMais</strong> coleta,
+      usa, armazena e compartilha os dados pessoais dos usuários (mentores e mentorados). Nosso foco
+      é oferecer um ambiente seguro para encontros educacionais online, com mínima coleta de dados e
+      respeito à privacidade.
+    </p>
+  </section>
+
+  <!-- 2 -->
+  <section class="mt-6">
+    <h3 class="text-base font-semibold text-cyan-700 mb-2">1. Dados que coletamos</h3>
+    <p class="text-gray-600"><strong>Coletamos somente:</strong></p>
+
+    <ul class="list-disc ml-5 text-gray-600 leading-relaxed mt-2">
+      <li><strong>Nome e sobrenome</strong> — usados para identificação e emissão de certificados.</li>
+      <li><strong>E-mail</strong> — usado para autenticação e envio de convites.</li>
+      <li><strong>Localização (estado)</strong> e <strong>nacionalidade</strong> — usadas em estatísticas agregadas.</li>
+      <li><strong>Data de nascimento</strong> — usada para validar idade mínima (mentor ≥ 18, mentorado ≥ 16).</li>
+      <li><strong>Descrição pessoal</strong> e <strong>link para rede social</strong>.</li>
+      <li><strong>Dados técnicos de sessão</strong> (JWT).</li>
+    </ul>
+  </section>
+
+  <!-- 3 -->
+  <section class="mt-6">
+    <h3 class="text-base font-semibold text-cyan-700 mb-2">2. Para que usamos os dados</h3>
+    <ul class="list-disc ml-5 text-gray-600 leading-relaxed">
+      <li>Autenticação e controle de acesso.</li>
+      <li>Envio de e-mails operacionais e convites.</li>
+      <li>Criação e gerenciamento de aulas.</li>
+      <li>Geração de certificados.</li>
+      <li>Estatísticas agregadas.</li>
+      <li>Validação de idade mínima.</li>
+    </ul>
+  </section>
+
+  <!-- 4 -->
+  <section class="mt-6">
+    <h3 class="text-base font-semibold text-cyan-700 mb-2">3. Segurança e armazenamento</h3>
+    <p class="text-gray-600">Medidas adotadas:</p>
+
+    <ul class="list-disc ml-5 text-gray-600 leading-relaxed mt-2">
+      <li><strong>Senhas</strong> com bcrypt.</li>
+      <li><strong>Transporte</strong> via HTTPS.</li>
+      <li><strong>Sessões</strong> com JWT.</li>
+      <li><strong>Logs</strong> com ID, horário e ação.</li>
+      <li><strong>Banco:</strong> Postgres.</li>
+      <li><strong>E-mail</strong> via API Gmail.</li>
+    </ul>
+
+    <p class="text-sm text-gray-500 mt-1">
+      Não monitoramos ou gravamos reuniões Zoom.
+    </p>
+  </section>
+
+  <!-- 5 -->
+  <section class="mt-6">
+    <h3 class="text-base font-semibold text-cyan-700 mb-2">4. Retenção e exclusão de dados</h3>
+    <ul class="list-disc ml-5 text-gray-600 leading-relaxed">
+      <li>Mentores: nome e sobrenome permanecem apenas para certificados.</li>
+      <li>Mentorados: exclusão completa dos dados pessoais.</li>
+      <li>Dados de aulas são mantidos para histórico.</li>
+      <li>Retenção legal quando exigido.</li>
+    </ul>
+  </section>
+
+  <!-- 6 -->
+  <section class="mt-6">
+    <h3 class="text-base font-semibold text-cyan-700 mb-2">5. Logs e auditoria</h3>
+    <p class="text-gray-600">Incluímos nos logs:</p>
+
+    <ul class="list-disc ml-5 text-gray-600 leading-relaxed">
+      <li>ID do usuário</li>
+      <li>Data e hora</li>
+      <li>Ação realizada</li>
+    </ul>
+
+    <p class="text-sm text-gray-500">Não armazenamos IPs nem mensagens.</p>
+  </section>
+
+  <!-- 7 -->
+  <section class="mt-6">
+    <h3 class="text-base font-semibold text-cyan-700 mb-2">6. Reuniões (Zoom)</h3>
+    <ul class="list-disc ml-5 text-gray-600 leading-relaxed">
+      <li>Links gerados pela API do Zoom e enviados por e-mail.</li>
+      <li>Não gravamos nem monitoramos reuniões.</li>
+      <li>Recomendamos não compartilhar publicamente os links.</li>
+    </ul>
+  </section>
+
+  <!-- 8 -->
+  <section class="mt-6">
+    <h3 class="text-base font-semibold text-cyan-700 mb-2">7. Direitos dos titulares</h3>
+    <ul class="list-disc ml-5 text-gray-600 leading-relaxed">
+      <li>Acesso aos dados.</li>
+      <li>Correção de dados.</li>
+      <li>Exclusão/eliminação.</li>
+    </ul>
+
+    <p class="text-gray-600">
+      Para exercer seus direitos: <strong>orientamais.app@gmail.com.br</strong>.
+    </p>
+  </section>
+
+  <!-- 9 -->
+  <section class="mt-6 pb-4 border-t pt-4">
+    <p class="text-sm text-gray-500">
+      OrientaMais <br />
+      Última atualização: 08/12/2025
+    </p>
+  </section>
+
+</div>

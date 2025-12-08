@@ -1,0 +1,70 @@
+<div class="flex justify-center min-h-[calc(100vh-4rem)] bg-gray-100 py-8 px-4">
+  <div class="w-full max-w-3xl bg-white rounded-2xl shadow-lg p-8">
+    <!-- Título -->
+    <h2 class="text-3xl font-bold text-gray-800 text-center mb-6">Meus Feedbacks</h2>
+
+    <!-- MÉDIA DOS FEEDBACKS -->
+    <div class="text-center mt-8">
+      <h3 class="text-xl font-semibold text-gray-800">Média Geral</h3>
+      <p class="text-4xl font-bold text-gray-800 mt-2">
+        {{ getAverage() }}
+      </p>
+
+      <div class="stars mx-auto mt-2">
+        <div class="stars-fill" [style.width.%]="(getAverage() / 5) * 100"></div>
+      </div>
+    </div>
+
+    <!-- LISTA DE FEEDBACKS -->
+    <div class="mt-8">
+      <h3 class="text-xl font-semibold text-gray-800 mb-4 text-center">Feedbacks Recebidos</h3>
+
+      <div *ngIf="feedbacks.length === 0" class="text-center text-gray-500">
+        Você ainda não recebeu nenhum feedback.
+      </div>
+
+      <div *ngFor="let fb of feedbacks" class="bg-gray-50 border rounded-xl p-4 mt-4 shadow-sm">
+        <!-- Texto -->
+        <div class="flex items-start justify-between gap-4">
+          <p class="text-gray-700 leading-relaxed flex-1">
+            {{ fb.feedback }}
+          </p>
+
+          <div class="stars-review shrink-0">
+            <div
+              class="stars-review-fill"
+              [style.width.%]="
+                ((fb.didactics +
+                  fb.subjectMastery +
+                  fb.punctuality +
+                  fb.communication +
+                  fb.engagement) /
+                  25) *
+                100
+              "
+            ></div>
+          </div>
+        </div>
+
+        <!-- Notas -->
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-sm mt-2">
+          <p>
+            Didática: <b>{{ fb.didactics }}</b>
+          </p>
+          <p>
+            Domínio: <b>{{ fb.subjectMastery }}</b>
+          </p>
+          <p>
+            Pontualidade: <b>{{ fb.punctuality }}</b>
+          </p>
+          <p>
+            Comunicação: <b>{{ fb.communication }}</b>
+          </p>
+          <p>
+            Engajamento: <b>{{ fb.engagement }}</b>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,1 +1,21 @@
 @import "tailwindcss";
+
+.policy-content h1 {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .policy-content p {
+    color: #4b5563;
+    line-height: 1.6;
+    margin: 8px 0;
+  }
+  
+  .policy-content ul {
+    margin-left: 20px;
+  }
+  
+  .policy-content li {
+    margin-bottom: 6px;
+  }

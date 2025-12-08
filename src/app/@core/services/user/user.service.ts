@@ -4,6 +4,7 @@ import { jwtDecode } from 'jwt-decode';
 import { ROLE } from '../../enums/role.enum';
 
 export interface JwtPayload {
+  id: string;
   sub: string;
   name?: string;
   role?: string;
@@ -13,44 +14,42 @@ export interface JwtPayload {
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
+  private id: string = '';
   private name: string | null = null;
   private role: ROLE | null = null;
   private email: string | null = null;
 
-  constructor(private authService: AuthService) {
-    this.loadUserFromToken();
-  }
+  constructor(private authService: AuthService) {}
 
-  private loadUserFromToken() {
+  getDecoded() {
     const token = this.authService.getAccessToken();
-    if (!token) return;
+    if (!token) return null;
 
     try {
-      const decoded = jwtDecode<JwtPayload>(token);
-      this.name = decoded.name ?? null;
-      this.role = (decoded.role as ROLE) ?? null;
-      this.email = decoded.sub ?? null;
-    } catch (e) {
-      console.error('Erro ao decodificar token:', e);
+      return jwtDecode<JwtPayload>(token);
+    } catch {
+      console.warn('Token inválido ou corrompido');
+      return null;
     }
   }
 
-  getName(): string | null {
-    return this.name;
+  getId(): string {
+    return this.getDecoded()?.id ?? '';
   }
 
-  getRole(): ROLE | null {
-    return this.role;
+  getRole(): ROLE {
+    return (this.getDecoded()?.role as ROLE) ?? null;
   }
 
-  getEmail(): string | null {
-    return this.email;
+  getEmail(): string {
+    return this.getDecoded()?.sub ?? '';
   }
 
-  clear() {
-    this.name = null;
-    this.role = null;
-    this.email = null;
+  getName(): string {
+    return this.getDecoded()?.name ?? '';
+  }
+
+  logout() {
     this.authService.logout();
   }
 }

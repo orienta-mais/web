@@ -1,0 +1,108 @@
+<div
+  class="max-w-4xl mx-auto px-6 py-12 bg-white shadow-xl rounded-3xl mt-10 border border-gray-200"
+>
+  <!-- Mentor -->
+  <ng-container *ngIf="role === 'MENTOR'">
+    <div class="text-center mb-10">
+      <h1 class="text-4xl font-extrabold text-blue-700">Olá, {{ name }}!</h1>
+      <p class="text-gray-600 text-lg max-w-xl mx-auto mt-3">
+        Aqui está tudo o que você, como mentor, pode fazer na plataforma.
+      </p>
+    </div>
+
+    <div class="space-y-10">
+      <!-- O que você faz aqui -->
+      <section>
+        <h2 class="text-2xl font-semibold text-gray-900 flex items-center gap-2 mb-3">
+          📌 O que você pode fazer na Orienta+
+        </h2>
+        <p class="text-gray-700 leading-relaxed">
+          Como mentor, você ajuda mentorados a evoluir profissionalmente, conduz sessões, acompanha
+          progresso e compartilha conhecimento de forma organizada.
+        </p>
+      </section>
+
+      <!-- Funcionalidades principais -->
+      <section>
+        <h2 class="text-2xl font-semibold text-gray-900 flex items-center gap-2 mb-4">
+          ⚙️ Funcionalidades do Mentor
+        </h2>
+        <div class="grid sm:grid-cols-2 gap-5">
+          <div class="p-5 bg-blue-50 border border-blue-100 rounded-xl">
+            <p class="font-semibold text-blue-900">📅 Sessões de Mentoria</p>
+            <p class="text-gray-600 text-sm">Gerencie e acompanhe suas sessões.</p>
+          </div>
+
+          <div class="p-5 bg-blue-50 border border-blue-100 rounded-xl">
+            <p class="font-semibold text-blue-900">📚 Materiais</p>
+            <p class="text-gray-600 text-sm">Anexe links como video do youtube nas suas aulas.</p>
+          </div>
+
+          <div class="p-5 bg-blue-50 border border-blue-100 rounded-xl">
+            <p class="font-semibold text-blue-900">📊 Feedback</p>
+            <p class="text-gray-600 text-sm">Veja o que os mentorados estão achando de você.</p>
+          </div>
+
+          <div class="p-5 bg-blue-50 border border-blue-100 rounded-xl">
+            <p class="font-semibold text-blue-900">👤 Perfil</p>
+            <p class="text-gray-600 text-sm">Atualize suas informações e disponibilidade.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </ng-container>
+
+  <!-- Mentorado -->
+  <ng-container *ngIf="role === 'MENTORED'">
+    <div class="text-center mb-10">
+      <h1 class="text-4xl font-extrabold text-yellow-600">Olá, {{ name }}!</h1>
+      <p class="text-gray-600 text-lg max-w-xl mx-auto mt-3">
+        Aqui está tudo o que você pode fazer como mentorado.
+      </p>
+    </div>
+
+    <div class="space-y-10">
+      <!-- O que você faz -->
+      <section>
+        <h2 class="text-2xl font-semibold text-gray-900 flex items-center gap-2 mb-3">
+          📌 A sua jornada na Orienta+
+        </h2>
+        <p class="text-gray-700 leading-relaxed">
+          Como mentorado, você participa de aulas, e acompanha seu desenvolvimento ao lado de um
+          mentor experiente.
+        </p>
+      </section>
+
+      <!-- Funcionalidades -->
+      <section>
+        <h2 class="text-2xl font-semibold text-gray-900 flex items-center gap-2 mb-4">
+          ⚙️ Funcionalidades do Mentorado
+        </h2>
+
+        <div class="grid sm:grid-cols-2 gap-5">
+          <div class="p-5 bg-yellow-50 border border-yellow-100 rounded-xl">
+            <p class="font-semibold text-yellow-700">📅 Sessões</p>
+            <p class="text-gray-600 text-sm">Veja seus horários e participe das reuniões.</p>
+          </div>
+
+          <div class="p-5 bg-yellow-50 border border-yellow-100 rounded-xl">
+            <p class="font-semibold text-yellow-700">📚 Materiais</p>
+            <p class="text-gray-600 text-sm">Acesse conteúdos enviadas pelo mentor.</p>
+          </div>
+
+          <div class="p-5 bg-yellow-50 border border-yellow-100 rounded-xl">
+            <p class="font-semibold text-yellow-700">🎥 Reuniões Ao Vivo</p>
+            <p class="text-gray-600 text-sm">Entre diretamente nas videochamadas da sessão.</p>
+          </div>
+
+          <div class="p-5 bg-yellow-50 border border-yellow-100 rounded-xl">
+            <p class="font-semibold text-yellow-700">💬 Comunicação</p>
+            <p class="text-gray-600 text-sm">
+              Troque mensagens e tire dúvidas com o mentor durante a chamada.
+            </p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </ng-container>
+</div>
