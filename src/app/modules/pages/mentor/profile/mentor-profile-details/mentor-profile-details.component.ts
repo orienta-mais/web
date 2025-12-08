@@ -17,6 +17,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import { YEAR_USER } from '../../../../../@core/enums/year-user.enum';
+import { linkedinValidator, noWhitespaceValidator } from '../../../../../@core/validators';
 
 @Component({
   selector: 'app-mentor-profile-details',
@@ -75,13 +76,18 @@ export class MentorProfileDetailsComponent implements OnInit {
   initializeForm() {
     this.form = this.fb.group({
       email: [{ value: '', disabled: true }],
-      name: ['', [Validators.required, Validators.maxLength(70)]],
-      lastName: ['', [Validators.required, Validators.maxLength(70)]],
+      name: ['', [Validators.required, noWhitespaceValidator, Validators.maxLength(70)]],
+      lastName: ['', [Validators.required, noWhitespaceValidator, Validators.maxLength(70)]],
       birthDate: ['', Validators.required],
-      socialMedias: ['', Validators.maxLength(255)],
+      socialMedias: ['', [noWhitespaceValidator, linkedinValidator, Validators.maxLength(150)]],
       description: [
         '',
-        [Validators.required, Validators.minLength(100), Validators.maxLength(1000)],
+        [
+          Validators.required,
+          noWhitespaceValidator,
+          Validators.minLength(100),
+          Validators.maxLength(1000),
+        ],
       ],
       state: ['', Validators.required],
       nationality: ['', Validators.required],
@@ -156,8 +162,9 @@ export class MentorProfileDetailsComponent implements OnInit {
       return;
     }
 
+    const { email, ...rest } = this.form.getRawValue();
     const payload = {
-      ...this.form.getRawValue(),
+      ...rest,
       state: this.form.get('state')?.value?.name,
       nationality: this.form.get('nationality')?.value?.name,
     };

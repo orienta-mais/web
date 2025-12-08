@@ -88,7 +88,7 @@ export class RegisterMentoredComponent implements OnInit {
           Validators.maxLength(1000),
         ],
       ],
-      socialMedias: ['', noWhitespaceValidator, linkedinValidator, Validators.maxLength(150)],
+      socialMedias: ['', [noWhitespaceValidator, linkedinValidator, Validators.maxLength(150)]],
       state: ['', Validators.required],
       nationality: ['', Validators.required],
     });

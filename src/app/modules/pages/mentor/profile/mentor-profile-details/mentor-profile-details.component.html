@@ -80,9 +80,15 @@
       <!-- LinkedIn -->
       <div>
         <p-floatlabel>
-          <input pInputText formControlName="socialMedias" maxlength="255" class="w-full" />
+          <input pInputText formControlName="socialMedias" maxlength="150" class="w-full" />
           <label>LinkedIn</label>
         </p-floatlabel>
+        <div
+          *ngIf="f['socialMedias'].touched && f['socialMedias'].errors?.['linkedinValidator']"
+          class="text-red-500 text-sm mt-1"
+        >
+          Deve ser um link completo pertencente ao LinkedIn
+        </div>
       </div>
 
       <!-- Descrição -->
