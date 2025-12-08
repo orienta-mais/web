@@ -7,7 +7,7 @@
 
     <div>
       <h1 class="text-xl font-semibold">Termos de Uso — OrientaMais</h1>
-      <div class="text-sm text-slate-500">Última atualização: 17/10/2025</div>
+      <div class="text-sm text-slate-500">Última atualização: 08/12/2025</div>
     </div>
   </header>
 
@@ -57,7 +57,7 @@
   <section class="mt-6">
     <h2 class="text-lg font-semibold mb-2 text-slate-800">5. Funcionamento das Aulas</h2>
     <ul class="list-disc ml-5 text-slate-600 leading-relaxed">
-      <li>As aulas são cadastradas pelos mentores, contendo data, horário, título, tema e descrição.</li>
+      <li>As aulas são cadastradas pelos mentores, contendo data, horário, título e descrição.</li>
       <li>O link da reunião no Zoom é criado pela plataforma e disponibilizado via plataforma e e-mail.</li>
       <li>O OrientaMais não gerencia, fiscaliza ou grava reuniões realizadas via Zoom.</li>
       <li>Cada usuário é responsável por sua conduta durante a reunião.</li>
@@ -94,7 +94,7 @@
     <ul class="list-disc ml-5 text-slate-600 leading-relaxed">
       <li>Utilizamos HTTPS em toda a comunicação.</li>
       <li>Armazenamos senhas utilizando <strong>bcrypt</strong>.</li>
-      <li>Utilizamos cookies apenas para sessão (com JWT).</li>
+      <li>Utilizamos armazenamento do navegador apenas para sessão (com JWT).</li>
       <li>Não utilizamos Google Analytics.</li>
       <li>Front-end e back-end possuem controle de acesso com papéis distintos.</li>
     </ul>
@@ -152,18 +152,12 @@
     <h2 class="text-lg font-semibold mb-2 text-slate-800">13. Contato</h2>
     <p class="text-slate-600 leading-relaxed">
       Para dúvidas ou solicitações, entre em contato via:  
-      <strong>orienta-mais.web@gmail.com</strong>
+      <strong>orientamais.app@gmail.com.br</strong>
     </p>
   </section>
 
   <footer class="mt-6 pt-4 border-t border-slate-200 text-slate-500 text-sm">
     <div>Recomendamos revisão jurídica para uso institucional.</div>
-
-    <div class="mt-3">
-      <a class="inline-block bg-amber-500 text-white px-4 py-2 rounded-lg hover:bg-amber-600 transition">
-        Voltar ao site
-      </a>
-    </div>
   </footer>
 
 </div>
