@@ -11,6 +11,7 @@ import { ToastService } from '../../../../shared/components/toast/toast.service'
 import { take } from 'rxjs';
 import { Location } from '@angular/common';
 import { MentoredService } from '../../../../@core/services/mentored/mentored.service';
+import { noWhitespaceValidator } from '../../../../@core/validators';
 
 @Component({
   selector: 'app-mentored-review-of-mentor',
@@ -35,6 +36,8 @@ export class MentoredReviewOfMentorComponent {
 
   reviewForm!: FormGroup;
 
+  ratingFields = ['didactics', 'subjectMastery', 'punctuality', 'communication', 'engagement'];
+
   constructor(
     private route: ActivatedRoute,
     private mentoredService: MentoredService,
@@ -51,12 +54,20 @@ export class MentoredReviewOfMentorComponent {
 
   initializeForm() {
     this.reviewForm = this.fb.group({
-      didactics: [0, Validators.required],
-      subjectMastery: [0, Validators.required],
-      punctuality: [0, Validators.required],
-      communication: [0, Validators.required],
-      engagement: [0, Validators.required],
-      feedback: ['', [Validators.required, Validators.minLength(10)]],
+      didactics: [0, [Validators.required, Validators.min(1), Validators.max(5)]],
+      subjectMastery: [0, [Validators.required, Validators.min(1), Validators.max(5)]],
+      punctuality: [0, [Validators.required, Validators.min(1), Validators.max(5)]],
+      communication: [0, [Validators.required, Validators.min(1), Validators.max(5)]],
+      engagement: [0, [Validators.required, Validators.min(1), Validators.max(5)]],
+      feedback: [
+        '',
+        [
+          Validators.required,
+          noWhitespaceValidator,
+          Validators.minLength(10),
+          Validators.maxLength(500),
+        ],
+      ],
     });
   }
 
@@ -100,6 +111,7 @@ export class MentoredReviewOfMentorComponent {
           this.feedbacks.push(payload);
           this.showReviewForm = false;
           this.reviewForm.reset();
+          this.loadMentorData();
         },
         error: () => {
           this.toast.error('Erro ao enviar feedback.');
@@ -140,5 +152,24 @@ export class MentoredReviewOfMentorComponent {
     }
 
     this.reviewForm.get(controlName)?.setValue(value, { emitEvent: false });
+  }
+
+  get anyRatingInvalid() {
+    return this.ratingFields.some((f) => {
+      const ctrl = this.reviewForm.get(f);
+      return ctrl?.touched && ctrl.invalid;
+    });
+  }
+
+  get ratingMinError() {
+    return this.ratingFields.some((f) => this.reviewForm.get(f)?.errors?.['min']);
+  }
+
+  get ratingMaxError() {
+    return this.ratingFields.some((f) => this.reviewForm.get(f)?.errors?.['max']);
+  }
+
+  get feedback() {
+    return this.reviewForm.get('feedback');
   }
 }

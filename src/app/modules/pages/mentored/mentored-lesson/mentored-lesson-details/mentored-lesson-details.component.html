@@ -143,7 +143,7 @@
           ></p-button>
         </div>
 
-        <div *ngIf="lesson && hasStarted" class="mt-4 text-center">
+        <div *ngIf="lesson && hasStarted && isRegistered" class="mt-4 text-center">
           <p-button
             (click)="sendFeedback()"
             label="Realizar feedback"
