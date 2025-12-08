@@ -14,6 +14,7 @@ import {
   PaginatedLeasonListResponse,
 } from '../../../../@core/interfaces/mentor.interface';
 import { FilterMentoredLessons } from '../../../../@core/interfaces/lesson.interface';
+import { DateTimeService } from '../../../../@core/services/datetime/datetime.service';
 
 @Component({
   selector: 'app-mentored-lesson',
@@ -47,6 +48,7 @@ export class MentoredLessonComponent implements OnInit {
     private lessonService: LessonService,
     private router: Router,
     private userService: UserService,
+    private dateTimeService: DateTimeService,
   ) {
     this.filterForm = this.fb.group({
       title: [''],
@@ -58,7 +60,6 @@ export class MentoredLessonComponent implements OnInit {
     this.loadLessons();
   }
 
-  // Alterna ordenação
   toggleOrder() {
     this.order = this.order === 'asc' ? 'desc' : 'asc';
     this.loadLessons();
@@ -68,15 +69,20 @@ export class MentoredLessonComponent implements OnInit {
     this.router.navigate(['/mentored/lessons/registered']);
   }
 
-  // 🔥 Carrega lista de aulas
   loadLessons() {
     this.loading = true;
 
+    const dateFilter = this.filterForm.get('date')?.value;
+    let dateForBackend: string | null = null;
+    if (dateFilter) {
+      dateForBackend = this.dateTimeService.toUTCDateString(new Date(dateFilter));
+    }
+
     const filters: FilterMentoredLessons = {
       title: this.filterForm.get('title')?.value || null,
-      date: this.filterForm.get('date')?.value || null,
+      date: dateForBackend,
       order: this.order,
-      page: this.page - 1, // backend começa em 0
+      page: this.page - 1,
       size: this.size,
     };
 
@@ -99,20 +105,16 @@ export class MentoredLessonComponent implements OnInit {
             return;
           }
 
-          // Conteúdo base
           const items = allLessons.content ?? [];
 
-          // Remove aulas já registradas
           this.lessons = items.filter((l) => !registeredIds.has(l.id));
 
-          // Totais
           this.totalItems = allLessons.total ?? items.length;
           this.totalPages = Math.max(
             1,
             allLessons.totalPages ?? Math.ceil(this.totalItems / this.size),
           );
 
-          // Atualiza página exibida (backend retorna currentPage começando em 0)
           this.page =
             (typeof allLessons.currentPage === 'number' ? allLessons.currentPage : this.page - 1) +
             1;
@@ -125,7 +127,6 @@ export class MentoredLessonComponent implements OnInit {
       });
   }
 
-  // Limpar filtros
   clearFilters() {
     this.filterForm.reset();
     this.order = 'desc';
@@ -134,12 +135,29 @@ export class MentoredLessonComponent implements OnInit {
     this.loadLessons();
   }
 
-  // Abrir detalhes
   showDetails(id: string) {
     this.router.navigate([`/mentored/lesson/details/${id}`]);
   }
 
-  // Paginação
+  formatDate(lesson: LessonListResponse): string {
+    if (!lesson?.date || !lesson?.startTime) return '';
+    const localDate = this.dateTimeService.utcToLocal(
+      lesson.date,
+      this.dateTimeService.ensureTimeSeconds(lesson.startTime),
+    );
+    return this.dateTimeService.formatDateBR(localDate);
+  }
+
+  formatStartTime(lesson: LessonListResponse): string {
+    if (!lesson?.date || !lesson?.startTime) return '';
+    return this.dateTimeService.utcTimeToLocalTime(lesson.date, lesson.startTime);
+  }
+
+  formatEndTime(lesson: LessonListResponse): string {
+    if (!lesson?.date || !lesson?.endTime) return '';
+    return this.dateTimeService.utcTimeToLocalTime(lesson.date, lesson.endTime);
+  }
+
   nextPage() {
     if (this.page < this.totalPages) {
       this.page++;
@@ -154,13 +172,11 @@ export class MentoredLessonComponent implements OnInit {
     }
   }
 
-  // Alterar tamanho da página
   changeSize() {
     this.page = 1;
     this.loadLessons();
   }
 
-  // Ir para primeira página
   goToStart() {
     if (this.page !== 1) {
       this.page = 1;
@@ -168,7 +184,6 @@ export class MentoredLessonComponent implements OnInit {
     }
   }
 
-  // Ir para última página
   goToEnd() {
     if (this.page !== this.totalPages) {
       this.page = this.totalPages;

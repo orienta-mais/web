@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { LessonService } from '../../../../../@core/services/lesson/lesson.service';
 import { ToastService } from '../../../../../shared/components/toast/toast.service';
 import { UserService } from '../../../../../@core/services/user/user.service';
+import { DateTimeService } from '../../../../../@core/services/datetime/datetime.service';
 
 @Component({
   selector: 'app-mentored-lesson-registered',
@@ -28,6 +29,7 @@ export class MentoredLessonRegisteredComponent implements OnInit {
     private userService: UserService,
     private toast: ToastService,
     private router: Router,
+    private dateTimeService: DateTimeService,
   ) {}
 
   ngOnInit(): void {
@@ -43,25 +45,39 @@ export class MentoredLessonRegisteredComponent implements OnInit {
       .pipe(take(1))
       .subscribe({
         next: (data) => {
-          const now = new Date();
+          const now = this.dateTimeService.now();
 
           const availableLessons = data.filter((lesson) => {
-            const lessonEndTime = new Date(`${lesson.date}T${lesson.endTime}`);
+            const lessonEndTime = this.dateTimeService.utcToLocal(
+              lesson.date,
+              this.dateTimeService.ensureTimeSeconds(lesson.endTime),
+            );
             return lessonEndTime >= now;
           });
 
           const finishedLessons = data.filter((lesson) => {
-            const lessonEndTime = new Date(`${lesson.date}T${lesson.endTime}`);
+            const lessonEndTime = this.dateTimeService.utcToLocal(
+              lesson.date,
+              this.dateTimeService.ensureTimeSeconds(lesson.endTime),
+            );
             return lessonEndTime < now;
           });
 
+          const sortByDateTime = (a: any, b: any) => {
+            const dateTimeA = this.dateTimeService.utcToLocal(
+              a.date,
+              this.dateTimeService.ensureTimeSeconds(a.startTime),
+            );
+            const dateTimeB = this.dateTimeService.utcToLocal(
+              b.date,
+              this.dateTimeService.ensureTimeSeconds(b.startTime),
+            );
+            return dateTimeA.getTime() - dateTimeB.getTime();
+          };
+
           this.lessons = [
-            ...availableLessons.sort(
-              (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
-            ),
-            ...finishedLessons.sort(
-              (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
-            ),
+            ...availableLessons.sort(sortByDateTime),
+            ...finishedLessons.sort(sortByDateTime),
           ];
 
           this.applyFilter();
@@ -86,9 +102,26 @@ export class MentoredLessonRegisteredComponent implements OnInit {
   }
 
   isLessonFinished(lesson: any): boolean {
-    const now = new Date();
-    const end = new Date(`${lesson.date}T${lesson.endTime}`);
-    return end < now;
+    return this.dateTimeService.isInPast(lesson.date, lesson.endTime);
+  }
+
+  formatDate(lesson: any): string {
+    if (!lesson?.date || !lesson?.startTime) return '';
+    const localDate = this.dateTimeService.utcToLocal(
+      lesson.date,
+      this.dateTimeService.ensureTimeSeconds(lesson.startTime),
+    );
+    return this.dateTimeService.formatDateBR(localDate);
+  }
+
+  formatStartTime(lesson: any): string {
+    if (!lesson?.date || !lesson?.startTime) return '';
+    return this.dateTimeService.utcTimeToLocalTime(lesson.date, lesson.startTime);
+  }
+
+  formatEndTime(lesson: any): string {
+    if (!lesson?.date || !lesson?.endTime) return '';
+    return this.dateTimeService.utcTimeToLocalTime(lesson.date, lesson.endTime);
   }
 
   changeCategory(category: 'all' | 'available' | 'finished') {

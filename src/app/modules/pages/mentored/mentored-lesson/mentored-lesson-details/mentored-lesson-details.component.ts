@@ -13,6 +13,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { UserService } from '../../../../../@core/services/user/user.service';
 import { Location } from '@angular/common';
 import { TooltipModule } from 'primeng/tooltip';
+import { DateTimeService } from '../../../../../@core/services/datetime/datetime.service';
 
 @Component({
   selector: 'app-mentored-lesson-details',
@@ -43,6 +44,7 @@ export class MentoredLessonDetailsComponent implements OnInit {
     private confirmService: ConfirmationService,
     private userService: UserService,
     private location: Location,
+    private dateTimeService: DateTimeService,
   ) {}
 
   ngOnInit() {
@@ -75,22 +77,33 @@ export class MentoredLessonDetailsComponent implements OnInit {
 
   showBoxLessonStarted() {
     if (this.lesson?.date && this.lesson?.startTime) {
-      const dateTimeString = `${this.lesson.date}T${this.lesson.startTime}`;
-      const lessonStart = new Date(dateTimeString);
-      const now = new Date();
-
-      this.hasStarted = lessonStart <= now;
+      this.hasStarted = this.dateTimeService.isInPast(this.lesson.date, this.lesson.startTime);
     }
   }
 
   showBoxLessonFinalized() {
     if (this.lesson?.date && this.lesson?.endTime) {
-      const dateTimeString = `${this.lesson.date}T${this.lesson.endTime}`;
-      const lessonEnd = new Date(dateTimeString);
-      const now = new Date();
-
-      this.hasEnd = lessonEnd <= now;
+      this.hasEnd = this.dateTimeService.isInPast(this.lesson.date, this.lesson.endTime);
     }
+  }
+
+  formatDate(): string {
+    if (!this.lesson?.date || !this.lesson?.startTime) return '';
+    const localDate = this.dateTimeService.utcToLocal(
+      this.lesson.date,
+      this.dateTimeService.ensureTimeSeconds(this.lesson.startTime),
+    );
+    return this.dateTimeService.formatDateBR(localDate);
+  }
+
+  formatStartTime(): string {
+    if (!this.lesson?.date || !this.lesson?.startTime) return '';
+    return this.dateTimeService.utcTimeToLocalTime(this.lesson.date, this.lesson.startTime);
+  }
+
+  formatEndTime(): string {
+    if (!this.lesson?.date || !this.lesson?.endTime) return '';
+    return this.dateTimeService.utcTimeToLocalTime(this.lesson.date, this.lesson.endTime);
   }
 
   confirmRegister() {
@@ -167,6 +180,14 @@ export class MentoredLessonDetailsComponent implements OnInit {
 
   returnBack() {
     this.location.back();
+  }
+
+  /**
+   * Verifica se o mentor ainda existe (não foi deletado)
+   * Quando o mentor deleta sua conta, o mentorId fica null mas name/lastName permanecem
+   */
+  get isMentorActive(): boolean {
+    return !!this.lesson?.mentorId;
   }
 
   viewDetailsMentor() {

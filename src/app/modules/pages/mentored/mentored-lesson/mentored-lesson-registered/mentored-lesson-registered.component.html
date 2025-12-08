@@ -77,14 +77,14 @@
             <p class="text-sm text-gray-600 mb-1 flex items-center">
               <i class="pi pi-calendar text-blue-600 mr-2"></i>
               <span class="font-medium text-gray-700">Data:</span>
-              <span class="ml-1">{{ lesson.date | date: 'dd/MM/yyyy' }}</span>
+              <span class="ml-1">{{ formatDate(lesson) }}</span>
             </p>
 
             <p class="text-sm text-gray-600 flex items-center">
               <i class="pi pi-clock text-blue-600 mr-2"></i>
               <span class="font-medium text-gray-700">Horário:</span>
               <span class="ml-1">
-                {{ lesson.startTime.slice(0, 5) }} - {{ lesson.endTime.slice(0, 5) }}
+                {{ formatStartTime(lesson) }} - {{ formatEndTime(lesson) }}
               </span>
             </p>
 

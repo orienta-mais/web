@@ -7,6 +7,7 @@ import { take } from 'rxjs';
 import { LessonService } from '../../../../@core/services/lesson/lesson.service';
 import { UserService } from '../../../../@core/services/user/user.service';
 import { LeasonListResponse as LessonListResponse } from '../../../../@core/interfaces/mentor.interface';
+import { DateTimeService } from '../../../../@core/services/datetime/datetime.service';
 
 @Component({
   selector: 'app-lesson',
@@ -26,6 +27,7 @@ export class LessonListComponent implements OnInit {
     private leasonService: LessonService,
     private router: Router,
     private userService: UserService,
+    private dateTimeService: DateTimeService,
   ) {}
 
   ngOnInit(): void {
@@ -39,22 +41,29 @@ export class LessonListComponent implements OnInit {
       .pipe(take(1))
       .subscribe({
         next: (data) => {
-          const now = new Date();
+          const now = this.dateTimeService.now();
 
           this.lessons = data
             .map((lesson) => {
-              const lessonEnd = new Date(`${lesson.date}T${lesson.endTime}`);
+              const lessonEnd = this.dateTimeService.utcToLocal(
+                lesson.date,
+                this.dateTimeService.ensureTimeSeconds(lesson.endTime),
+              );
 
               const status = lessonEnd < now ? 'Finalizada' : 'Pendente';
 
               return { ...lesson, status };
             })
             .sort((a, b) => {
-              const dateA = new Date(a.date).getTime();
-              const dateB = new Date(b.date).getTime();
-              if (dateA !== dateB) return dateA - dateB;
-
-              return a.startTime.localeCompare(b.startTime);
+              const dateTimeA = this.dateTimeService.utcToLocal(
+                a.date,
+                this.dateTimeService.ensureTimeSeconds(a.startTime),
+              );
+              const dateTimeB = this.dateTimeService.utcToLocal(
+                b.date,
+                this.dateTimeService.ensureTimeSeconds(b.startTime),
+              );
+              return dateTimeA.getTime() - dateTimeB.getTime();
             });
 
           this.loading = false;
@@ -71,6 +80,18 @@ export class LessonListComponent implements OnInit {
       return this.lessons.filter((l) => l.status === 'Pendente');
     }
     return this.lessons;
+  }
+
+  formatDate(utcDate: string, utcTime: string): string {
+    const localDate = this.dateTimeService.utcToLocal(
+      utcDate,
+      this.dateTimeService.ensureTimeSeconds(utcTime),
+    );
+    return this.dateTimeService.formatDateBR(localDate);
+  }
+
+  formatTime(utcDate: string, utcTime: string): string {
+    return this.dateTimeService.utcTimeToLocalTime(utcDate, utcTime);
   }
 
   goToCreate() {

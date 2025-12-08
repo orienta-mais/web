@@ -23,6 +23,7 @@ import { DatePickerModule } from 'primeng/datepicker';
 import { UserService } from '../../../../../@core/services/user/user.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { noWhitespaceValidator, safeUrlValidator } from '../../../../../@core/validators';
+import { DateTimeService } from '../../../../../@core/services/datetime/datetime.service';
 
 @Component({
   selector: 'app-lesson-details',
@@ -58,6 +59,7 @@ export class LeasonDetailsComponent implements OnInit {
     private confirmService: ConfirmationService,
     private userService: UserService,
     private cdr: ChangeDetectorRef,
+    private dateTimeService: DateTimeService,
   ) {}
 
   ngOnInit() {
@@ -74,6 +76,16 @@ export class LeasonDetailsComponent implements OnInit {
           const links = data.additionalLinks ?? [];
           this.leason = { ...data, additionalLinks: links };
 
+          const localDate = this.dateTimeService.utcDateToLocalDate(data.date);
+          const localStartTime = this.dateTimeService.utcTimeToLocalTime(
+            data.date,
+            data.startTime || '00:00:00',
+          );
+          const localEndTime = this.dateTimeService.utcTimeToLocalTime(
+            data.date,
+            data.endTime || '00:00:00',
+          );
+
           this.form = this.fb.group({
             title: [
               data.title,
@@ -87,9 +99,9 @@ export class LeasonDetailsComponent implements OnInit {
               data.presentCode,
               [Validators.required, noWhitespaceValidator, Validators.maxLength(6)],
             ],
-            date: [this.parseDate(data.date), Validators.required],
-            initialTime: [data.startTime?.slice(0, 5) || '', Validators.required],
-            finalTime: [data.endTime?.slice(0, 5) || '', Validators.required],
+            date: [localDate, Validators.required],
+            initialTime: [localStartTime, Validators.required],
+            finalTime: [localEndTime, Validators.required],
             mentorId: [this.userService.getId()],
             additionalLinks: this.fb.array(
               links.map((l) => this.fb.control(l, [safeUrlValidator])),
@@ -107,11 +119,7 @@ export class LeasonDetailsComponent implements OnInit {
 
   validateLessonFinalized() {
     if (this.leason?.date && this.leason?.startTime) {
-      const dateTimeString = `${this.leason.date}T${this.leason.startTime}`;
-      const lessonStart = new Date(dateTimeString);
-      const now = new Date();
-
-      this.lessonFinalized = lessonStart <= now;
+      this.lessonFinalized = this.dateTimeService.isInPast(this.leason.date, this.leason.startTime);
     }
   }
 
@@ -145,12 +153,6 @@ export class LeasonDetailsComponent implements OnInit {
     }
   }
 
-  private parseDate(dateString: string): Date | null {
-    if (!dateString) return null;
-    const d = new Date(dateString);
-    return new Date(d.getTime() + d.getTimezoneOffset() * 60000);
-  }
-
   enableEdit() {
     this.editMode = true;
     this.cdr.detectChanges();
@@ -172,32 +174,21 @@ export class LeasonDetailsComponent implements OnInit {
     const startTime = this.form.value.initialTime;
     const endTime = this.form.value.finalTime;
 
-    const [hStart, mStart] = startTime.split(':').map(Number);
-    const [hEnd, mEnd] = endTime.split(':').map(Number);
+    const startDateTime = this.dateTimeService.createLocalDateTime(selectedDate, startTime);
+    const endDateTime = this.dateTimeService.createLocalDateTime(selectedDate, endTime);
+    const now = this.dateTimeService.now();
 
-    // Monta o datetime exato respeitando o fuso
-    const startDateTime = new Date(selectedDate);
-    startDateTime.setHours(hStart, mStart, 0, 0);
-
-    const endDateTime = new Date(selectedDate);
-    endDateTime.setHours(hEnd, mEnd, 0, 0);
-
-    const now = new Date();
-
-    // 1️⃣ Início no passado
     if (startDateTime < now) {
       this.toast.error('A data e hora de início não podem estar no passado.');
       return;
     }
 
-    // 2️⃣ Fim antes do início
     if (endDateTime <= startDateTime) {
       this.toast.error('A hora de término deve ser posterior à de início.');
       return;
     }
 
-    // 3️⃣ Mais de 6h de duração
-    const hoursDiff = (endDateTime.getTime() - startDateTime.getTime()) / (1000 * 60 * 60);
+    const hoursDiff = this.dateTimeService.diffInHours(startDateTime, endDateTime);
     if (hoursDiff > 6) {
       this.toast.error('A aula não pode ter mais de 6 horas de duração.');
       return;
@@ -208,14 +199,17 @@ export class LeasonDetailsComponent implements OnInit {
         ?.map((l) => (l ? l.trim() : ''))
         .filter((l) => l && l.length > 0) ?? [];
 
+    const startUTC = this.dateTimeService.localToUTC(selectedDate, startTime);
+    const endUTC = this.dateTimeService.localToUTC(selectedDate, endTime);
+
     const payload: any = {
       title: this.form.value.title.trim(),
       maxGuest: this.form.value.maxGuest,
       description: (this.form.value.description ?? '').trim(),
       presentCode: (this.form.value.presentCode ?? '').trim(),
-      date: this.formatDate(this.form.value.date),
-      startTime: this.ensureTimeFormat(this.form.value.initialTime),
-      endTime: this.ensureTimeFormat(this.form.value.finalTime),
+      date: startUTC.date,
+      startTime: startUTC.time,
+      endTime: endUTC.time,
       mentorId: this.userService.getId(),
       ...(cleanLinks.length > 0 ? { additionalLinks: cleanLinks } : {}),
     };
@@ -237,15 +231,6 @@ export class LeasonDetailsComponent implements OnInit {
           this.loading = false;
         },
       });
-  }
-
-  private formatDate(date: Date | string): string {
-    const d = new Date(date);
-    return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().split('T')[0];
-  }
-
-  private ensureTimeFormat(time: string): string {
-    return time && time.length === 5 ? time + ':00' : time;
   }
 
   confirmDelete() {
@@ -276,6 +261,25 @@ export class LeasonDetailsComponent implements OnInit {
 
   returnBack() {
     this.router.navigate(['/mentor/lesson']);
+  }
+
+  formatDate(): string {
+    if (!this.leason?.date || !this.leason?.startTime) return '';
+    const localDate = this.dateTimeService.utcToLocal(
+      this.leason.date,
+      this.dateTimeService.ensureTimeSeconds(this.leason.startTime),
+    );
+    return this.dateTimeService.formatDateBR(localDate);
+  }
+
+  formatStartTime(): string {
+    if (!this.leason?.date || !this.leason?.startTime) return '';
+    return this.dateTimeService.utcTimeToLocalTime(this.leason.date, this.leason.startTime);
+  }
+
+  formatEndTime(): string {
+    if (!this.leason?.date || !this.leason?.endTime) return '';
+    return this.dateTimeService.utcTimeToLocalTime(this.leason.date, this.leason.endTime);
   }
 
   get f() {

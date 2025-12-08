@@ -188,21 +188,21 @@
             <div>
               <span class="text-gray-600 text-sm block">Data</span>
               <p class="text-base font-medium text-gray-900">
-                {{ leason?.date | date: 'dd/MM/yyyy' }}
+                {{ formatDate() }}
               </p>
             </div>
 
             <div>
               <span class="text-gray-600 text-sm block">Início</span>
               <p class="text-base font-medium text-gray-900">
-                {{ leason?.startTime?.slice(0, 5) }}
+                {{ formatStartTime() }}
               </p>
             </div>
 
             <div>
               <span class="text-gray-600 text-sm block">Fim</span>
               <p class="text-base font-medium text-gray-900">
-                {{ leason?.endTime?.slice(0, 5) }}
+                {{ formatEndTime() }}
               </p>
             </div>
 

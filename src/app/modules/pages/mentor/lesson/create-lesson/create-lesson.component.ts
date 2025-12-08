@@ -14,6 +14,7 @@ import { UserService } from '../../../../../@core/services/user/user.service';
 import { LessonService } from '../../../../../@core/services/lesson/lesson.service';
 import { CreateLesson } from '../../../../../@core/interfaces/mentor.interface';
 import { noWhitespaceValidator, safeUrlValidator } from '../../../../../@core/validators';
+import { DateTimeService } from '../../../../../@core/services/datetime/datetime.service';
 
 @Component({
   selector: 'app-create-lesson',
@@ -43,6 +44,7 @@ export class CreateLeasonComponent {
     private userService: UserService,
     private lessonService: LessonService,
     private router: Router,
+    private dateTimeService: DateTimeService,
   ) {
     this.form = this.fb.group({
       title: ['', [Validators.required, noWhitespaceValidator, Validators.maxLength(200)]],
@@ -90,37 +92,21 @@ export class CreateLeasonComponent {
     const { title, description, date, startTime, endTime, maxGuest, additionalLinks } =
       this.form.value;
 
-    // --------------------------
-    const [hInit, mInit] = startTime.split(':').map(Number);
-    const [hEnd, mEnd] = endTime.split(':').map(Number);
+    const startDateTime = this.dateTimeService.createLocalDateTime(date, startTime);
+    const endDateTime = this.dateTimeService.createLocalDateTime(date, endTime);
+    const now = this.dateTimeService.now();
 
-    const startDateTime = new Date(date);
-    startDateTime.setHours(hInit, mInit, 0, 0);
-
-    const endDateTime = new Date(date);
-    endDateTime.setHours(hEnd, mEnd, 0, 0);
-    const now = new Date();
-
-    // --------------------------
-    // ❌ Aula não pode começar no passado
-    // --------------------------
-    if (startDateTime <= now) {
+    if (startDateTime.getTime() <= now.getTime()) {
       this.toast.error('A data e hora de início não podem estar no passado.');
       return;
     }
 
-    // --------------------------
-    // ❌ Término não pode ser antes do início
-    // --------------------------
-    if (endDateTime <= startDateTime) {
+    if (endDateTime.getTime() <= startDateTime.getTime()) {
       this.toast.error('A hora de término deve ser posterior à de início.');
       return;
     }
 
-    // --------------------------
-    // 🔵 Verifica duração (máx. 6h)
-    // --------------------------
-    const diffHours = (endDateTime.getTime() - startDateTime.getTime()) / (1000 * 60 * 60);
+    const diffHours = this.dateTimeService.diffInHours(startDateTime, endDateTime);
 
     if (diffHours > 6) {
       this.toast.error('A aula não pode ter mais de 6 horas de duração.');
@@ -133,14 +119,17 @@ export class CreateLeasonComponent {
       .map((l: string) => l?.trim())
       .filter((l: string) => l);
 
+    const startUTC = this.dateTimeService.localToUTC(date, startTime);
+    const endUTC = this.dateTimeService.localToUTC(date, endTime);
+
     const payload: CreateLesson = {
       title: title.trim(),
       description: description?.trim(),
       presentCode: this.form.value.presentCode,
       maxGuest: Number(maxGuest),
-      date: this.formatDate(date),
-      startTime: this.ensureTimeFormat(startTime),
-      endTime: this.ensureTimeFormat(endTime),
+      date: startUTC.date,
+      startTime: startUTC.time,
+      endTime: endUTC.time,
       mentorId,
       additionalLinks: filteredLinks,
     };
@@ -163,15 +152,6 @@ export class CreateLeasonComponent {
           this.toast.error(msg);
         },
       });
-  }
-
-  private formatDate(date: Date | string): string {
-    const d = new Date(date);
-    return d.toISOString().split('T')[0];
-  }
-
-  private ensureTimeFormat(time: string): string {
-    return time.length === 5 ? `${time}:00` : time;
   }
 
   goBack() {

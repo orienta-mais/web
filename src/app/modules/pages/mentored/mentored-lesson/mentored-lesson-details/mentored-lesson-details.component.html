@@ -28,24 +28,34 @@
         <div class="grid grid-cols-2 gap-6 mt-4">
           <div>
             <p class="text-sm text-gray-500 font-medium">Data</p>
-            <p class="text-base text-gray-800">{{ lesson?.date | date: 'dd/MM/yyyy' }}</p>
+            <p class="text-base text-gray-800">{{ formatDate() }}</p>
           </div>
 
           <div>
             <p class="text-sm text-gray-500 font-medium">Hora de início</p>
-            <p class="text-base text-gray-800">{{ lesson?.startTime?.slice(0, 5) }}</p>
+            <p class="text-base text-gray-800">{{ formatStartTime() }}</p>
           </div>
 
           <div>
             <p class="text-sm text-gray-500 font-medium">Hora de fim</p>
-            <p class="text-base text-gray-800">{{ lesson?.endTime?.slice(0, 5) }}</p>
+            <p class="text-base text-gray-800">{{ formatEndTime() }}</p>
           </div>
 
           <div>
             <p class="text-sm text-gray-500 font-medium">Mentor</p>
-            <a class="text-base text-blue-500 cursor-pointer" (click)="viewDetailsMentor()">{{
-              lesson?.mentorName
-            }}</a>
+            <a
+              *ngIf="isMentorActive; else mentorInactive"
+              class="text-base text-blue-500 cursor-pointer hover:underline"
+              (click)="viewDetailsMentor()"
+            >
+              {{ lesson?.mentorName }}
+            </a>
+            <ng-template #mentorInactive>
+              <p class="text-base text-gray-800">
+                {{ lesson?.mentorName }}
+                <span class="text-gray-400 text-sm italic">(conta excluída)</span>
+              </p>
+            </ng-template>
           </div>
 
           <div>
@@ -143,7 +153,10 @@
           ></p-button>
         </div>
 
-        <div *ngIf="lesson && hasStarted && isRegistered" class="mt-4 text-center">
+        <div
+          *ngIf="lesson && hasStarted && isRegistered && isMentorActive"
+          class="mt-4 text-center"
+        >
           <p-button
             (click)="sendFeedback()"
             label="Realizar feedback"
